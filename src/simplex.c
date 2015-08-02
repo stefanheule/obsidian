@@ -84,15 +84,26 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
     struct tm *t = localtime(&now);
 
     // time and date strings
-    strftime(buffer_day, sizeof(buffer_day), "%d", t);
+    strftime(buffer_day, sizeof(buffer_day), "%m/%d", t);
+    // remove leading zeros
     if (buffer_day[0] == '0') {
-        buffer_day[0] = buffer_day[1];
-        buffer_day[1] = 0;
+        memcpy(&buffer_day[0], &buffer_day[1], 5);
     }
+    if (buffer_day[2] == '0') {
+        memcpy(&buffer_day[2], &buffer_day[3], 2);
+    }
+    if (buffer_day[3] == '0') {
+        memcpy(&buffer_day[3], &buffer_day[4], 2);
+    }
+//    buffer_day[0] = '1';
+//    buffer_day[1] = '2';
+//    buffer_day[2] = '/';
+//    buffer_day[3] = '2';
+//    buffer_day[4] = '8';
+//    buffer_day[5] = 0;
+    strftime(buffer_dayofweek, sizeof(buffer_dayofweek), "%a", t);
     text_layer_set_text(label_day, buffer_day);
     text_layer_set_text(label_dayofweek, buffer_dayofweek);
-    strftime(buffer_dayofweek, sizeof(buffer_dayofweek), "%a", t);
-
 }
 
 /**
@@ -167,19 +178,21 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, layer_time);
 
     // create dayofweek text layer
-    label_dayofweek = text_layer_create(GRect(46, 114, 27, 20));
+    label_dayofweek = text_layer_create(GRect(88, 64, 9*5, 20));
     text_layer_set_text(label_dayofweek, buffer_day);
     text_layer_set_background_color(label_dayofweek, COLOR_BACKGROUND);
     text_layer_set_text_color(label_dayofweek, COLOR_NORMAL);
     text_layer_set_font(label_dayofweek, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+    text_layer_set_text_alignment(label_dayofweek, GTextAlignmentCenter);
     layer_add_child(layer_text, text_layer_get_layer(label_dayofweek));
 
     // create day text layer
-    label_day = text_layer_create(GRect(73, 114, 18, 20));
+    label_day = text_layer_create(GRect(88, 82, 9*5, 20));
     text_layer_set_text(label_day, buffer_dayofweek);
     text_layer_set_background_color(label_day, COLOR_BACKGROUND);
-    text_layer_set_text_color(label_day, COLOR_NORMAL);
+    text_layer_set_text_color(label_day, COLOR_ACCENT);
     text_layer_set_font(label_day, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+    text_layer_set_text_alignment(label_day, GTextAlignmentCenter);
     layer_add_child(layer_text, text_layer_get_layer(label_day));
 }
 
