@@ -161,22 +161,29 @@ static void time_update_proc(Layer *layer, GContext *ctx) {
 //    graphics_draw_line(ctx, second_hand, center);
 
     // minute hand
-    GPoint minute_hand = get_radial_point(radius, t->tm_min, 60);
+    GPoint minute_hand = get_radial_point(radius - 10, t->tm_min, 60);
     graphics_context_set_stroke_width(ctx, 5);
     graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
     graphics_draw_line(ctx, minute_hand, center);
     graphics_context_set_stroke_width(ctx, 4);
     graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
     graphics_draw_line(ctx, minute_hand, center);
+    graphics_context_set_stroke_width(ctx, 1);
+    graphics_context_set_stroke_color(ctx, GColorLightGray);
+    graphics_draw_line(ctx, get_radial_point(radius - 12, t->tm_min, 60), center);
 
     // hour hand
-    GPoint hour_hand = get_radial_point(radius * 65 / 100, ((t->tm_hour % 12) * 6) + (t->tm_min / 10), 12 * 6);
+    int hour_tick = ((t->tm_hour % 12) * 6) + (t->tm_min / 10);
+    GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_tick, 12 * 6);
     graphics_context_set_stroke_width(ctx, 5);
     graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
     graphics_draw_line(ctx, hour_hand, center);
     graphics_context_set_stroke_width(ctx, 4);
     graphics_context_set_stroke_color(ctx, COLOR_ACCENT);
     graphics_draw_line(ctx, hour_hand, center);
+    graphics_context_set_stroke_width(ctx, 1);
+    graphics_context_set_stroke_color(ctx, GColorLightGray);
+    graphics_draw_line(ctx, get_radial_point(radius * 55 / 100 - 2, hour_tick, 12*6), center);
 
     // dot in the middle
     graphics_context_set_fill_color(ctx, COLOR_NORMAL);
