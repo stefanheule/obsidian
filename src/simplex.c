@@ -10,6 +10,7 @@
 #define COLOR_BACKGROUND GColorBlack
 #define COLOR_NORMAL GColorWhite
 #define COLOR_ACCENT GColorCyan
+#define COLOR_WARNING GColorSunsetOrange
 
 
 ////////////////////////////////////////////
