@@ -8,9 +8,10 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
-#define COLOR_BACKGROUND GColorBlack
-#define COLOR_NORMAL GColorWhite
-#define COLOR_ACCENT GColorCyan
+#define COLOR_BACKGROUND GColorWhite
+#define COLOR_NORMAL GColorBlack
+//#define COLOR_ACCENT GColorBlue
+#define COLOR_ACCENT GColorIslamicGreen
 #define COLOR_BATTERY GColorDarkGray
 #define COLOR_WARNING GColorSunsetOrange
 
@@ -73,8 +74,13 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     int16_t radius = bounds.size.w / 2;
 
     // background
-    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
+    graphics_context_set_fill_color(ctx, GColorDarkGray);
     graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
+    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
+    graphics_fill_circle(ctx, center, radius);
+    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+    graphics_context_set_stroke_width(ctx, 4);
+    graphics_draw_circle(ctx, center, radius+3);
 
     // hour ticks
     graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
