@@ -52,6 +52,19 @@ static GPoint get_radial_point(const int16_t distance_from_center, const int32_t
     return result;
 }
 
+static void draw_bluetooth_logo(GContext *ctx, GColor color, GPoint origin) {
+    graphics_context_set_stroke_color(ctx, color);
+    graphics_context_set_stroke_width(ctx, 1);
+
+    graphics_draw_line(ctx, GPoint(origin.x + 3, origin.y + 0), GPoint(origin.x + 3, origin.y +12));
+
+    graphics_draw_line(ctx, GPoint(origin.x + 0, origin.y + 3), GPoint(origin.x + 6, origin.y + 9));
+    graphics_draw_line(ctx, GPoint(origin.x + 0, origin.y + 9), GPoint(origin.x + 6, origin.y + 3));
+
+    graphics_draw_line(ctx, GPoint(origin.x + 3, origin.y + 0), GPoint(origin.x + 6, origin.y + 3));
+    graphics_draw_line(ctx, GPoint(origin.x + 3, origin.y +12), GPoint(origin.x + 6, origin.y + 9));
+}
+
 /**
  * Update procedure for the background
  */
@@ -67,14 +80,16 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
     graphics_context_set_stroke_width(ctx, 2);
     for (int i = 0; i < 12; ++i) {
-        graphics_draw_line(ctx, get_radial_point(radius, i, 12), get_radial_point(radius - 5, i, 12));
+        graphics_draw_line(ctx, get_radial_point(radius, i, 12), get_radial_point(radius - 6, i, 12));
     }
 
     // minute ticks
     graphics_context_set_stroke_width(ctx, 1);
     for (int i = 0; i < 60; ++i) {
-        graphics_draw_line(ctx, get_radial_point(radius, i, 60), get_radial_point(radius - 2, i, 60));
+        graphics_draw_line(ctx, get_radial_point(radius, i, 60), get_radial_point(radius - 3, i, 60));
     }
+
+    //draw_bluetooth_logo(ctx, COLOR_WARNING, GPoint(3, 3));
 }
 
 /**
@@ -116,7 +131,8 @@ static void battery_update_proc(Layer *layer, GContext *ctx) {
     BatteryChargeState state = battery_state_service_peek();
     graphics_context_set_stroke_width(ctx, 1);
     graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
-    graphics_draw_line(ctx, GPoint(0, bounds.size.h-1), GPoint(bounds.size.w * state.charge_percent / 100, bounds.size.h-1));
+    graphics_draw_line(ctx, GPoint(0, bounds.size.h - 1),
+                       GPoint(bounds.size.w * state.charge_percent / 100, bounds.size.h - 1));
 }
 
 /**
@@ -202,7 +218,7 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, layer_time);
 
     // create dayofweek text layer
-    label_dayofweek = text_layer_create(GRect(88, 64, 9*5, 20));
+    label_dayofweek = text_layer_create(GRect(88, 64, 9 * 5, 20));
     text_layer_set_text(label_dayofweek, buffer_day);
     text_layer_set_background_color(label_dayofweek, COLOR_BACKGROUND);
     text_layer_set_text_color(label_dayofweek, COLOR_NORMAL);
@@ -211,7 +227,7 @@ static void window_load(Window *window) {
     layer_add_child(layer_text, text_layer_get_layer(label_dayofweek));
 
     // create day text layer
-    label_day = text_layer_create(GRect(88, 82, 9*5, 20));
+    label_day = text_layer_create(GRect(88, 82, 9 * 5, 20));
     text_layer_set_text(label_day, buffer_dayofweek);
     text_layer_set_background_color(label_day, COLOR_BACKGROUND);
     text_layer_set_text_color(label_day, COLOR_ACCENT);
