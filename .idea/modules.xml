@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/elegant-eel.iml" filepath="$PROJECT_DIR$/.idea/elegant-eel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/simplex.iml" filepath="$PROJECT_DIR$/.idea/simplex.iml" />
     </modules>
   </component>
 </project>
