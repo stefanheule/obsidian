@@ -9,7 +9,7 @@
 
 #define COLOR_BACKGROUND GColorBlack
 #define COLOR_NORMAL GColorWhite
-#define COLOR_ACCENT GColorMintGreen
+#define COLOR_ACCENT GColorCyan
 
 
 ////////////////////////////////////////////
@@ -144,8 +144,10 @@ static void time_update_proc(Layer *layer, GContext *ctx) {
     graphics_draw_line(ctx, hour_hand, center);
 
     // dot in the middle
+    graphics_context_set_fill_color(ctx, COLOR_NORMAL);
+    graphics_fill_circle(ctx, center, 5);
     graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
-    graphics_fill_rect(ctx, GRect(bounds.size.w / 2 - 1, bounds.size.h / 2 - 1, 3, 3), 0, GCornerNone);
+    graphics_fill_circle(ctx, center, 2);
 }
 
 /**
