@@ -1,3 +1,4 @@
+#include <pebble.h>
 #include "simplex.h"
 
 #include "pebble.h"
@@ -10,6 +11,7 @@
 #define COLOR_BACKGROUND GColorBlack
 #define COLOR_NORMAL GColorWhite
 #define COLOR_ACCENT GColorCyan
+#define COLOR_BATTERY GColorDarkGray
 #define COLOR_WARNING GColorSunsetOrange
 
 
@@ -21,7 +23,7 @@
 static Window *window;
 
 /** All layers */
-static Layer *layer_time, *layer_text, *layer_background;
+static Layer *layer_time, *layer_text, *layer_background, *layer_battery;
 
 /** All text layers */
 static TextLayer *label_dayofweek, *label_day;
@@ -79,8 +81,6 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
  * Update procedure for text
  */
 static void text_update_proc(Layer *layer, GContext *ctx) {
-    GRect bounds = layer_get_bounds(layer);
-
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
 
@@ -105,6 +105,18 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
     strftime(buffer_dayofweek, sizeof(buffer_dayofweek), "%a", t);
     text_layer_set_text(label_day, buffer_day);
     text_layer_set_text(label_dayofweek, buffer_dayofweek);
+}
+
+/**
+ * Update procedure for the battery level
+ */
+static void battery_update_proc(Layer *layer, GContext *ctx) {
+    GRect bounds = layer_get_bounds(layer);
+
+    BatteryChargeState state = battery_state_service_peek();
+    graphics_context_set_stroke_width(ctx, 1);
+    graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
+    graphics_draw_line(ctx, GPoint(0, bounds.size.h-1), GPoint(bounds.size.w * state.charge_percent / 100, bounds.size.h-1));
 }
 
 /**
@@ -151,6 +163,10 @@ static void time_update_proc(Layer *layer, GContext *ctx) {
     graphics_fill_circle(ctx, center, 2);
 }
 
+static void handle_battery(BatteryChargeState new_state) {
+    layer_mark_dirty(layer_battery);
+}
+
 /**
  * Handler for time ticks.
  */
@@ -169,6 +185,11 @@ static void window_load(Window *window) {
     layer_background = layer_create(bounds);
     layer_set_update_proc(layer_background, background_update_proc);
     layer_add_child(window_layer, layer_background);
+
+    // create the battery layer
+    layer_battery = layer_create(bounds);
+    layer_set_update_proc(layer_battery, battery_update_proc);
+    layer_add_child(window_layer, layer_battery);
 
     // create text layer
     layer_text = layer_create(bounds);
@@ -228,6 +249,7 @@ static void init() {
     buffer_dayofweek[0] = '\0';
 
     tick_timer_service_subscribe(MINUTE_UNIT, handle_second_tick);
+    battery_state_service_subscribe(handle_battery);
 }
 
 /**
@@ -235,6 +257,8 @@ static void init() {
  */
 static void deinit() {
     tick_timer_service_unsubscribe();
+    battery_state_service_unsubscribe();
+
     window_destroy(window);
 }
 
