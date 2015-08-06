@@ -17,6 +17,12 @@
 #define COLOR_BATTERY GColorDarkGray
 #define COLOR_WARNING GColorSunsetOrange
 
+//#define SIMPLEX_SHOW_NUMBERS
+#define SIMPLEX_LONG_TICKS
+#define SIMPLEX_FAT_TICKS
+#define SIMPLEX_ONLY_RELEVANT_MINUTE_TICKS
+#define SIMPLEX_ONLY_RELEVANT_NUMBER
+
 
 ////////////////////////////////////////////
 //// Global variables
@@ -96,7 +102,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_draw_circle(ctx, center, radius + 3);
 
     // numbers
-#ifdef SIMPLEX_SHOW_NUMBERS
+#if defined(SIMPLEX_SHOW_NUMBERS) || defined(SIMPLEX_ONLY_RELEVANT_NUMBER)
     static const GPoint number_points[] = {
             {144 / 2 - 9,       18},
             {144 / 2 + 23,      26},
@@ -126,7 +132,14 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             "11",
     };
     graphics_context_set_text_color(ctx, COLOR_NORMAL);
+#ifdef SIMPLEX_ONLY_RELEVANT_NUMBER
+    {
+        time_t now = time(NULL);
+        struct tm *t = localtime(&now);
+        int i = t->tm_hour % 12;
+#else
     for (unsigned i = 0; i < ARRAY_LENGTH(number_points); i++) {
+#endif
         graphics_draw_text(ctx, numbers[i], fonts_get_system_font(FONT_KEY_GOTHIC_18),
                            GRect(number_points[i].x, number_points[i].y, strlen(numbers[i]) > 1 ? 18 : 9, 22),
                            GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
@@ -138,7 +151,18 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_width(ctx, 2);
     for (int i = 0; i < 12; ++i) {
         int32_t angle = i * TRIG_MAX_ANGLE / 12;
-        graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 6, angle));
+        int tick_length = 6;
+#ifdef SIMPLEX_LONG_TICKS
+        if (i % 3 == 0) {
+            tick_length = 10;
+#ifdef SIMPLEX_FAT_TICKS
+            graphics_context_set_stroke_width(ctx, 4);
+        } else {
+            graphics_context_set_stroke_width(ctx, 2);
+#endif
+        }
+#endif
+        graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle));
     }
 
 #ifdef SIMPLEX_ONLY_RELEVANT_MINUTE_TICKS
