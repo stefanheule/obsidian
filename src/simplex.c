@@ -9,6 +9,8 @@
 ////////////////////////////////////////////
 
 #define COLOR_BACKGROUND GColorWhite
+#define COLOR_BACKGROUND_WARNING GColorDarkCandyAppleRed
+#define COLOR_BACKGROUND_OUTER GColorDarkGray
 #define COLOR_NORMAL GColorBlack
 //#define COLOR_ACCENT GColorBlue
 #define COLOR_ACCENT GColorJaegerGreen
@@ -80,7 +82,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     int16_t radius = bounds.size.w / 2;
 
     // background
-    graphics_context_set_fill_color(ctx, GColorDarkGray);
+    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND_WARNING);
     graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
     graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
     graphics_fill_circle(ctx, center, radius);
@@ -109,7 +111,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
     }
 
-    //draw_bluetooth_logo(ctx, COLOR_WARNING, GPoint(3, 3));
+    draw_bluetooth_logo(ctx, COLOR_WARNING, GPoint(144/2-3, 40));
 }
 
 /**
