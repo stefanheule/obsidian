@@ -28,9 +28,6 @@ static Window *window;
 /** All layers */
 static Layer *layer_time, *layer_text, *layer_background, *layer_battery;
 
-/** All text layers */
-static TextLayer *label_dayofweek, *label_day;
-
 /** Buffers for date strings */
 static char buffer_dayofweek[4], buffer_day[7];
 
@@ -100,16 +97,16 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
     // numbers
     static const GPoint number_points[] = {
-            {144 / 2 - 9, 18},
-            {144 / 2 + 23, 26},
-            {144 / 2 + 45, 43},
-            {144 / 2 + 53, 72},
-            {144 / 2 + 45, 99},
-            {144 / 2 + 23, 118},
-            {144 / 2 - 4, 128},
-            {144 / 2 - 6 - 23, 118},
-            {144 / 2 - 6 - 45, 99},
-            {144 / 2 - 6 - 53, 72},
+            {144 / 2 - 9,       18},
+            {144 / 2 + 23,      26},
+            {144 / 2 + 45,      43},
+            {144 / 2 + 53,      72},
+            {144 / 2 + 45,      99},
+            {144 / 2 + 23,      118},
+            {144 / 2 - 4,       128},
+            {144 / 2 - 6 - 23,  118},
+            {144 / 2 - 6 - 45,  99},
+            {144 / 2 - 6 - 53,  72},
             {144 / 2 - 12 - 45, 43},
             {144 / 2 - 12 - 23, 26},
     };
@@ -189,8 +186,12 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
 //    buffer_day[5] = '8';
 //    buffer_day[6] = 0;
 
-    text_layer_set_text(label_day, buffer_day);
-    text_layer_set_text(label_dayofweek, buffer_dayofweek);
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    graphics_draw_text(ctx, buffer_dayofweek, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+                       GRect(72 - 50 / 2, 90, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+    graphics_context_set_text_color(ctx, COLOR_ACCENT);
+    graphics_draw_text(ctx, buffer_day, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+                       GRect(72 - 50 / 2, 105, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 }
 
 /**
@@ -307,24 +308,6 @@ static void window_load(Window *window) {
     layer_time = layer_create(bounds);
     layer_set_update_proc(layer_time, time_update_proc);
     layer_add_child(window_layer, layer_time);
-
-    // create dayofweek text layer
-    label_dayofweek = text_layer_create(GRect(72 - 50 / 2, 90, 50, 21));
-    text_layer_set_text(label_dayofweek, buffer_day);
-    text_layer_set_background_color(label_dayofweek, COLOR_BACKGROUND);
-    text_layer_set_text_color(label_dayofweek, COLOR_NORMAL);
-    text_layer_set_font(label_dayofweek, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-    text_layer_set_text_alignment(label_dayofweek, GTextAlignmentCenter);
-    layer_add_child(layer_text, text_layer_get_layer(label_dayofweek));
-
-    // create day text layer
-    label_day = text_layer_create(GRect(72 - 50 / 2, 108, 50, 21));
-    text_layer_set_text(label_day, buffer_dayofweek);
-    text_layer_set_background_color(label_day, COLOR_BACKGROUND);
-    text_layer_set_text_color(label_day, COLOR_ACCENT);
-    text_layer_set_font(label_day, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-    text_layer_set_text_alignment(label_day, GTextAlignmentCenter);
-    layer_add_child(layer_text, text_layer_get_layer(label_day));
 }
 
 /**
@@ -333,9 +316,6 @@ static void window_load(Window *window) {
 static void window_unload(Window *window) {
     layer_destroy(layer_background);
     layer_destroy(layer_time);
-
-    text_layer_destroy(label_dayofweek);
-    text_layer_destroy(label_day);
 }
 
 /**
