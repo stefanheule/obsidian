@@ -96,6 +96,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_draw_circle(ctx, center, radius + 3);
 
     // numbers
+#ifdef SIMPLEX_SHOW_NUMBERS
     static const GPoint number_points[] = {
             {144 / 2 - 9,       18},
             {144 / 2 + 23,      26},
@@ -130,6 +131,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                            GRect(number_points[i].x, number_points[i].y, strlen(numbers[i]) > 1 ? 18 : 9, 22),
                            GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
+#endif
 
     // hour ticks
     graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
@@ -139,7 +141,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 6, angle));
     }
 
-#ifdef ONLY_RELEVANT_MINUTE_TICKS
+#ifdef SIMPLEX_ONLY_RELEVANT_MINUTE_TICKS
     // only relevant minute ticks
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
