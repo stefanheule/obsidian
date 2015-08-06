@@ -66,14 +66,19 @@ static void draw_bluetooth_logo(GContext *ctx, GColor color, GPoint origin) {
     graphics_context_set_stroke_color(ctx, color);
     graphics_context_set_stroke_width(ctx, 1);
 
-    #define BLUETOOTH_LOGO_STEP 3
-    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0), GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4*BLUETOOTH_LOGO_STEP));
+#define BLUETOOTH_LOGO_STEP 3
+    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
+                       GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP));
 
-    graphics_draw_line(ctx, GPoint(origin.x + 0, origin.y + BLUETOOTH_LOGO_STEP), GPoint(origin.x + 2*BLUETOOTH_LOGO_STEP, origin.y + 3*BLUETOOTH_LOGO_STEP));
-    graphics_draw_line(ctx, GPoint(origin.x + 0, origin.y + 3*BLUETOOTH_LOGO_STEP), GPoint(origin.x + 2*BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP));
+    graphics_draw_line(ctx, GPoint(origin.x + 0, origin.y + BLUETOOTH_LOGO_STEP),
+                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + 3 * BLUETOOTH_LOGO_STEP));
+    graphics_draw_line(ctx, GPoint(origin.x + 0, origin.y + 3 * BLUETOOTH_LOGO_STEP),
+                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP));
 
-    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0), GPoint(origin.x + 2*BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP));
-    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4*BLUETOOTH_LOGO_STEP), GPoint(origin.x + 2*BLUETOOTH_LOGO_STEP, origin.y + 3*BLUETOOTH_LOGO_STEP));
+    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
+                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP));
+    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP),
+                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + 3 * BLUETOOTH_LOGO_STEP));
 }
 
 /**
@@ -93,34 +98,71 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_width(ctx, 4);
     graphics_draw_circle(ctx, center, radius + 3);
 
+    // numbers
+    static const GPoint number_points[] = {
+            {144 / 2 - 9, 18},
+            {144 / 2 + 23, 26},
+            {144 / 2 + 45, 43},
+            {144 / 2 + 53, 72},
+            {144 / 2 + 45, 99},
+            {144 / 2 + 23, 118},
+            {144 / 2 - 4, 128},
+            {144 / 2 - 6 - 23, 118},
+            {144 / 2 - 6 - 45, 99},
+            {144 / 2 - 6 - 53, 72},
+            {144 / 2 - 12 - 45, 43},
+            {144 / 2 - 12 - 23, 26},
+    };
+    static const char *numbers[] = {
+            "12",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+    };
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    for (unsigned i = 0; i < ARRAY_LENGTH(number_points); i++) {
+        graphics_draw_text(ctx, numbers[i], fonts_get_system_font(FONT_KEY_GOTHIC_18),
+                           GRect(number_points[i].x, number_points[i].y, strlen(numbers[i]) > 1 ? 18 : 9, 22),
+                           GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+    }
+
     // hour ticks
     graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
     graphics_context_set_stroke_width(ctx, 2);
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
     for (int i = 0; i < 12; ++i) {
         int32_t angle = i * TRIG_MAX_ANGLE / 12;
         graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 6, angle));
-
-        // add text
-        GPoint text_center = get_radial_point(radius - 30, angle);
-//        graphics_draw_text(ctx, "1", fonts_get_system_font(FONT_KEY_GOTHIC_18), GRect(text_center.x, text_center.y, 9, 22),
-//                           GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
 
-    // compute start tick
+#ifdef ONLY_RELEVANT_MINUTE_TICKS
+    // only relevant minute ticks
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     int start_min_tick = (t->tm_min / 5) * 5;
-
-    // minute ticks
     graphics_context_set_stroke_width(ctx, 1);
     for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
         int32_t angle = i * TRIG_MAX_ANGLE / 60;
         graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
     }
+#else
+    // all minute ticks
+    graphics_context_set_stroke_width(ctx, 1);
+    for (int i = 0; i < 60; ++i) {
+        int32_t angle = i * TRIG_MAX_ANGLE / 60;
+        graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
+    }
+#endif
 
     if (!bluetooth) {
-        draw_bluetooth_logo(ctx, COLOR_WARNING, GPoint(144/2-3, 40));
+        draw_bluetooth_logo(ctx, COLOR_WARNING, GPoint(144 / 2 - 3, 40));
     }
 }
 
@@ -231,7 +273,7 @@ static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 static void handle_bluetooth(bool connected) {
     layer_mark_dirty(layer_background);
     // Vibe pattern: ON, OFF, ON, etc.
-    static const uint32_t const segments[] = { 200, 200, 200, 200, 500 };
+    static const uint32_t const segments[] = {200, 200, 200, 200, 500};
     VibePattern pat = {
             .durations = segments,
             .num_segments = ARRAY_LENGTH(segments),
@@ -267,7 +309,7 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, layer_time);
 
     // create dayofweek text layer
-    label_dayofweek = text_layer_create(GRect(72 - 50 / 2, 100, 50, 21));
+    label_dayofweek = text_layer_create(GRect(72 - 50 / 2, 90, 50, 21));
     text_layer_set_text(label_dayofweek, buffer_day);
     text_layer_set_background_color(label_dayofweek, COLOR_BACKGROUND);
     text_layer_set_text_color(label_dayofweek, COLOR_NORMAL);
@@ -276,7 +318,7 @@ static void window_load(Window *window) {
     layer_add_child(layer_text, text_layer_get_layer(label_dayofweek));
 
     // create day text layer
-    label_day = text_layer_create(GRect(72 - 50 / 2, 118, 50, 21));
+    label_day = text_layer_create(GRect(72 - 50 / 2, 108, 50, 21));
     text_layer_set_text(label_day, buffer_dayofweek);
     text_layer_set_background_color(label_day, COLOR_BACKGROUND);
     text_layer_set_text_color(label_day, COLOR_ACCENT);
