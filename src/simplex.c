@@ -107,9 +107,14 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 //                           GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
 
+    // compute start tick
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    int start_min_tick = (t->tm_min / 5) * 5;
+
     // minute ticks
     graphics_context_set_stroke_width(ctx, 1);
-    for (int i = 0; i < 60; ++i) {
+    for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
         int32_t angle = i * TRIG_MAX_ANGLE / 60;
         graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
     }
