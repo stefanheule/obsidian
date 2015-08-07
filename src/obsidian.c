@@ -210,12 +210,13 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
 //    buffer_day[5] = '8';
 //    buffer_day[6] = 0;
 
+    const int date_start = 100;
     graphics_context_set_text_color(ctx, COLOR_NORMAL);
     graphics_draw_text(ctx, buffer_dayofweek, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-                       GRect(72 - 50 / 2, 90, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+                       GRect(72 - 50 / 2, date_start, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
     graphics_draw_text(ctx, buffer_day, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-                       GRect(72 - 50 / 2, 105, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+                       GRect(72 - 50 / 2, date_start+15, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 }
 
 /**
