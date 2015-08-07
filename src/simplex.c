@@ -299,13 +299,7 @@ static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 
 static void handle_bluetooth(bool connected) {
     layer_mark_dirty(layer_background);
-    // Vibe pattern: ON, OFF, ON, etc.
-    static const uint32_t const segments[] = {200, 200, 200, 200, 500};
-    VibePattern pat = {
-            .durations = segments,
-            .num_segments = ARRAY_LENGTH(segments),
-    };
-    vibes_enqueue_custom_pattern(pat);
+    vibes_double_pulse();
 }
 
 /**
