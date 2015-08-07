@@ -1,7 +1,5 @@
 #include <pebble.h>
-#include "simplex.h"
-
-#include "pebble.h"
+#include "obsidian.h"
 
 
 ////////////////////////////////////////////

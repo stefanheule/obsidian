@@ -1,5 +1,2 @@
-# simple-analog
+# Obsidian - simply beautiful watchface for the Pebble Time
 
-![screenshot](simple-analog-screenshot.png)
-
-Example analog watchface that uses hands instead of numbers.
