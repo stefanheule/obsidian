@@ -1,7 +1,7 @@
 
 all: install_emulator
 
-phone: install_phone
+deploy: install_deploy
 
 build: src/*.c src/*.h
 	pebble build
@@ -9,5 +9,5 @@ build: src/*.c src/*.h
 install_emulator: build
 	pebble install --emulator basalt
 
-install_phone: build
+install_deploy: build
 	pebble install --phone 10.0.0.5
