@@ -21,7 +21,7 @@
 #define SIMPLEX_LONG_TICKS
 #define SIMPLEX_FAT_TICKS
 #define SIMPLEX_ONLY_RELEVANT_MINUTE_TICKS
-#define SIMPLEX_ONLY_RELEVANT_NUMBER
+//#define SIMPLEX_ONLY_RELEVANT_NUMBER
 
 
 ////////////////////////////////////////////
