@@ -15,11 +15,11 @@
 #define COLOR_BATTERY GColorDarkGray
 #define COLOR_WARNING GColorSunsetOrange
 
-//#define SIMPLEX_SHOW_NUMBERS
-#define SIMPLEX_LONG_TICKS
-#define SIMPLEX_FAT_TICKS
-#define SIMPLEX_ONLY_RELEVANT_MINUTE_TICKS
-//#define SIMPLEX_ONLY_RELEVANT_NUMBER
+//#define OBSIDIAN_SHOW_NUMBERS
+#define OBSIDIAN_LONG_TICKS
+#define OBSIDIAN_FAT_TICKS
+#define OBSIDIAN_ONLY_RELEVANT_MINUTE_TICKS
+//#define OBSIDIAN_ONLY_RELEVANT_NUMBER
 
 
 ////////////////////////////////////////////
@@ -100,7 +100,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_draw_circle(ctx, center, radius + 3);
 
     // numbers
-#if defined(SIMPLEX_SHOW_NUMBERS) || defined(SIMPLEX_ONLY_RELEVANT_NUMBER)
+#if defined(OBSIDIAN_SHOW_NUMBERS) || defined(OBSIDIAN_ONLY_RELEVANT_NUMBER)
     static const GPoint number_points[] = {
             {144 / 2 - 9,       18},
             {144 / 2 + 23,      26},
@@ -130,7 +130,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             "11",
     };
     graphics_context_set_text_color(ctx, COLOR_NORMAL);
-#ifdef SIMPLEX_ONLY_RELEVANT_NUMBER
+#ifdef OBSIDIAN_ONLY_RELEVANT_NUMBER
     {
         time_t now = time(NULL);
         struct tm *t = localtime(&now);
@@ -150,10 +150,10 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     for (int i = 0; i < 12; ++i) {
         int32_t angle = i * TRIG_MAX_ANGLE / 12;
         int tick_length = 6;
-#ifdef SIMPLEX_LONG_TICKS
+#ifdef OBSIDIAN_LONG_TICKS
         if (i % 3 == 0) {
             tick_length = 10;
-#ifdef SIMPLEX_FAT_TICKS
+#ifdef OBSIDIAN_FAT_TICKS
             graphics_context_set_stroke_width(ctx, 4);
         } else {
             graphics_context_set_stroke_width(ctx, 2);
@@ -163,7 +163,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle));
     }
 
-#ifdef SIMPLEX_ONLY_RELEVANT_MINUTE_TICKS
+#ifdef OBSIDIAN_ONLY_RELEVANT_MINUTE_TICKS
     // only relevant minute ticks
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
