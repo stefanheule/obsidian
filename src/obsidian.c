@@ -13,7 +13,8 @@
 //#define COLOR_ACCENT GColorBlue
 #define COLOR_ACCENT GColorJaegerGreen
 #define COLOR_BATTERY GColorDarkGray
-#define COLOR_WARNING GColorSunsetOrange
+#define COLOR_WARNING_BACKGROUND GColorSunsetOrange
+#define COLOR_WARNING GColorRed
 
 //#define OBSIDIAN_SHOW_NUMBERS
 #define OBSIDIAN_LONG_TICKS
@@ -62,12 +63,21 @@ static GPoint get_radial_point_basic(const int16_t distance_from_center, const i
     return get_radial_point(distance_from_center, TRIG_MAX_ANGLE * tick / maxtick);
 }
 
-static void draw_bluetooth_logo(GContext *ctx, GColor color, GPoint origin) {
+/**
+ * Draws a bluetooth logo at a given position (top-left).
+ */
+static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
+#define BLUETOOTH_LOGO_STEP 3
+
+    // background
+    graphics_context_set_fill_color(ctx, COLOR_WARNING);
+    graphics_fill_rect(ctx, GRect(origin.x-2, origin.y-2, BLUETOOTH_LOGO_STEP*2 + 5, BLUETOOTH_LOGO_STEP*4 + 5), 2, GCornersAll);
+
+    // logo on the inside
     graphics_context_set_antialiased(ctx, false);
-    graphics_context_set_stroke_color(ctx, color);
+    graphics_context_set_stroke_color(ctx, GColorWhite);
     graphics_context_set_stroke_width(ctx, 1);
 
-#define BLUETOOTH_LOGO_STEP 3
     graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
                        GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP));
 
@@ -197,7 +207,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     if (!bluetooth) {
-        draw_bluetooth_logo(ctx, COLOR_WARNING, GPoint(144 / 2 - 3, 40));
+        draw_bluetooth_logo(ctx, GPoint(144 / 2 - 3, 40));
     }
 }
 
