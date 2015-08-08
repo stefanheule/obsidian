@@ -93,6 +93,20 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // background
     graphics_context_set_fill_color(ctx, !bluetooth ? COLOR_BACKGROUND_WARNING : COLOR_BACKGROUND_OUTER);
     graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
+
+    // battery
+//    const int max_battery_points = 50;
+//    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+//    graphics_context_set_fill_color(ctx, COLOR_NORMAL);
+//    graphics_context_set_stroke_width(ctx, 1);
+//    const int cur_battery_points = battery_state_service_peek().charge_percent * max_battery_points / 100;
+//    for (int i = 0; i < cur_battery_points; ++i) {
+//        int32_t angle = i * TRIG_MAX_ANGLE / max_battery_points;
+////        graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius + 9, angle));
+//        graphics_fill_circle(ctx, get_radial_point(radius+5, angle), 3);
+//    }
+
+    // background
     graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
     graphics_fill_circle(ctx, center, radius);
     graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
