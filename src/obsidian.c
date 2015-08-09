@@ -42,6 +42,9 @@ static GPoint center;
 /** Open Sans font. */
 static GFont font_open_sans;
 
+/** System font. */
+static GFont font_system_18px;
+
 
 ////////////////////////////////////////////
 //// Implementation
@@ -239,10 +242,10 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
 
     const int date_start = 100;
     graphics_context_set_text_color(ctx, COLOR_NORMAL);
-    graphics_draw_text(ctx, buffer_dayofweek, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+    graphics_draw_text(ctx, buffer_dayofweek, font_system_18px,
                        GRect(72 - 50 / 2, date_start, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
-    graphics_draw_text(ctx, buffer_day, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+    graphics_draw_text(ctx, buffer_day, font_system_18px,
                        GRect(72 - 50 / 2, date_start+15, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 }
 
@@ -355,8 +358,9 @@ static void window_load(Window *window) {
     layer_set_update_proc(layer_time, time_update_proc);
     layer_add_child(window_layer, layer_time);
 
-    // load custom font
+    // load fonts
     font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
+    font_system_18px = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 }
 
 /**

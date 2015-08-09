@@ -13,6 +13,7 @@
     "media": [
       {
         "type": "font",
+        "characterRegex": "[0-9%]",
         "name": "OPEN_SANS_12",
         "file": "fonts/OpenSans-Regular.ttf"
       }
