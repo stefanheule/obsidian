@@ -10,7 +10,13 @@
   },
   "appKeys": {},
   "resources": {
-    "media": []
+    "media": [
+      {
+        "type": "font",
+        "name": "OPEN_SANS_12",
+        "file": "fonts/OpenSans-Regular.ttf"
+      }
+    ]
   },
   "targetPlatforms": [
     "basalt"

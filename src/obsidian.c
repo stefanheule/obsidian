@@ -39,6 +39,9 @@ static char buffer_dayofweek[4], buffer_day[7];
 /** The center of the watch */
 static GPoint center;
 
+/** Open Sans font. */
+static GFont font_open_sans;
+
 
 ////////////////////////////////////////////
 //// Implementation
@@ -351,6 +354,9 @@ static void window_load(Window *window) {
     layer_time = layer_create(bounds);
     layer_set_update_proc(layer_time, time_update_proc);
     layer_add_child(window_layer, layer_time);
+
+    // load custom font
+    font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
 }
 
 /**
@@ -359,6 +365,8 @@ static void window_load(Window *window) {
 static void window_unload(Window *window) {
     layer_destroy(layer_background);
     layer_destroy(layer_time);
+
+    fonts_unload_custom_font(font_open_sans);
 }
 
 /**

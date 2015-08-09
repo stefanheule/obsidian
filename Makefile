@@ -3,7 +3,7 @@ all: install_emulator
 
 deploy: install_deploy
 
-build: src/*.c src/*.h
+build: src/*.c src/*.h appinfo.json wscript
 	pebble build
 
 install_emulator: build
