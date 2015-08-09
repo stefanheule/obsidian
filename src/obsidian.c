@@ -12,7 +12,7 @@
 #define COLOR_NORMAL GColorBlack
 //#define COLOR_ACCENT GColorBlue
 #define COLOR_ACCENT GColorJaegerGreen
-#define COLOR_BATTERY GColorDarkGray
+#define COLOR_BATTERY GColorWhite
 #define COLOR_WARNING_BACKGROUND GColorSunsetOrange
 #define COLOR_WARNING GColorRed
 
@@ -34,7 +34,7 @@ static Window *window;
 static Layer *layer_time, *layer_text, *layer_background;
 
 /** Buffers for strings */
-static char buffer_7[7];
+static char buffer_7[30];
 
 /** The center of the watch */
 static GPoint center;
@@ -219,7 +219,16 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
     // battery status
+    const GRect battery = GRect(119, 2, 22, 11);
     BatteryChargeState state = battery_state_service_peek();
+    snprintf(buffer_7, sizeof(buffer_7), "%d", state.charge_percent);//state.charge_percent);
+    graphics_context_set_text_color(ctx, COLOR_BATTERY);
+    graphics_draw_text(ctx, buffer_7, font_open_sans, GRect(battery.origin.x, battery.origin.y-1, battery.size.w, battery.size.h),
+                       GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+    graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
+    graphics_draw_rect(ctx, GRect(battery.origin.x, battery.origin.y, battery.size.w, battery.size.h));
+    graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 3),
+                       GPoint(battery.origin.x + battery.size.w, battery.origin.y + battery.size.h - 3));
 }
 
 /**
@@ -246,8 +255,7 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
     }
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
     graphics_draw_text(ctx, buffer_7, font_system_18px, GRect(72 - 50 / 2, date_start + 15, 50, 21),
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
+                       GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 
     // day of week
     strftime(buffer_7, sizeof(buffer_7), "%a", t);
@@ -350,7 +358,7 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, layer_time);
 
     // load fonts
-    font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
+    font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_10));
     font_system_18px = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 }
 
