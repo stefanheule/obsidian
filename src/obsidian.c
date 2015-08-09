@@ -31,10 +31,10 @@
 static Window *window;
 
 /** All layers */
-static Layer *layer_time, *layer_text, *layer_background, *layer_battery;
+static Layer *layer_time, *layer_text, *layer_background;
 
-/** Buffers for date strings */
-static char buffer_dayofweek[4], buffer_day[7];
+/** Buffers for strings */
+static char buffer_7[7];
 
 /** The center of the watch */
 static GPoint center;
@@ -77,7 +77,8 @@ static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 
     // background
     graphics_context_set_fill_color(ctx, COLOR_WARNING);
-    graphics_fill_rect(ctx, GRect(origin.x-2, origin.y-2, BLUETOOTH_LOGO_STEP*2 + 5, BLUETOOTH_LOGO_STEP*4 + 5), 2, GCornersAll);
+    graphics_fill_rect(ctx, GRect(origin.x - 2, origin.y - 2, BLUETOOTH_LOGO_STEP * 2 + 5, BLUETOOTH_LOGO_STEP * 4 + 5),
+                       2, GCornersAll);
 
     // logo on the inside
     graphics_context_set_antialiased(ctx, false);
@@ -212,9 +213,13 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 #endif
 
+    // bluetooth status
     if (!bluetooth) {
         draw_bluetooth_logo(ctx, GPoint(144 / 2 - 3, 40));
     }
+
+    // battery status
+    BatteryChargeState state = battery_state_service_peek();
 }
 
 /**
@@ -223,14 +228,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 static void text_update_proc(Layer *layer, GContext *ctx) {
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
-
-    // time and date strings
-    strftime(buffer_day, sizeof(buffer_day), "%b %d", t);
-    // remove leading zeros
-    if (buffer_day[4] == '0') {
-        memcpy(&buffer_day[4], &buffer_day[5], 2);
-    }
-    strftime(buffer_dayofweek, sizeof(buffer_dayofweek), "%a", t);
+    const int date_start = 100;
 
 //    buffer_day[0] = 'D';
 //    buffer_day[1] = 'e';
@@ -240,26 +238,24 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
 //    buffer_day[5] = '8';
 //    buffer_day[6] = 0;
 
-    const int date_start = 100;
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
-    graphics_draw_text(ctx, buffer_dayofweek, font_system_18px,
-                       GRect(72 - 50 / 2, date_start, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+    // day and month
+    strftime(buffer_7, sizeof(buffer_7), "%b %d", t);
+    // remove leading zeros
+    if (buffer_7[4] == '0') {
+        memcpy(&buffer_7[4], &buffer_7[5], 2);
+    }
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
-    graphics_draw_text(ctx, buffer_day, font_system_18px,
-                       GRect(72 - 50 / 2, date_start+15, 50, 21), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
-}
+    graphics_draw_text(ctx, buffer_7, font_system_18px, GRect(72 - 50 / 2, date_start + 15, 50, 21),
+                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+                       NULL);
 
-/**
- * Update procedure for the battery level
- */
-static void battery_update_proc(Layer *layer, GContext *ctx) {
-    GRect bounds = layer_get_bounds(layer);
+    // day of week
+    strftime(buffer_7, sizeof(buffer_7), "%a", t);
 
-    BatteryChargeState state = battery_state_service_peek();
-    graphics_context_set_stroke_width(ctx, 1);
-    graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
-    graphics_draw_line(ctx, GPoint(0, bounds.size.h - 1),
-                       GPoint(bounds.size.w * state.charge_percent / 100, bounds.size.h - 1));
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    graphics_draw_text(ctx, buffer_7, font_system_18px, GRect(72 - 50 / 2, date_start, 50, 21),
+                       GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+
 }
 
 /**
@@ -316,7 +312,7 @@ static void time_update_proc(Layer *layer, GContext *ctx) {
 }
 
 static void handle_battery(BatteryChargeState new_state) {
-    layer_mark_dirty(layer_battery);
+    layer_mark_dirty(layer_background);
 }
 
 /**
@@ -342,11 +338,6 @@ static void window_load(Window *window) {
     layer_background = layer_create(bounds);
     layer_set_update_proc(layer_background, background_update_proc);
     layer_add_child(window_layer, layer_background);
-
-    // create the battery layer
-    layer_battery = layer_create(bounds);
-    layer_set_update_proc(layer_battery, battery_update_proc);
-    layer_add_child(window_layer, layer_battery);
 
     // create text layer
     layer_text = layer_create(bounds);
@@ -386,9 +377,6 @@ static void init() {
 
     GRect bounds = layer_get_bounds(window_get_root_layer(window));
     center = grect_center_point(&bounds);
-
-    buffer_day[0] = '\0';
-    buffer_dayofweek[0] = '\0';
 
     tick_timer_service_subscribe(MINUTE_UNIT, handle_second_tick);
     battery_state_service_subscribe(handle_battery);
