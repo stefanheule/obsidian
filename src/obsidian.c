@@ -219,7 +219,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
     // battery status
-    const GRect battery = GRect(119, 2, 22, 11);
+    const GRect battery = GRect(118, 2, 22, 11);
     BatteryChargeState state = battery_state_service_peek();
     snprintf(buffer_7, sizeof(buffer_7), "%d", state.charge_percent);//state.charge_percent);
     graphics_context_set_text_color(ctx, COLOR_BATTERY);
@@ -227,6 +227,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                        GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
     graphics_draw_rect(ctx, GRect(battery.origin.x, battery.origin.y, battery.size.w, battery.size.h));
+    graphics_context_set_stroke_width(ctx, 2);
     graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 3),
                        GPoint(battery.origin.x + battery.size.w, battery.origin.y + battery.size.h - 3));
 }
