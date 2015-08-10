@@ -21,6 +21,7 @@
 #define OBSIDIAN_FAT_TICKS
 #define OBSIDIAN_ONLY_RELEVANT_MINUTE_TICKS
 //#define OBSIDIAN_ONLY_RELEVANT_NUMBER
+//#define OBSIDIAN_BATTERY_USE_TEXT
 
 
 ////////////////////////////////////////////
@@ -106,6 +107,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
     int16_t radius = bounds.size.w / 2;
     bool bluetooth = bluetooth_connection_service_peek();
+    BatteryChargeState battery_state = battery_state_service_peek();
 
     // background
     graphics_context_set_fill_color(ctx, COLOR_BACKGROUND_OUTER);
@@ -219,9 +221,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
     // battery status
+#ifdef OBSIDIAN_BATTERY_USE_TEXT
     const GRect battery = GRect(118, 2, 22, 11);
-    BatteryChargeState state = battery_state_service_peek();
-    snprintf(buffer_7, sizeof(buffer_7), "%d", state.charge_percent);//state.charge_percent);
+    snprintf(buffer_7, sizeof(buffer_7), "%d", battery_state.charge_percent);//battery_state.charge_percent);
     graphics_context_set_text_color(ctx, COLOR_BATTERY);
     graphics_draw_text(ctx, buffer_7, font_open_sans, GRect(battery.origin.x, battery.origin.y-1, battery.size.w, battery.size.h),
                        GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
@@ -230,6 +232,15 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_width(ctx, 2);
     graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 3),
                        GPoint(battery.origin.x + battery.size.w, battery.origin.y + battery.size.h - 3));
+#else
+    const GRect battery = GRect(125, 3, 14, 8);
+    graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
+    graphics_draw_rect(ctx, battery);
+    graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4), 0, GCornerNone);
+    graphics_context_set_stroke_width(ctx, 1);
+    graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
+                       GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
+#endif
 }
 
 /**
@@ -332,8 +343,14 @@ static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void handle_bluetooth(bool connected) {
+    // redraw background (to turn on/off the logo)
     layer_mark_dirty(layer_background);
+
+    // vibrate
     vibes_double_pulse();
+
+    // turn light on
+    light_enable_interaction();
 }
 
 /**
