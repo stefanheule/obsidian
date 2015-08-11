@@ -112,7 +112,16 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     BatteryChargeState battery_state = battery_state_service_peek();
 
     // background
-    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND_OUTER);
+
+    GColor8 outer_color = COLOR_BACKGROUND_OUTER;
+    if (battery_state.charge_percent <= 10) {
+        outer_color = COLOR_BATTERY_WARNING_BACKGROUND_3;
+    } else if (battery_state.charge_percent <= 20) {
+        outer_color = COLOR_BATTERY_WARNING_BACKGROUND_2;
+    } else if (battery_state.charge_percent <= 30) {
+        outer_color = COLOR_BATTERY_WARNING_BACKGROUND_1;
+    }
+    graphics_context_set_fill_color(ctx, outer_color);
     graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
 
     // battery
