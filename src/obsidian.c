@@ -247,7 +247,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
     graphics_context_set_fill_color(ctx, COLOR_BATTERY);
     graphics_draw_rect(ctx, battery);
-    graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4), 0, GCornerNone);
+    graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4), 0,
+                       GCornerNone);
     graphics_context_set_stroke_width(ctx, 1);
     graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
                        GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
@@ -262,14 +263,6 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
     struct tm *t = localtime(&now);
     const int date_start = 100;
 
-//    buffer_day[0] = 'D';
-//    buffer_day[1] = 'e';
-//    buffer_day[2] = 'c';
-//    buffer_day[3] = ' ';
-//    buffer_day[4] = '2';
-//    buffer_day[5] = '8';
-//    buffer_day[6] = 0;
-
     // day and month
     strftime(buffer_7, sizeof(buffer_7), "%b %d", t);
     // remove leading zeros
@@ -277,15 +270,19 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
         memcpy(&buffer_7[4], &buffer_7[5], 2);
     }
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
-    graphics_draw_text(ctx, buffer_7, font_system_18px_bold, GRect(72 - 50 / 2, date_start + 15, 50, 21),
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+    GRect date_pos = GRect(0, date_start + 15, 144, 21);
+    GSize date_size = graphics_text_layout_get_content_size(buffer_7, font_system_18px_bold, date_pos,
+                                                       GTextOverflowModeWordWrap, GTextAlignmentCenter);
+    graphics_draw_text(ctx, buffer_7, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
+                       NULL);
 
     // day of week
     strftime(buffer_7, sizeof(buffer_7), "%a", t);
 
     graphics_context_set_text_color(ctx, COLOR_NORMAL);
-    graphics_draw_text(ctx, buffer_7, font_system_18px_bold, GRect(72 - 50 / 2, date_start, 50, 21),
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+    GRect day_pos = GRect(0, date_start, 144, 21);
+    graphics_draw_text(ctx, buffer_7, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
+                       NULL);
 
 }
 
