@@ -6,15 +6,17 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
+#define COLOR_BATTERY_WARNING_BACKGROUND_1 GColorIcterine
+#define COLOR_BATTERY_WARNING_BACKGROUND_2 GColorRajah
+#define COLOR_BATTERY_WARNING_BACKGROUND_3 GColorSunsetOrange
 #define COLOR_BACKGROUND GColorWhite
-#define COLOR_BACKGROUND_WARNING GColorDarkCandyAppleRed
 #define COLOR_BACKGROUND_OUTER GColorDarkGray
 #define COLOR_NORMAL GColorBlack
 //#define COLOR_ACCENT GColorBlue
 #define COLOR_ACCENT GColorJaegerGreen
-#define COLOR_BATTERY GColorWhite
-#define COLOR_WARNING_BACKGROUND GColorSunsetOrange
-#define COLOR_WARNING GColorRed
+#define COLOR_BATTERY GColorBlack
+
+#define COLOR_BLUETOOTH GColorSunsetOrange
 
 //#define OBSIDIAN_SHOW_NUMBERS
 #define OBSIDIAN_LONG_TICKS
@@ -77,7 +79,7 @@ static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 #define BLUETOOTH_LOGO_STEP 3
 
     // background
-    graphics_context_set_fill_color(ctx, COLOR_WARNING);
+    graphics_context_set_fill_color(ctx, COLOR_BLUETOOTH);
     graphics_fill_rect(ctx, GRect(origin.x - 2, origin.y - 2, BLUETOOTH_LOGO_STEP * 2 + 5, BLUETOOTH_LOGO_STEP * 4 + 5),
                        2, GCornersAll);
 
@@ -235,6 +237,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #else
     const GRect battery = GRect(125, 3, 14, 8);
     graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
+    graphics_context_set_fill_color(ctx, COLOR_BATTERY);
     graphics_draw_rect(ctx, battery);
     graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4), 0, GCornerNone);
     graphics_context_set_stroke_width(ctx, 1);
