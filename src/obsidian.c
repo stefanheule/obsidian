@@ -42,11 +42,13 @@ static char buffer_7[30];
 /** The center of the watch */
 static GPoint center;
 
+#ifdef OBSIDIAN_SHOW_NUMBERS
 /** Open Sans font. */
 static GFont font_open_sans;
+#endif
 
 /** System font. */
-static GFont font_system_18px;
+static GFont font_system_18px_bold;
 
 
 ////////////////////////////////////////////
@@ -145,18 +147,18 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // numbers
 #if defined(OBSIDIAN_SHOW_NUMBERS) || defined(OBSIDIAN_ONLY_RELEVANT_NUMBER)
     static const GPoint number_points[] = {
-            {144 / 2 - 9,       18},
-            {144 / 2 + 23,      26},
-            {144 / 2 + 45,      43},
-            {144 / 2 + 53,      72},
-            {144 / 2 + 45,      99},
-            {144 / 2 + 23,      118},
-            {144 / 2 - 4,       128},
-            {144 / 2 - 6 - 23,  118},
-            {144 / 2 - 6 - 45,  99},
-            {144 / 2 - 6 - 53,  72},
-            {144 / 2 - 12 - 45, 43},
-            {144 / 2 - 12 - 23, 26},
+            {144 / 2 - 9,       26}, // 12
+            {144 / 2 + 23,      28}, // 1
+            {144 / 2 + 45,      47}, // 2
+            {144 / 2 + 49,      77}, // 3
+            {144 / 2 + 45,      102}, // 4
+            {144 / 2 + 24,      124}, // 5
+            {144 / 2 - 4,       128}, // 6
+            {144 / 2 - 6 - 23,  124}, // 7
+            {144 / 2 - 6 - 43,  103}, // 8
+            {144 / 2 - 6 - 51,  77}, // 9
+            {144 / 2 - 12 - 43, 48}, // 10
+            {144 / 2 - 12 - 23, 28}, // 11
     };
     static const char *numbers[] = {
             "12",
@@ -172,7 +174,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             "10",
             "11",
     };
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    graphics_context_set_text_color(ctx, GColorDarkGray);
 #ifdef OBSIDIAN_ONLY_RELEVANT_NUMBER
     {
         time_t now = time(NULL);
@@ -181,7 +183,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #else
     for (unsigned i = 0; i < ARRAY_LENGTH(number_points); i++) {
 #endif
-        graphics_draw_text(ctx, numbers[i], fonts_get_system_font(FONT_KEY_GOTHIC_18),
+        graphics_draw_text(ctx, numbers[i], font_open_sans,
                            GRect(number_points[i].x, number_points[i].y, strlen(numbers[i]) > 1 ? 18 : 9, 22),
                            GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
@@ -277,14 +279,14 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
         memcpy(&buffer_7[4], &buffer_7[5], 2);
     }
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
-    graphics_draw_text(ctx, buffer_7, font_system_18px, GRect(72 - 50 / 2, date_start + 15, 50, 21),
+    graphics_draw_text(ctx, buffer_7, font_system_18px_bold, GRect(72 - 50 / 2, date_start + 15, 50, 21),
                        GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 
     // day of week
     strftime(buffer_7, sizeof(buffer_7), "%a", t);
 
     graphics_context_set_text_color(ctx, COLOR_NORMAL);
-    graphics_draw_text(ctx, buffer_7, font_system_18px, GRect(72 - 50 / 2, date_start, 50, 21),
+    graphics_draw_text(ctx, buffer_7, font_system_18px_bold, GRect(72 - 50 / 2, date_start, 50, 21),
                        GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 
 }
@@ -387,8 +389,10 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, layer_time);
 
     // load fonts
-    font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_10));
-    font_system_18px = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+#ifdef OBSIDIAN_SHOW_NUMBERS
+    font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
+#endif
+    font_system_18px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 }
 
 /**
@@ -397,8 +401,9 @@ static void window_load(Window *window) {
 static void window_unload(Window *window) {
     layer_destroy(layer_background);
     layer_destroy(layer_time);
-
+#ifdef OBSIDIAN_SHOW_NUMBERS
     fonts_unload_custom_font(font_open_sans);
+#endif
 }
 
 /**

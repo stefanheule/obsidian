@@ -10,67 +10,7 @@
   },
   "appKeys": {},
   "resources": {
-    "media": [
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_11",
-        "file": "fonts/OpenSans-Regular.ttf"
-      },
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_12",
-        "file": "fonts/OpenSans-Regular.ttf"
-      }
-    ,
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_13",
-        "file": "fonts/OpenSans-Regular.ttf"
-      }
-    ,
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_14",
-        "file": "fonts/OpenSans-Regular.ttf"
-      }
-    ,
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_15",
-        "file": "fonts/OpenSans-Regular.ttf"
-      }
-    ,
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_10",
-        "file": "fonts/OpenSans-Regular.ttf"
-      }
-    ,
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_9",
-        "file": "fonts/OpenSans-Regular.ttf"
-      },
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_8",
-        "file": "fonts/OpenSans-Regular.ttf"
-      },
-      {
-        "type": "font",
-        "characterRegex": "[0-9]",
-        "name": "OPEN_SANS_7",
-        "file": "fonts/OpenSans-Regular.ttf"
-      }
-    ]
+    "media": []
   },
   "targetPlatforms": [
     "basalt"
