@@ -16,8 +16,6 @@
 #define COLOR_ACCENT GColorJaegerGreen
 #define COLOR_BATTERY GColorBlack
 
-#define COLOR_BLUETOOTH GColorSunsetOrange
-
 //#define OBSIDIAN_SHOW_NUMBERS
 #define OBSIDIAN_LONG_TICKS
 #define OBSIDIAN_FAT_TICKS
@@ -81,7 +79,7 @@ static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 #define BLUETOOTH_LOGO_STEP 3
 
     // background
-    graphics_context_set_fill_color(ctx, COLOR_BLUETOOTH);
+    graphics_context_set_fill_color(ctx, COLOR_ACCENT);
     graphics_fill_rect(ctx, GRect(origin.x - 2, origin.y - 2, BLUETOOTH_LOGO_STEP * 2 + 5, BLUETOOTH_LOGO_STEP * 4 + 5),
                        2, GCornersAll);
 
