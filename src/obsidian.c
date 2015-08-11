@@ -112,7 +112,6 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     BatteryChargeState battery_state = battery_state_service_peek();
 
     // background
-
     GColor8 outer_color = COLOR_BACKGROUND_OUTER;
     if (battery_state.charge_percent <= 10) {
         outer_color = COLOR_BATTERY_WARNING_BACKGROUND_3;
