@@ -6,9 +6,9 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
-#define COLOR_BATTERY_WARNING_BACKGROUND_1 GColorIcterine
-#define COLOR_BATTERY_WARNING_BACKGROUND_2 GColorRajah
-#define COLOR_BATTERY_WARNING_BACKGROUND_3 GColorSunsetOrange
+#define COLOR_BATTERY_WARNING_BACKGROUND_1 GColorYellow
+#define COLOR_BATTERY_WARNING_BACKGROUND_2 GColorOrange
+#define COLOR_BATTERY_WARNING_BACKGROUND_3 GColorRed
 #define COLOR_BACKGROUND GColorWhite
 #define COLOR_BACKGROUND_OUTER GColorDarkGray
 #define COLOR_NORMAL GColorBlack
