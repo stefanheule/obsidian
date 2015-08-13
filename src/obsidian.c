@@ -32,7 +32,7 @@
 static Window *window;
 
 /** All layers */
-static Layer *layer_time, *layer_text, *layer_background;
+static Layer *layer_time, *layer_background;
 
 /** Buffers for strings */
 static char buffer_7[30];
@@ -288,14 +288,17 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 }
 
 /**
- * Update procedure for text
+ * Update procedure for the time
  */
-static void text_update_proc(Layer *layer, GContext *ctx) {
+static void time_update_proc(Layer *layer, GContext *ctx) {
+    GRect bounds = layer_get_bounds(layer);
+    int16_t radius = bounds.size.w / 2;
+
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
-    const int date_start = 100;
 
     // day and month
+    const int date_start = 100;
     strftime(buffer_7, sizeof(buffer_7), "%b %d", t);
     // remove leading zeros
     if (buffer_7[4] == '0') {
@@ -304,7 +307,7 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
     GRect date_pos = GRect(0, date_start + 15, 144, 21);
     GSize date_size = graphics_text_layout_get_content_size(buffer_7, font_system_18px_bold, date_pos,
-                                                       GTextOverflowModeWordWrap, GTextAlignmentCenter);
+                                                            GTextOverflowModeWordWrap, GTextAlignmentCenter);
     graphics_draw_text(ctx, buffer_7, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
 
@@ -315,18 +318,6 @@ static void text_update_proc(Layer *layer, GContext *ctx) {
     GRect day_pos = GRect(0, date_start, 144, 21);
     graphics_draw_text(ctx, buffer_7, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
-
-}
-
-/**
- * Update procedure for the time
- */
-static void time_update_proc(Layer *layer, GContext *ctx) {
-    GRect bounds = layer_get_bounds(layer);
-    int16_t radius = bounds.size.w / 2;
-
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
 
     // second hand
 //    GPoint second_hand = get_radial_point_basic(radius, t->tm_sec, 60);
@@ -404,11 +395,6 @@ static void window_load(Window *window) {
     layer_background = layer_create(bounds);
     layer_set_update_proc(layer_background, background_update_proc);
     layer_add_child(window_layer, layer_background);
-
-    // create text layer
-    layer_text = layer_create(bounds);
-    layer_set_update_proc(layer_text, text_update_proc);
-    layer_add_child(window_layer, layer_text);
 
     // create time layer
     layer_time = layer_create(bounds);
