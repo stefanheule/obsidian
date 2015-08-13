@@ -65,6 +65,37 @@ static GPoint get_radial_point(const int16_t distance_from_center, const int32_t
 }
 
 /**
+ * Do the line segments a0->a1 and b0->b1 intersect?
+ * Loosely based on http://stackoverflow.com/questions/4977491/determining-if-two-line-segments-intersect/4977569#4977569
+ */
+static bool intersect(const GPoint a0, const GPoint a1, const GPoint b0, const GPoint b1) {
+    GPoint va = GPoint(a1.x-a0.x, a1.y-a0.y);
+    GPoint vb = GPoint(b1.x-b0.x, b1.y-b0.y);
+
+    // test for parallel line segments
+    int16_t det = vb.x*va.y - va.x*vb.y;
+    if (det == 0) {
+        if ((b0.x-a0.x) * va.y == (b0.y-a0.y) * va.x) {
+            // the two lines are parallel, and might overlap (if the segments were extended infinitely, they would be the same line)
+            return (0 <= b0.x-a0.x && b0.x-a0.x <= va.x) || (0 <= a0.x-b0.x && a0.x-b0.x <= vb.x);
+        } else {
+            // the two lines are parallel, and not overlapping
+            return false;
+        }
+    }
+
+    int16_t s =  ( (a0.x - b0.x) * va.y - (a0.y - b0.y) * va.x);
+    int16_t t = -(-(a0.x - b0.x) * vb.y + (a0.y - b0.y) * vb.x);
+
+    if (det < 0) {
+        det = -det;
+        s = -s;
+        t = -t;
+    }
+    return 0 <= s && s <= det && 0 <= t && t <= det;
+}
+
+/**
  * Returns a point on the line from the center away at an angle specified by tick/maxtick, at a specified distance
  */
 static GPoint get_radial_point_basic(const int16_t distance_from_center, const int32_t tick,
@@ -120,6 +151,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     } else if (battery_state.charge_percent <= 30) {
         outer_color = COLOR_BATTERY_WARNING_BACKGROUND_1;
     }
+
     graphics_context_set_fill_color(ctx, outer_color);
     graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
 
