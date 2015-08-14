@@ -1,10 +1,12 @@
-# Obsidian - simply beautiful watchface for the Pebble Time
+# Obsidian - a functional and beautiful watchface for the Pebble Time
 
-This is a simple and beautiful watchface for the Pebble Time.  It's main features are:
+This is a functional and beautiful watchface for the Pebble Time.  It's main features are:
 
-- High contrast colors, clearly visible in many light conditions
-- Display of the current date (day and month) as well as day of the week
-- Display of the battery level
+- High contrast colors, clearly visible in most light conditions.
+- Display of the current date (day and month) as well as day of the week.
+- The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slighly to the side.
+- Display of the battery level.
+- Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
 - Vibrates when the bluetooth connection is lost or regained, and shows an icon if no connection is available.
 
 ## License
