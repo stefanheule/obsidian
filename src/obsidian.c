@@ -32,10 +32,11 @@
 static Window *window;
 
 /** All layers */
-static Layer *layer_time, *layer_background;
+static Layer *layer_background;
 
 /** Buffers for strings */
-static char buffer_7[30];
+static char buffer_1[30];
+static char buffer_2[30];
 
 /** The center of the watch */
 static GPoint center;
@@ -69,22 +70,22 @@ static GPoint get_radial_point(const int16_t distance_from_center, const int32_t
  * Loosely based on http://stackoverflow.com/questions/4977491/determining-if-two-line-segments-intersect/4977569#4977569
  */
 static bool intersect(const GPoint a0, const GPoint a1, const GPoint b0, const GPoint b1) {
-    GPoint va = GPoint(a1.x-a0.x, a1.y-a0.y);
-    GPoint vb = GPoint(b1.x-b0.x, b1.y-b0.y);
+    GPoint va = GPoint(a1.x - a0.x, a1.y - a0.y);
+    GPoint vb = GPoint(b1.x - b0.x, b1.y - b0.y);
 
     // test for parallel line segments
-    int16_t det = vb.x*va.y - va.x*vb.y;
+    int16_t det = vb.x * va.y - va.x * vb.y;
     if (det == 0) {
-        if ((b0.x-a0.x) * va.y == (b0.y-a0.y) * va.x) {
+        if ((b0.x - a0.x) * va.y == (b0.y - a0.y) * va.x) {
             // the two lines are parallel, and might overlap (if the segments were extended infinitely, they would be the same line)
-            return (0 <= b0.x-a0.x && b0.x-a0.x <= va.x) || (0 <= a0.x-b0.x && a0.x-b0.x <= vb.x);
+            return (0 <= b0.x - a0.x && b0.x - a0.x <= va.x) || (0 <= a0.x - b0.x && a0.x - b0.x <= vb.x);
         } else {
             // the two lines are parallel, and not overlapping
             return false;
         }
     }
 
-    int16_t s =  ( (a0.x - b0.x) * va.y - (a0.y - b0.y) * va.x);
+    int16_t s = ((a0.x - b0.x) * va.y - (a0.y - b0.y) * va.x);
     int16_t t = -(-(a0.x - b0.x) * vb.y + (a0.y - b0.y) * vb.x);
 
     if (det < 0) {
@@ -134,6 +135,23 @@ static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 }
 
 /**
+ * Returns true if the line and rectangle intersect.
+ */
+bool line_rect_intersect(GPoint line0, GPoint line1, GPoint rect0, GPoint rect1) {
+    return intersect(line0, line1, rect0, GPoint(rect1.x, rect0.y)) ||
+           intersect(line0, line1, rect0, GPoint(rect0.x, rect1.y)) ||
+           intersect(line0, line1, rect1, GPoint(rect1.x, rect0.y)) ||
+           intersect(line0, line1, rect1, GPoint(rect0.x, rect1.y));
+}
+
+/**
+ * Returns true if either of two lines intersects with the rectangle.
+ */
+bool line2_rect_intersect(GPoint lineA0, GPoint lineA1, GPoint lineB0, GPoint lineB1, GPoint rect0, GPoint rect1) {
+    return line_rect_intersect(lineA0, lineA1, rect0, rect1) || line_rect_intersect(lineB0, lineB1, rect0, rect1);
+}
+
+/**
  * Update procedure for the background
  */
 static void background_update_proc(Layer *layer, GContext *ctx) {
@@ -141,6 +159,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     int16_t radius = bounds.size.w / 2;
     bool bluetooth = bluetooth_connection_service_peek();
     BatteryChargeState battery_state = battery_state_service_peek();
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
 
     // background
     GColor8 outer_color = COLOR_BACKGROUND_OUTER;
@@ -240,8 +260,6 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
 #ifdef OBSIDIAN_ONLY_RELEVANT_MINUTE_TICKS
     // only relevant minute ticks
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
     int start_min_tick = (t->tm_min / 5) * 5;
     graphics_context_set_stroke_width(ctx, 1);
     for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
@@ -257,6 +275,89 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 #endif
 
+    // for testing only
+    t->tm_min = 2;
+
+    // compute angles
+    int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
+    GPoint minute_hand = get_radial_point(radius - 10, minute_angle);
+    int hour_tick = ((t->tm_hour % 12) * 6) + (t->tm_min / 10);
+    int32_t hour_angle = hour_tick * TRIG_MAX_ANGLE / (12 * 6);
+    GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_angle);
+
+    // format date strings
+    strftime(buffer_1, sizeof(buffer_1), "%b %d", t);
+    // remove leading zeros
+    if (buffer_1[4] == '0') {
+        memcpy(&buffer_1[4], &buffer_1[5], 2);
+    }
+    strftime(buffer_2, sizeof(buffer_2), "%a", t);
+
+    // determine where we can draw the date without overlap
+    GPoint d_center = GPoint(0, 0);
+    const int d_offset = 15;
+    const int d_height = 21;
+    const int d_y_start = 100;
+    GRect date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
+    GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
+                                                            GTextOverflowModeWordWrap, GTextAlignmentCenter);
+    GRect day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
+    GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
+                                                           GTextOverflowModeWordWrap, GTextAlignmentCenter);
+
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    if (line2_rect_intersect(center, hour_hand, center, minute_hand,
+                            GPoint(72 + d_center.x - day_size.w / 2, d_y_start + d_center.y),
+                            GPoint(72 + d_center.x + day_size.w / 2, d_y_start + d_center.y + d_height)) ||
+        line2_rect_intersect(center, hour_hand, center, minute_hand,
+                            GPoint(72 + d_center.x - date_size.w / 2, d_y_start + d_center.y + d_offset),
+                            GPoint(72 + d_center.x + date_size.w / 2, d_y_start + d_center.y + d_height + d_offset))) {
+    }
+
+    graphics_draw_text(ctx, buffer_2, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
+                       NULL);
+    graphics_context_set_text_color(ctx, COLOR_ACCENT);
+    graphics_draw_text(ctx, buffer_1, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
+                       NULL);
+
+
+    // second hand
+//    GPoint second_hand = get_radial_point_basic(radius, t->tm_sec, 60);
+//    graphics_context_set_stroke_width(ctx, 4);
+//    graphics_context_set_stroke_color(ctx, GColorBlack);
+//    graphics_draw_line(ctx, second_hand, center);
+//    graphics_context_set_stroke_width(ctx, 3);
+//    graphics_context_set_stroke_color(ctx, GColorWhite);
+//    graphics_draw_line(ctx, second_hand, center);
+
+    // minute hand
+    graphics_context_set_stroke_width(ctx, 5);
+    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
+    graphics_draw_line(ctx, minute_hand, center);
+    graphics_context_set_stroke_width(ctx, 4);
+    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+    graphics_draw_line(ctx, minute_hand, center);
+    graphics_context_set_stroke_width(ctx, 1);
+    graphics_context_set_stroke_color(ctx, GColorLightGray);
+    graphics_draw_line(ctx, get_radial_point(radius - 12, minute_angle), center);
+
+    // hour hand
+    graphics_context_set_stroke_width(ctx, 5);
+    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
+    graphics_draw_line(ctx, hour_hand, center);
+    graphics_context_set_stroke_width(ctx, 4);
+    graphics_context_set_stroke_color(ctx, COLOR_ACCENT);
+    graphics_draw_line(ctx, hour_hand, center);
+    graphics_context_set_stroke_width(ctx, 1);
+    graphics_context_set_stroke_color(ctx, GColorLightGray);
+    graphics_draw_line(ctx, get_radial_point(radius * 55 / 100 - 2, hour_angle), center);
+
+    // dot in the middle
+    graphics_context_set_fill_color(ctx, COLOR_NORMAL);
+    graphics_fill_circle(ctx, center, 5);
+    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
+    graphics_fill_circle(ctx, center, 2);
+
     // bluetooth status
     if (!bluetooth) {
         draw_bluetooth_logo(ctx, GPoint(144 / 2 - 3, 40));
@@ -265,9 +366,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // battery status
 #ifdef OBSIDIAN_BATTERY_USE_TEXT
     const GRect battery = GRect(118, 2, 22, 11);
-    snprintf(buffer_7, sizeof(buffer_7), "%d", battery_state.charge_percent);//battery_state.charge_percent);
+    snprintf(buffer_1, sizeof(buffer_1), "%d", battery_state.charge_percent);//battery_state.charge_percent);
     graphics_context_set_text_color(ctx, COLOR_BATTERY);
-    graphics_draw_text(ctx, buffer_7, font_open_sans, GRect(battery.origin.x, battery.origin.y-1, battery.size.w, battery.size.h),
+    graphics_draw_text(ctx, buffer_1, font_open_sans, GRect(battery.origin.x, battery.origin.y-1, battery.size.w, battery.size.h),
                        GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
     graphics_draw_rect(ctx, GRect(battery.origin.x, battery.origin.y, battery.size.w, battery.size.h));
@@ -287,81 +388,6 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 }
 
-/**
- * Update procedure for the time
- */
-static void time_update_proc(Layer *layer, GContext *ctx) {
-    GRect bounds = layer_get_bounds(layer);
-    int16_t radius = bounds.size.w / 2;
-
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
-
-    // day and month
-    const int date_start = 100;
-    strftime(buffer_7, sizeof(buffer_7), "%b %d", t);
-    // remove leading zeros
-    if (buffer_7[4] == '0') {
-        memcpy(&buffer_7[4], &buffer_7[5], 2);
-    }
-    graphics_context_set_text_color(ctx, COLOR_ACCENT);
-    GRect date_pos = GRect(0, date_start + 15, 144, 21);
-    GSize date_size = graphics_text_layout_get_content_size(buffer_7, font_system_18px_bold, date_pos,
-                                                            GTextOverflowModeWordWrap, GTextAlignmentCenter);
-    graphics_draw_text(ctx, buffer_7, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
-
-    // day of week
-    strftime(buffer_7, sizeof(buffer_7), "%a", t);
-
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
-    GRect day_pos = GRect(0, date_start, 144, 21);
-    graphics_draw_text(ctx, buffer_7, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
-
-    // second hand
-//    GPoint second_hand = get_radial_point_basic(radius, t->tm_sec, 60);
-//    graphics_context_set_stroke_width(ctx, 4);
-//    graphics_context_set_stroke_color(ctx, GColorBlack);
-//    graphics_draw_line(ctx, second_hand, center);
-//    graphics_context_set_stroke_width(ctx, 3);
-//    graphics_context_set_stroke_color(ctx, GColorWhite);
-//    graphics_draw_line(ctx, second_hand, center);
-
-    // minute hand
-    int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
-    GPoint minute_hand = get_radial_point(radius - 10, minute_angle);
-    graphics_context_set_stroke_width(ctx, 5);
-    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
-    graphics_draw_line(ctx, minute_hand, center);
-    graphics_context_set_stroke_width(ctx, 4);
-    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
-    graphics_draw_line(ctx, minute_hand, center);
-    graphics_context_set_stroke_width(ctx, 1);
-    graphics_context_set_stroke_color(ctx, GColorLightGray);
-    graphics_draw_line(ctx, get_radial_point(radius - 12, minute_angle), center);
-
-    // hour hand
-    int hour_tick = ((t->tm_hour % 12) * 6) + (t->tm_min / 10);
-    int32_t hour_angle = hour_tick * TRIG_MAX_ANGLE / (12 * 6);
-    GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_angle);
-    graphics_context_set_stroke_width(ctx, 5);
-    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
-    graphics_draw_line(ctx, hour_hand, center);
-    graphics_context_set_stroke_width(ctx, 4);
-    graphics_context_set_stroke_color(ctx, COLOR_ACCENT);
-    graphics_draw_line(ctx, hour_hand, center);
-    graphics_context_set_stroke_width(ctx, 1);
-    graphics_context_set_stroke_color(ctx, GColorLightGray);
-    graphics_draw_line(ctx, get_radial_point(radius * 55 / 100 - 2, hour_angle), center);
-
-    // dot in the middle
-    graphics_context_set_fill_color(ctx, COLOR_NORMAL);
-    graphics_fill_circle(ctx, center, 5);
-    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
-    graphics_fill_circle(ctx, center, 2);
-}
-
 static void handle_battery(BatteryChargeState new_state) {
     layer_mark_dirty(layer_background);
 }
@@ -370,7 +396,7 @@ static void handle_battery(BatteryChargeState new_state) {
  * Handler for time ticks.
  */
 static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
-    layer_mark_dirty(layer_time);
+    layer_mark_dirty(layer_background);
 }
 
 static void handle_bluetooth(bool connected) {
@@ -391,15 +417,10 @@ static void window_load(Window *window) {
     Layer *window_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(window_layer);
 
-    // create background layer
+    // create layer
     layer_background = layer_create(bounds);
     layer_set_update_proc(layer_background, background_update_proc);
     layer_add_child(window_layer, layer_background);
-
-    // create time layer
-    layer_time = layer_create(bounds);
-    layer_set_update_proc(layer_time, time_update_proc);
-    layer_add_child(window_layer, layer_time);
 
     // load fonts
 #ifdef OBSIDIAN_SHOW_NUMBERS
@@ -413,7 +434,6 @@ static void window_load(Window *window) {
  */
 static void window_unload(Window *window) {
     layer_destroy(layer_background);
-    layer_destroy(layer_time);
 #ifdef OBSIDIAN_SHOW_NUMBERS
     fonts_unload_custom_font(font_open_sans);
 #endif
