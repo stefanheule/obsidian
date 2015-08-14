@@ -151,6 +151,11 @@ bool line2_rect_intersect(GPoint lineA0, GPoint lineA1, GPoint lineB0, GPoint li
     return line_rect_intersect(lineA0, lineA1, rect0, rect1) || line_rect_intersect(lineB0, lineB1, rect0, rect1);
 }
 
+//#define DEBUG_DATE_POSITION
+#ifdef DEBUG_DATE_POSITION
+static int debug_iter = 0;
+#endif
+
 /**
  * Update procedure for the background
  */
@@ -275,8 +280,11 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 #endif
 
+#ifdef DEBUG_DATE_POSITION
     // for testing only
     t->tm_min = 2;
+    t->tm_hour = 1;
+#endif
 
     // compute angles
     int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
@@ -294,25 +302,53 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     strftime(buffer_2, sizeof(buffer_2), "%a", t);
 
     // determine where we can draw the date without overlap
-    GPoint d_center = GPoint(0, 0);
+    const GPoint d_points[] = {
+            GPoint(0, 0),
+            GPoint(10, -3),
+            GPoint(17, -7),
+            GPoint(26, -13),
+            GPoint(29, -19),
+            GPoint(33, -25),
+            GPoint(33, -32),
+            GPoint(33, -39),
+    };
     const int d_offset = 15;
     const int d_height = 21;
     const int d_y_start = 100;
-    GRect date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
-    GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
-                                                            GTextOverflowModeWordWrap, GTextAlignmentCenter);
-    GRect day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
-    GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
-                                                           GTextOverflowModeWordWrap, GTextAlignmentCenter);
-
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
-    if (line2_rect_intersect(center, hour_hand, center, minute_hand,
-                            GPoint(72 + d_center.x - day_size.w / 2, d_y_start + d_center.y),
-                            GPoint(72 + d_center.x + day_size.w / 2, d_y_start + d_center.y + d_height)) ||
-        line2_rect_intersect(center, hour_hand, center, minute_hand,
-                            GPoint(72 + d_center.x - date_size.w / 2, d_y_start + d_center.y + d_offset),
-                            GPoint(72 + d_center.x + date_size.w / 2, d_y_start + d_center.y + d_height + d_offset))) {
+    bool found = false;
+    uint16_t i;
+    GPoint d_center;
+    GRect date_pos;
+    GRect day_pos;
+    for (i = 0; i < 1 + (ARRAY_LENGTH(d_points)-1) * 2; i++) {
+        d_center = d_points[(i + 1) / 2];
+        if (i % 2 == 0) {
+            d_center.x = -d_center.x;
+        }
+        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
+        GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
+                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
+        day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
+        GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
+                                                               GTextOverflowModeWordWrap, GTextAlignmentCenter);
+        if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
+                                 GPoint(72 + d_center.x - day_size.w / 2, d_y_start + d_center.y),
+                                 GPoint(72 + d_center.x + day_size.w / 2, d_y_start + d_center.y + d_height)) ||
+            line2_rect_intersect(center, hour_hand, center, minute_hand,
+                                 GPoint(72 + d_center.x - date_size.w / 2, d_y_start + d_center.y + d_offset),
+                                 GPoint(72 + d_center.x + date_size.w / 2, d_y_start + d_center.y + d_height + d_offset)))) {
+            found = true;
+            break;
+        }
     }
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    if (!found) {
+        graphics_context_set_text_color(ctx, COLOR_ACCENT);
+        d_center = d_points[0];
+        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
+        day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
+    }
+
 
     graphics_draw_text(ctx, buffer_2, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
@@ -397,6 +433,9 @@ static void handle_battery(BatteryChargeState new_state) {
  */
 static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
     layer_mark_dirty(layer_background);
+#ifdef DEBUG_DATE_POSITION
+    debug_iter += 1;
+#endif
 }
 
 static void handle_bluetooth(bool connected) {
@@ -453,7 +492,11 @@ static void init() {
     GRect bounds = layer_get_bounds(window_get_root_layer(window));
     center = grect_center_point(&bounds);
 
-    tick_timer_service_subscribe(MINUTE_UNIT, handle_second_tick);
+    TimeUnits unit = MINUTE_UNIT;
+#ifdef DEBUG_DATE_POSITION
+    unit = SECOND_UNIT;
+#endif
+    tick_timer_service_subscribe(unit, handle_second_tick);
     battery_state_service_subscribe(handle_battery);
     bluetooth_connection_service_subscribe(handle_bluetooth);
 }
