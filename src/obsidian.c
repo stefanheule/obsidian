@@ -303,6 +303,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
     // determine where we can draw the date without overlap
     const GPoint d_points[] = {
+            // array of candidate points to draw the date strings at
             GPoint(0, 0),
             GPoint(10, -3),
             GPoint(17, -7),
@@ -320,6 +321,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     GPoint d_center;
     GRect date_pos;
     GRect day_pos;
+    // loop through all points and use the first one that doesn't overlap with the watch hands
     for (i = 0; i < 1 + (ARRAY_LENGTH(d_points)-1) * 2; i++) {
         d_center = d_points[(i + 1) / 2];
         if (i % 2 == 0) {
@@ -341,21 +343,21 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             break;
         }
     }
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+
+    // this should not happen, but if it does, then use the default position
     if (!found) {
-        graphics_context_set_text_color(ctx, COLOR_ACCENT);
         d_center = d_points[0];
         date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
         day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
     }
 
-
+    // actuallyl draw the date text
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
     graphics_draw_text(ctx, buffer_2, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
     graphics_draw_text(ctx, buffer_1, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
-
 
     // second hand
 //    GPoint second_hand = get_radial_point_basic(radius, t->tm_sec, 60);
