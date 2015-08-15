@@ -15,15 +15,15 @@ This is a usable and elegant watchface for the Pebble Time.  It's main features 
 
 The main goal when building this watchface was for it to be practical.  For instance, the date display should never be obstructed by the watch hands:
 
-![Screenshot](screenshots/date.png)
+![Screenshot of the date display moving](screenshots/date.png)
 
 The watchface also alerts the user when the bluetooth connection is lost or regained, by vibrating and showing an information overlay.  After a few seconds, the overlay goes away, and a small bluetooth icon stays if no connection is available:
 
-![Screenshot](screenshots/bluetooth.png)
+![Screenshot of the bluetooth alerts](screenshots/bluetooth.png)
 
 The watchface always shows a small battery indicator in the top right corner.  However, if the battery starts running low, the background changes to yellow, orange and finally red:
 
-![Screenshot](screenshots/batter.png)
+![Screenshot of the battery alert](screenshots/battery.png)
 
 ## License
 
