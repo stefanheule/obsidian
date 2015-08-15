@@ -514,6 +514,8 @@ static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 
 static void timer_callback_bluetooth_popup(void *data) {
     show_bluetooth_popup = false;
+    timer_bluetooth_popup = NULL;
+    layer_mark_dirty(layer_background);
 }
 
 static void handle_bluetooth(bool connected) {
