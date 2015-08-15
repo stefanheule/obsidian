@@ -3,7 +3,7 @@ all: install_emulator
 
 deploy: install_deploy
 
-build: src/*.c src/*.h appinfo.json wscript
+build:
 	pebble build
 
 install_emulator: build
@@ -20,3 +20,5 @@ menu_icon:
 
 clean_config:
 	echo "" > src/config.h
+
+.PHONY: all deploy build install_emulator install_deploy menu_icon clean_config
