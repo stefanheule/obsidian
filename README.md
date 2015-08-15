@@ -1,5 +1,7 @@
 # Obsidian
 
+[![Build status](https://travis-ci.org/stefanheule/obsidian.svg?branch=master)](https://travis-ci.org/stefanheule/obsidian)
+
 ![Screenshot](screenshots/main.png)
 
 This is a usable and elegant watchface for the Pebble Time.  It's main features are:
