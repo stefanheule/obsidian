@@ -1,5 +1,9 @@
+
 #include <pebble.h>
-#include "obsidian.h"
+
+// I don't know how to pass parameters to the compiler, so I'm using this file
+// for various configurations
+#include "config.h"
 
 
 ////////////////////////////////////////////
@@ -53,6 +57,12 @@ static GFont font_system_18px_bold;
 ////////////////////////////////////////////
 //// Implementation
 ////////////////////////////////////////////
+
+#ifdef DEBUG_MENU_ICON
+#define DEBUG_NICE_TIME
+#define DEBUG_NO_DATE
+#define DEBUG_NO_BATTERY_ICON
+#endif
 
 /**
  * Returns a point on the line from the center away at an angle specified by tick/maxtick, at a specified distance
@@ -285,6 +295,10 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     t->tm_min = 2;
     t->tm_hour = 1;
 #endif
+#ifdef DEBUG_NICE_TIME
+    t->tm_min = 10;
+    t->tm_hour = 10;
+#endif
 
     // compute angles
     int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
@@ -352,12 +366,14 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
     // actuallyl draw the date text
+#ifndef DEBUG_NO_DATE
     graphics_context_set_text_color(ctx, COLOR_NORMAL);
     graphics_draw_text(ctx, buffer_2, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     graphics_context_set_text_color(ctx, COLOR_ACCENT);
     graphics_draw_text(ctx, buffer_1, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
+#endif
 
     // second hand
 //    GPoint second_hand = get_radial_point_basic(radius, t->tm_sec, 60);
@@ -402,6 +418,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
     // battery status
+#ifndef DEBUG_NO_BATTERY_ICON
 #ifdef OBSIDIAN_BATTERY_USE_TEXT
     const GRect battery = GRect(118, 2, 22, 11);
     snprintf(buffer_1, sizeof(buffer_1), "%d", battery_state.charge_percent);//battery_state.charge_percent);
@@ -423,6 +440,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_width(ctx, 1);
     graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
                        GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
+#endif
 #endif
 }
 
