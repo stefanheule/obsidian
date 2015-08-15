@@ -1,4 +1,3 @@
-
 #include <pebble.h>
 
 // I don't know how to pass parameters to the compiler, so I'm using this file
@@ -336,7 +335,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     GRect date_pos;
     GRect day_pos;
     // loop through all points and use the first one that doesn't overlap with the watch hands
-    for (i = 0; i < 1 + (ARRAY_LENGTH(d_points)-1) * 2; i++) {
+    for (i = 0; i < 1 + (ARRAY_LENGTH(d_points) - 1) * 2; i++) {
         d_center = d_points[(i + 1) / 2];
         if (i % 2 == 0) {
             d_center.x = -d_center.x;
@@ -348,11 +347,12 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
         if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                 GPoint(72 + d_center.x - day_size.w / 2, d_y_start + d_center.y),
-                                 GPoint(72 + d_center.x + day_size.w / 2, d_y_start + d_center.y + d_height)) ||
-            line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                 GPoint(72 + d_center.x - date_size.w / 2, d_y_start + d_center.y + d_offset),
-                                 GPoint(72 + d_center.x + date_size.w / 2, d_y_start + d_center.y + d_height + d_offset)))) {
+                                   GPoint(72 + d_center.x - day_size.w / 2, d_y_start + d_center.y),
+                                   GPoint(72 + d_center.x + day_size.w / 2, d_y_start + d_center.y + d_height)) ||
+              line2_rect_intersect(center, hour_hand, center, minute_hand,
+                                   GPoint(72 + d_center.x - date_size.w / 2, d_y_start + d_center.y + d_offset),
+                                   GPoint(72 + d_center.x + date_size.w / 2,
+                                          d_y_start + d_center.y + d_height + d_offset)))) {
             found = true;
             break;
         }
@@ -442,6 +442,25 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                        GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
 #endif
 #endif
+//    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND_OUTER);
+//    graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
+//    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
+//    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+//    graphics_context_set_stroke_width(ctx, 4);
+//    GRect notification_rect = GRect(10, 40, 144 - 2 * 10, 168 - 2 * 40);
+//    graphics_fill_rect(ctx, notification_rect, 8, GCornersAll);
+//    graphics_draw_round_rect(ctx, notification_rect, 8);
+//    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+//    graphics_draw_text(ctx, "Bluetooth Connected", font_system_18px_bold,
+//                       GRect(notification_rect.origin.x+10, notification_rect.origin.y + 10, notification_rect.size.w-20, 70),
+//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+//                       NULL);
+//    GPoint notification_logo = GPoint(144/2-3, notification_rect.origin.y + notification_rect.size.h - 28);
+//    draw_bluetooth_logo(ctx, notification_logo);
+//    graphics_context_set_stroke_color(ctx, GColorRed);
+//    graphics_context_set_stroke_width(ctx, 2);
+//    graphics_draw_circle(ctx, GPoint(144/2, notification_logo.y + 6), 12);
+//    graphics_draw_line(ctx, GPoint(144/2-9, notification_logo.y + 2), GPoint(144/2+9, notification_logo.y + 12 - 2));
 }
 
 static void handle_battery(BatteryChargeState new_state) {
