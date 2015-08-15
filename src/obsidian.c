@@ -60,14 +60,62 @@ AppTimer *timer_bluetooth_popup;
 
 
 ////////////////////////////////////////////
-//// Implementation
+//// screenshot configurations
 ////////////////////////////////////////////
 
-#ifdef DEBUG_MENU_ICON
+#ifdef SCREENSHOT_MENU_ICON
 #define DEBUG_NICE_TIME
 #define DEBUG_NO_DATE
 #define DEBUG_NO_BATTERY_ICON
 #endif
+
+#ifdef SCREENSHOT_BATTERY_LOW_1
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_BATTERY_LOW_2
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_BATTERY_LOW_3
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_DATE_1
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_DATE_2
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_BLUETOOTH_ICON
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#define DEBUG_NO_BLUETOOTH
+#endif
+
+#ifdef SCREENSHOT_BLUETOOTH_POPUP_1
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#define DEBUG_BLUETOOTH_POPUP
+#endif
+
+#ifdef SCREENSHOT_BLUETOOTH_POPUP_2
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#define DEBUG_NO_BLUETOOTH
+#define DEBUG_BLUETOOTH_POPUP
+#endif
+
+
+
+////////////////////////////////////////////
+//// Implementation
+////////////////////////////////////////////
 
 /**
  * Returns a point on the line from the center away at an angle specified by tick/maxtick, at a specified distance
@@ -170,7 +218,9 @@ bool line2_rect_intersect(GPoint lineA0, GPoint lineA1, GPoint lineB0, GPoint li
  * Draws a popup about the bluetooth connection
  */
 static void bluetooth_popup(GContext *ctx, bool connected) {
+#ifndef DEBUG_BLUETOOTH_POPUP
     if (!show_bluetooth_popup) return;
+#endif
 
     graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
     graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
@@ -223,9 +273,38 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
     int16_t radius = bounds.size.w / 2;
     bool bluetooth = bluetooth_connection_service_peek();
+#ifdef DEBUG_NO_BLUETOOTH
+    bluetooth = false;
+#endif
     BatteryChargeState battery_state = battery_state_service_peek();
+#ifdef SCREENSHOT_BATTERY_LOW_1
+    battery_state.charge_percent = 30;
+#endif
+#ifdef SCREENSHOT_BATTERY_LOW_2
+    battery_state.charge_percent = 20;
+#endif
+#ifdef SCREENSHOT_BATTERY_LOW_3
+    battery_state.charge_percent = 10;
+#endif
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
+#ifdef DEBUG_NICE_TIME
+    t->tm_min = 10;
+    t->tm_hour = 10;
+#endif
+#ifdef DEBUG_NICE_DATE
+    t->tm_mday = 8;
+    t->tm_mon = 4;
+    t->tm_year = 2015;
+#endif
+#ifdef SCREENSHOT_DATE_1
+    t->tm_min = 26;
+    t->tm_hour = 10;
+#endif
+#ifdef SCREENSHOT_DATE_2
+    t->tm_min = 31;
+    t->tm_hour = 2;
+#endif
 
     // background
     GColor8 outer_color = COLOR_BACKGROUND_OUTER;
@@ -340,15 +419,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 #endif
 
-#ifdef DEBUG_DATE_POSITION
     // for testing only
-    t->tm_min = 2;
-    t->tm_hour = 1;
-#endif
-#ifdef DEBUG_NICE_TIME
-    t->tm_min = 10;
-    t->tm_hour = 10;
-#endif
+//    t->tm_min = 2;
+//    t->tm_hour = 1;
 
     // compute angles
     int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
