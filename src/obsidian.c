@@ -69,6 +69,11 @@ AppTimer *timer_bluetooth_popup;
 #define DEBUG_NO_BATTERY_ICON
 #endif
 
+#ifdef SCREENSHOT_MAIN
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
 #ifdef SCREENSHOT_BATTERY_LOW_1
 #define DEBUG_NICE_TIME
 #define DEBUG_NICE_DATE
