@@ -52,6 +52,12 @@ static GFont font_open_sans;
 /** System font. */
 static GFont font_system_18px_bold;
 
+/** Is the bluetooth popup current supposed to be shown? */
+static bool show_bluetooth_popup;
+
+/** The timer for the bluetooth popup */
+AppTimer *timer_bluetooth_popup;
+
 
 ////////////////////////////////////////////
 //// Implementation
@@ -158,6 +164,51 @@ bool line_rect_intersect(GPoint line0, GPoint line1, GPoint rect0, GPoint rect1)
  */
 bool line2_rect_intersect(GPoint lineA0, GPoint lineA1, GPoint lineB0, GPoint lineB1, GPoint rect0, GPoint rect1) {
     return line_rect_intersect(lineA0, lineA1, rect0, rect1) || line_rect_intersect(lineB0, lineB1, rect0, rect1);
+}
+
+/**
+ * Draws a popup about the bluetooth connection
+ */
+static void bluetooth_popup(GContext *ctx, bool connected) {
+    if (!show_bluetooth_popup) return;
+
+    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
+    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+    graphics_context_set_stroke_width(ctx, 4);
+    GRect notification_rect = GRect(-10, 168 - 50 - 7, 144 + 20, 50);
+    graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
+    graphics_draw_round_rect(ctx, notification_rect, 8);
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
+                       GRect(2, notification_rect.origin.y + 4, 105, 40),
+                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+                       NULL);
+    if (connected) {
+        graphics_context_set_fill_color(ctx, GColorGreen);
+    } else {
+        graphics_context_set_fill_color(ctx, GColorRed);
+    }
+
+    GPoint icon_center = GPoint(120 + 3, notification_rect.origin.y + notification_rect.size.h - 26);
+    graphics_fill_circle(ctx, icon_center, 9);
+    graphics_context_set_stroke_width(ctx, 2);
+    graphics_context_set_stroke_color(ctx, GColorWhite);
+
+    if (connected) {
+        graphics_draw_line(ctx,
+                           GPoint(icon_center.x + 4, icon_center.y - 3),
+                           GPoint(icon_center.x - 2, icon_center.y + 3));
+        graphics_draw_line(ctx,
+                           GPoint(icon_center.x - 4, icon_center.y + 0),
+                           GPoint(icon_center.x - 2, icon_center.y + 3));
+    } else {
+        graphics_draw_line(ctx,
+                           GPoint(icon_center.x + 3, icon_center.y - 3),
+                           GPoint(icon_center.x - 3, icon_center.y + 3));
+        graphics_draw_line(ctx,
+                           GPoint(icon_center.x - 3, icon_center.y - 3),
+                           GPoint(icon_center.x + 3, icon_center.y + 3));
+    }
 }
 
 //#define DEBUG_DATE_POSITION
@@ -442,23 +493,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                        GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
 #endif
 #endif
-    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
-    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
-    graphics_context_set_stroke_width(ctx, 4);
-    GRect notification_rect = GRect(-10, 168-50-7, 144+20, 50);
-    graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
-    graphics_draw_round_rect(ctx, notification_rect, 8);
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
-    graphics_draw_text(ctx, "Bluetooth Disconnected", font_system_18px_bold,
-                       GRect(0, notification_rect.origin.y + 3, 105, 40),
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
-    GPoint notification_logo = GPoint(120, notification_rect.origin.y + notification_rect.size.h - 32);
-    draw_bluetooth_logo(ctx, notification_logo);
-    graphics_context_set_stroke_color(ctx, GColorRed);
-    graphics_context_set_stroke_width(ctx, 2);
-    graphics_draw_circle(ctx, GPoint(120+3, notification_logo.y + 6), 12);
-    graphics_draw_line(ctx, GPoint(120-6, notification_logo.y + 2), GPoint(120+12, notification_logo.y + 12 - 2));
+
+    // draw the bluetooth popup
+    bluetooth_popup(ctx, bluetooth);
 }
 
 static void handle_battery(BatteryChargeState new_state) {
@@ -475,6 +512,10 @@ static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 #endif
 }
 
+static void timer_callback_bluetooth_popup(void *data) {
+    show_bluetooth_popup = false;
+}
+
 static void handle_bluetooth(bool connected) {
     // redraw background (to turn on/off the logo)
     layer_mark_dirty(layer_background);
@@ -484,6 +525,14 @@ static void handle_bluetooth(bool connected) {
 
     // turn light on
     light_enable_interaction();
+
+    // show popup
+    show_bluetooth_popup = true;
+    if (timer_bluetooth_popup) {
+        app_timer_reschedule(timer_bluetooth_popup, 4000);
+    } else {
+        timer_bluetooth_popup = app_timer_register(4000, timer_callback_bluetooth_popup, NULL);
+    }
 }
 
 /**
@@ -503,6 +552,9 @@ static void window_load(Window *window) {
     font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
 #endif
     font_system_18px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+
+    // initialize
+    show_bluetooth_popup = false;
 }
 
 /**
