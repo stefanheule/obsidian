@@ -1,7 +1,7 @@
 language: pebblec
 sudo: false
 before_script: bash ./before_install.sh
-script: make
+script: make travis_build
 cache:
   directories:
     - $HOME/pebble-dev

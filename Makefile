@@ -9,6 +9,9 @@ deploy: install_deploy
 build:
 	pebble build
 
+travis_build:
+	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
+
 install_emulator: build
 	pebble install --emulator basalt
 
