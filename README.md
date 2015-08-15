@@ -29,5 +29,5 @@ limitations under the License.
 
 There are a few watch faces that have influenced the design of Obsidian:
 
-- [Simple.Watch]http://apps.getpebble.com/en_US/application/5551c537c60fc8732d000006)
+- [Simple.Watch](http://apps.getpebble.com/en_US/application/5551c537c60fc8732d000006)
 - [TH3](http://apps.getpebble.com/en_US/application/5551c4a91113bc93a00000de)
