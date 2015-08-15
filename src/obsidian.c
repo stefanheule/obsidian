@@ -442,25 +442,23 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                        GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
 #endif
 #endif
-//    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND_OUTER);
-//    graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
-//    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
-//    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
-//    graphics_context_set_stroke_width(ctx, 4);
-//    GRect notification_rect = GRect(10, 40, 144 - 2 * 10, 168 - 2 * 40);
-//    graphics_fill_rect(ctx, notification_rect, 8, GCornersAll);
-//    graphics_draw_round_rect(ctx, notification_rect, 8);
-//    graphics_context_set_text_color(ctx, COLOR_NORMAL);
-//    graphics_draw_text(ctx, "Bluetooth Connected", font_system_18px_bold,
-//                       GRect(notification_rect.origin.x+10, notification_rect.origin.y + 10, notification_rect.size.w-20, 70),
-//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-//                       NULL);
-//    GPoint notification_logo = GPoint(144/2-3, notification_rect.origin.y + notification_rect.size.h - 28);
-//    draw_bluetooth_logo(ctx, notification_logo);
-//    graphics_context_set_stroke_color(ctx, GColorRed);
-//    graphics_context_set_stroke_width(ctx, 2);
-//    graphics_draw_circle(ctx, GPoint(144/2, notification_logo.y + 6), 12);
-//    graphics_draw_line(ctx, GPoint(144/2-9, notification_logo.y + 2), GPoint(144/2+9, notification_logo.y + 12 - 2));
+    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
+    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+    graphics_context_set_stroke_width(ctx, 4);
+    GRect notification_rect = GRect(-10, 168-50-7, 144+20, 50);
+    graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
+    graphics_draw_round_rect(ctx, notification_rect, 8);
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    graphics_draw_text(ctx, "Bluetooth Disconnected", font_system_18px_bold,
+                       GRect(0, notification_rect.origin.y + 3, 105, 40),
+                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+                       NULL);
+    GPoint notification_logo = GPoint(120, notification_rect.origin.y + notification_rect.size.h - 32);
+    draw_bluetooth_logo(ctx, notification_logo);
+    graphics_context_set_stroke_color(ctx, GColorRed);
+    graphics_context_set_stroke_width(ctx, 2);
+    graphics_draw_circle(ctx, GPoint(120+3, notification_logo.y + 6), 12);
+    graphics_draw_line(ctx, GPoint(120-6, notification_logo.y + 2), GPoint(120+12, notification_logo.y + 12 - 2));
 }
 
 static void handle_battery(BatteryChargeState new_state) {
