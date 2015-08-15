@@ -30,7 +30,8 @@ sleep 0.1
 shutter -e -n --window QEMU -o $file
 
 # check image dimensions (sanity check)
-if ! identify test.png | grep 150x197 > /dev/null; then
+if ! identify $file | grep 150x197 > /dev/null; then
+  identify $file
   echo "ERROR: unexpected image size"
   exit 1
 fi
