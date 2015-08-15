@@ -1,13 +1,29 @@
-# Obsidian - a functional and elegant watchface for the Pebble Time
+# Obsidian
 
-This is a functional and elegant watchface for the Pebble Time.  It's main features are:
+![Screenshot](screenshots/main.png)
+
+This is a usable and elegant watchface for the Pebble Time.  It's main features are:
 
 - High contrast colors, clearly visible in most light conditions.
 - Display of the current date (day and month) as well as day of the week.
-- The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slighly to the side.
+- The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
 - Display of the battery level.
 - Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
-- Vibrates when the bluetooth connection is lost or regained, and shows an icon if no connection is available.
+- Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
+
+## Screenshots
+
+The main goal when building this watchface was for it to be practical.  For instance, the date display should never be obstructed by the watch hands:
+
+![Screenshot](screenshots/date.png)
+
+The watchface also alerts the user when the bluetooth connection is lost or regained, by vibrating and showing an information overlay.  After a few seconds, the overlay goes away, and a small bluetooth icon stays if no connection is available:
+
+![Screenshot](screenshots/bluetooth.png)
+
+The watchface always shows a small battery indicator in the top right corner.  However, if the battery starts running low, the background changes to yellow, orange and finally red:
+
+![Screenshot](screenshots/batter.png)
 
 ## License
 
