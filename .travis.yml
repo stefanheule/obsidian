@@ -1,0 +1,14 @@
+language: pebblec
+sudo: false
+before_script: bash ./before_install.sh
+script: make
+cache:
+  directories:
+    - $HOME/pebble-dev
+    - $HOME/.cache/pip
+addons:
+  apt:
+    packages:
+    - python2.7-dev
+    - python-pip
+    - python-virtualenv
