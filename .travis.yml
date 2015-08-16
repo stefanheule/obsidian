@@ -12,3 +12,6 @@ addons:
     - python2.7-dev
     - python-pip
     - python-virtualenv
+env:
+- PEBBLE_SDK=PebbleSDK-3.2.1
+- PEBBLE_PROJECT_PATH=stefanheule/obsidian
