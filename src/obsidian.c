@@ -448,9 +448,10 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     }
 #endif
 
-    // for testing only
-    t->tm_hour = 9;
-    t->tm_min = 29;
+#ifdef DEBUG_DATE_POSITION
+    t->tm_hour = 6;
+    t->tm_min = debug_iter % 60;
+#endif
 
     // compute angles
     int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
@@ -487,6 +488,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     GPoint d_center;
     GRect date_pos;
     GRect day_pos;
+    const int border = 2;
     // loop through all points and use the first one that doesn't overlap with the watch hands
     for (i = 0; i < 1 + (ARRAY_LENGTH(d_points) - 1) * 2; i++) {
         d_center = d_points[(i + 1) / 2];
@@ -500,12 +502,12 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
         if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(72 + d_center.x - day_size.w / 2, d_y_start + d_center.y),
-                                   GPoint(72 + d_center.x + day_size.w / 2, d_y_start + d_center.y + d_height)) ||
+                                   GPoint(72 + d_center.x - day_size.w / 2 - border, d_y_start + d_center.y - border),
+                                   GPoint(72 + d_center.x + day_size.w / 2 + border, d_y_start + d_center.y + d_height + border)) ||
               line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(72 + d_center.x - date_size.w / 2, d_y_start + d_center.y + d_offset),
-                                   GPoint(72 + d_center.x + date_size.w / 2,
-                                          d_y_start + d_center.y + d_height + d_offset)))) {
+                                   GPoint(72 + d_center.x - date_size.w / 2 - border, d_y_start + d_center.y + d_offset - border),
+                                   GPoint(72 + d_center.x + date_size.w / 2 + border,
+                                          d_y_start + d_center.y + d_height + d_offset + border)))) {
             found = true;
             break;
         }
