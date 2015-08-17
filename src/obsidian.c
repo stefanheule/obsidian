@@ -122,6 +122,30 @@ AppTimer *timer_bluetooth_popup;
 //// Implementation
 ////////////////////////////////////////////
 
+#define LOG(fmt, args...) \
+  do { \
+    char buffer[80]; \
+    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+    graphics_context_set_fill_color(ctx, GColorWhite); \
+    graphics_fill_rect(ctx, GRect(0, 0, 144, 60), 0, GCornerNone); \
+    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 0, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+  } while (0)
+#define LOG2(fmt, args...) \
+  do { \
+    char buffer[80]; \
+    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+  } while (0)
+#define LOG3(fmt, args...) \
+  do { \
+    char buffer[80]; \
+    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21+21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+  } while (0)
+
 /**
  * Returns a point on the line from the center away at an angle specified by tick/maxtick, at a specified distance
  */
@@ -425,8 +449,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // for testing only
-//    t->tm_min = 2;
-//    t->tm_hour = 1;
+    t->tm_hour = 9;
+    t->tm_min = 29;
 
     // compute angles
     int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
