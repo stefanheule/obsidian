@@ -504,6 +504,11 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                        NULL);
 #endif
 
+    // bluetooth status
+    if (!bluetooth) {
+        draw_bluetooth_logo(ctx, GPoint(144 / 2 - 3, 40));
+    }
+
     // second hand
 //    GPoint second_hand = get_radial_point_basic(radius, t->tm_sec, 60);
 //    graphics_context_set_stroke_width(ctx, 4);
@@ -540,11 +545,6 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_fill_circle(ctx, center, 5);
     graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
     graphics_fill_circle(ctx, center, 2);
-
-    // bluetooth status
-    if (!bluetooth) {
-        draw_bluetooth_logo(ctx, GPoint(144 / 2 - 3, 40));
-    }
 
     // battery status
 #ifndef DEBUG_NO_BATTERY_ICON
