@@ -325,6 +325,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     t->tm_mday = 8;
     t->tm_mon = 4;
     t->tm_year = 2015;
+    t->tm_wday = 6;
 #endif
 #ifdef SCREENSHOT_DATE_1
     t->tm_min = 26;
