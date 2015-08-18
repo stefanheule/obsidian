@@ -189,14 +189,6 @@ static bool intersect(const GPoint a0, const GPoint a1, const GPoint b0, const G
 }
 
 /**
- * Returns a point on the line from the center away at an angle specified by tick/maxtick, at a specified distance
- */
-static GPoint get_radial_point_basic(const int16_t distance_from_center, const int32_t tick,
-                                     const int32_t maxtick) {
-    return get_radial_point(distance_from_center, TRIG_MAX_ANGLE * tick / maxtick);
-}
-
-/**
  * Draws a bluetooth logo at a given position (top-left).
  */
 static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
