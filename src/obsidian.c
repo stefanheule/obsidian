@@ -450,8 +450,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
 #ifdef DEBUG_DATE_POSITION
-    t->tm_hour = 6;
-    t->tm_min = debug_iter % 60;
+    t->tm_hour = 12;
+    t->tm_min = (debug_iter + 55) % 60;
 #endif
 
     // compute angles
@@ -533,7 +533,36 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
     // bluetooth status
     if (!bluetooth) {
-        draw_bluetooth_logo(ctx, GPoint(144 / 2 - 3, 40));
+        // determine where we can draw the bluetooth logo without overlap
+        const GPoint b_points[] = {
+                // array of candidate points to draw the bluetooth logo at
+                GPoint(0, 0),
+                GPoint(4, 1),
+                GPoint(8, 2),
+                GPoint(12, 4),
+                GPoint(16, 6),
+                GPoint(20, 9),
+                GPoint(24, 12),
+        };
+        GPoint b_center;
+        const int b_border = 3;
+        const int b_x = 144 / 2;
+        const int b_y = 38;
+        // loop through all points and use the first one that doesn't overlap with the watch hands
+        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
+            b_center = b_points[(i + 1) / 2];
+            if (i % 2 == 0) {
+                b_center.x = -b_center.x;
+            }
+            if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
+                                       GPoint(b_x + b_center.x - 5 - b_border, b_y + b_center.y - b_border),
+                                       GPoint(b_x + b_center.x + 5 + b_border, b_y + b_center.y + 17 + b_border))) {
+                found = true;
+                break;
+            }
+        }
+
+        draw_bluetooth_logo(ctx, GPoint(b_x + b_center.x - 3, b_y + 2 + b_center.y));
     }
 
     // second hand
