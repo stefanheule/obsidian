@@ -26,6 +26,8 @@
 //#define OBSIDIAN_ONLY_RELEVANT_NUMBER
 //#define OBSIDIAN_BATTERY_USE_TEXT
 
+#define OBSIDIAN_BLUETOOTH_POPUP_MS 5000
+
 
 ////////////////////////////////////////////
 //// Global variables
@@ -657,9 +659,9 @@ static void handle_bluetooth(bool connected) {
     // show popup
     show_bluetooth_popup = true;
     if (timer_bluetooth_popup) {
-        app_timer_reschedule(timer_bluetooth_popup, 4000);
+        app_timer_reschedule(timer_bluetooth_popup, OBSIDIAN_BLUETOOTH_POPUP_MS);
     } else {
-        timer_bluetooth_popup = app_timer_register(4000, timer_callback_bluetooth_popup, NULL);
+        timer_bluetooth_popup = app_timer_register(OBSIDIAN_BLUETOOTH_POPUP_MS, timer_callback_bluetooth_popup, NULL);
     }
 }
 
