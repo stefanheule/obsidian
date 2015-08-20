@@ -517,10 +517,10 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    graphics_context_set_text_color(ctx, COLOR_ACCENT);
     graphics_draw_text(ctx, buffer_2, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
-    graphics_context_set_text_color(ctx, COLOR_ACCENT);
+    graphics_context_set_text_color(ctx, COLOR_NORMAL);
     graphics_draw_text(ctx, buffer_1, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
 #endif
