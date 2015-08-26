@@ -1,10 +1,8 @@
-# Obsidian
-
-[![Build status](https://travis-ci.org/stefanheule/obsidian.svg?branch=master)](https://travis-ci.org/stefanheule/obsidian)
+# Obsidian [![Build status](https://travis-ci.org/stefanheule/obsidian.svg?branch=master)](https://travis-ci.org/stefanheule/obsidian)
 
 ![Screenshot](screenshots/main.png)
 
-This is a usable and elegant watchface for the Pebble Time.  It's main features are:
+This is a usable and elegant analog watchface for the Pebble Time.  It's main features are:
 
 - High contrast colors, clearly visible in most light conditions.
 - Display of the current date (day and month) as well as day of the week.
