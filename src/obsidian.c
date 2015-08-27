@@ -332,11 +332,11 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
     // background
     GColor8 outer_color = COLOR_BACKGROUND_OUTER;
-    if (battery_state.charge_percent <= 10) {
+    if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
         outer_color = COLOR_BATTERY_WARNING_BACKGROUND_3;
-    } else if (battery_state.charge_percent <= 20) {
+    } else if (battery_state.charge_percent <= 20 && !battery_state.is_charging && !battery_state.is_plugged) {
         outer_color = COLOR_BATTERY_WARNING_BACKGROUND_2;
-    } else if (battery_state.charge_percent <= 30) {
+    } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
         outer_color = COLOR_BATTERY_WARNING_BACKGROUND_1;
     }
 
