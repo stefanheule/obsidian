@@ -42,8 +42,8 @@ convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verd
 mv tmp.png screenshots/bluetooth.png
 
 textx1=$((12+x1))
-textx2=$((1+x2))
-textx3=$((-11+x3))
+textx2=$((10+x2))
+textx3=$((4+x3))
 
 # date
 convert data/white.png -background white -resize ${width}x${height}! tmp.png
@@ -51,6 +51,6 @@ composite -compose atop -geometry +$x1+$border screenshots/main.png tmp.png tmp.
 composite -compose atop -geometry +$x2+$border screenshots/date-1.png tmp.png tmp.png
 composite -compose atop -geometry +$x3+$border screenshots/date-2.png tmp.png tmp.png
 convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verdana.ttf -annotate +$textx1+$texty 'Normal position' tmp.png
-convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verdana.ttf -annotate +$textx2+$texty 'Date moved to left' tmp.png
-convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verdana.ttf -annotate +$textx3+$texty 'Date moved to right' tmp.png
+convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verdana.ttf -annotate +$textx2+$texty 'Date moved left' tmp.png
+convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verdana.ttf -annotate +$textx3+$texty 'Date moved right' tmp.png
 mv tmp.png screenshots/date.png
