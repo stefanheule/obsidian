@@ -1,6 +1,4 @@
-# Obsidian
-
-[![Build status](https://travis-ci.org/stefanheule/obsidian.svg?branch=master)](https://travis-ci.org/stefanheule/obsidian)
+# Obsidian [![Build status](https://travis-ci.org/stefanheule/obsidian.svg?branch=master)](https://travis-ci.org/stefanheule/obsidian)
 
 ![Screenshot](screenshots/main.png)
 
@@ -29,7 +27,7 @@ The watchface always shows a small battery indicator in the top right corner.  H
 
 ## Building from Source
 
-The project can be build using the command `make build`.  The `Makefile` also includes various other targets, such as ones to install the watchface in an emulator or on the Pebble watch.  There are also targets to automatically take the screenshots that are part of this distribution, but that is likely to not work in environments other than mine.  The official `pebble screenshot` tool is currently broken, which is why an alternative way to obtain a screenshot is used.
+The project can be build using the command `make build`.  The `Makefile` also includes various other targets, such as ones to install the watchface in an emulator or on the Pebble watch.  There are also targets to automatically take the screenshots that are part of this distribution, but that is likely to not work in environments other than mine.  The official `pebble screenshot` tool does not work reliably for me, which is why an alternative way to obtain a screenshot is used.
 
 ## Contributing
 
