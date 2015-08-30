@@ -963,6 +963,9 @@ static void init() {
     config_color_inner_minute_hand = GColorLightGrayARGB8;
     config_color_inner_hour_hand = config_color_inner_minute_hand;
 #endif
+#ifdef DEBUG_NO_BATTERY_ICON
+    config_battery_logo = 3;
+#endif
 
     window = window_create();
     window_set_window_handlers(window, (WindowHandlers) {
