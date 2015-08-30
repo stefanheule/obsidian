@@ -988,19 +988,19 @@ static void init() {
     config_color_hour_hand = accent_col;
 #endif
 #ifdef SCREENSHOT_ALT_THEME_3
-    uint8_t col1 = GColorChromeYellowARGB8;
-    uint8_t col2 = GColorVividCeruleanARGB8;
-    config_color_outer_background = col2;
-    config_color_inner_background = col2;
-    config_color_minute_hand = col1;
-    config_color_hour_hand = col1;
-    config_color_circle = col2;
-    config_color_ticks = col2;
-    config_color_day_of_week = col2;
-    config_color_date = col2;
+    config_hour_ticks = 3;
+    config_minute_ticks = 3;
+    config_color_outer_background = GColorPurpleARGB8;
+    config_color_inner_background = GColorPurpleARGB8;
+    config_color_minute_hand = GColorBlackARGB8;
+    config_color_hour_hand = GColorBlackARGB8;
+    config_color_circle = GColorBlackARGB8;
+    config_color_ticks = GColorBlackARGB8;
+    config_color_day_of_week = GColorPurpleARGB8;
+    config_color_date = GColorPurpleARGB8;
     config_battery_logo = 3;
-    config_color_inner_minute_hand = col1;
-    config_color_inner_hour_hand = config_color_inner_minute_hand;
+    config_color_inner_minute_hand = GColorBlackARGB8;
+    config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
 #ifdef SCREENSHOT_ALT_THEME_4
     config_color_outer_background = GColorBlackARGB8;
@@ -1014,6 +1014,38 @@ static void init() {
     config_battery_logo = 3;
     config_color_inner_minute_hand = GColorLightGrayARGB8;
     config_color_inner_hour_hand = config_color_inner_minute_hand;
+#endif
+#ifdef SCREENSHOT_ALT_THEME_5
+    uint8_t col1 = GColorChromeYellowARGB8;
+    uint8_t col2 = GColorVividCeruleanARGB8;
+    config_hour_ticks = 3;
+    config_minute_ticks = 3;
+    config_color_outer_background = col2;
+    config_color_inner_background = col2;
+    config_color_minute_hand = col1;
+    config_color_hour_hand = col1;
+    config_color_circle = col2;
+    config_color_ticks = col1;
+    config_color_day_of_week = col2;
+    config_color_date = col2;
+    config_battery_logo = 3;
+    config_color_inner_minute_hand = col1;
+    config_color_inner_hour_hand = config_color_inner_minute_hand;
+#endif
+#ifdef SCREENSHOT_ALT_THEME_6
+    config_hour_ticks = 1;
+    config_minute_ticks = 1;
+    config_color_outer_background = GColorWhiteARGB8;
+    config_color_inner_background = GColorWhiteARGB8;
+    config_color_minute_hand = GColorRedARGB8;
+    config_color_hour_hand = GColorBlackARGB8;
+    config_color_circle = GColorBlackARGB8;
+    config_color_ticks = GColorBlackARGB8;
+    config_color_day_of_week = GColorWhiteARGB8;
+    config_color_date = GColorWhiteARGB8;
+    config_battery_logo = 3;
+    config_color_inner_minute_hand = GColorRedARGB8;
+    config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
 #ifdef DEBUG_NO_BATTERY_ICON
     config_battery_logo = 3;
