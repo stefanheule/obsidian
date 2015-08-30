@@ -186,7 +186,7 @@ static uint8_t sync_buffer[NUM_CONFIG + 1];
 #define DEBUG_NICE_DATE
 #endif
 
-#define SCREENSHOT_ALT_THEME_3
+#define SCREENSHOT_ALT_THEME_7
 #ifdef SCREENSHOT_ALT_THEME_3
 #define DEBUG_NICE_TIME
 #define DEBUG_NICE_DATE
@@ -198,6 +198,21 @@ static uint8_t sync_buffer[NUM_CONFIG + 1];
 #endif
 
 #ifdef SCREENSHOT_ALT_THEME_5
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_6
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_7
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_8
 #define DEBUG_NICE_TIME
 #define DEBUG_NICE_DATE
 #endif
@@ -1045,6 +1060,36 @@ static void init() {
     config_color_date = GColorWhiteARGB8;
     config_battery_logo = 3;
     config_color_inner_minute_hand = GColorRedARGB8;
+    config_color_inner_hour_hand = GColorBlackARGB8;
+#endif
+#ifdef SCREENSHOT_ALT_THEME_7
+    config_hour_ticks = 1;
+    config_minute_ticks = 2;
+    config_color_outer_background = GColorWhiteARGB8;
+    config_color_inner_background = GColorWhiteARGB8;
+    config_color_minute_hand = GColorBlackARGB8;
+    config_color_hour_hand = GColorBlackARGB8;
+    config_color_circle = GColorBlackARGB8;
+    config_color_ticks = GColorBlackARGB8;
+    config_color_day_of_week = GColorWhiteARGB8;
+    config_color_date = GColorBlackARGB8;
+    config_battery_logo = 3;
+    config_color_inner_minute_hand = GColorBlackARGB8;
+    config_color_inner_hour_hand = GColorBlackARGB8;
+#endif
+#ifdef SCREENSHOT_ALT_THEME_8
+    config_hour_ticks = 1;
+    config_minute_ticks = 2;
+    config_color_outer_background = GColorWhiteARGB8;
+    config_color_inner_background = GColorIcterineARGB8;
+    config_color_minute_hand = GColorBlueARGB8;
+    config_color_hour_hand = GColorBlackARGB8;
+    config_color_circle = GColorBlackARGB8;
+    config_color_ticks = GColorBlackARGB8;
+    config_color_day_of_week = GColorIcterineARGB8;
+    config_color_date = GColorBlueARGB8;
+    config_battery_logo = 3;
+    config_color_inner_minute_hand = GColorBlueARGB8;
     config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
 #ifdef DEBUG_NO_BATTERY_ICON
