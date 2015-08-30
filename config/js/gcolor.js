@@ -102,6 +102,7 @@ var GColor = (function () {
   // Convert a hex color (e.g. FFFFFF) into a GColor8 value used by the
   // Pebble SDK.
   function GColorFromHex(hex) {
+    console.log(hex);
     var hexNum = parseInt(hex, 16);
     var a = 192;
     var r = (((hexNum >> 16) & 0xFF) >> 6) << 4;

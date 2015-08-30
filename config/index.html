@@ -194,14 +194,12 @@
     });
   }
   function readConfigFromDom() {
-
     var options = {};
-
     getAllConfigHtmlNodes().each(function () {
       var el = $(this);
       var val;
       if (el.hasClass('item-color')) {
-        val = parseInt(el.val().substr(2), 16);
+        val = GColor.fromHex(el.val().substr(2));
       } else if (el.hasClass('item-toggle')) {
         val = el.is(':checked');
       } else if (el.hasClass('item-select')) {
@@ -212,6 +210,9 @@
         return;
       }
       options[this.id] = val;
+
+      // store settings
+      localStorage.setItem(this.id, val);
     });
 
     console.log('[ info ] configuration read from DOM:');
@@ -257,7 +258,20 @@
       CONFIG_COLOR_BLUETOOTH_LOGO: GColor.JaegerGreen,
     };
 
-    return defaults;
+    // use defaults
+    if (localStorage.getItem("CONFIG_COLOR_OUTER_BACKGROUND") === null) {
+      console.log("[ info ] loading default values");
+      return defaults;
+    }
+
+    console.log("[ info ] found previous values");
+
+    var options = {};
+    for (k in defaults) {
+      options[k] = localStorage.getItem(k);
+    }
+
+    return options;
   }
 
   var config = readValuesFromStorage();
@@ -267,8 +281,8 @@
     if (el.hasClass('item-color')) {
       el.val('#' + GColor.toHex(val));
     } else if (el.hasClass('item-toggle')) {
-      if (val)
-        el.attr('checked', val);
+      val = val == "true" ? true : false;
+      if (val) el.attr('checked', true);
     } else if (el.hasClass('item-select')) {
       el.val(val);
     } else {
@@ -279,11 +293,6 @@
  
   // get default values from the url
   $(document).ready(function() {
-    // var color = getParameterByName("color") || "green";
-    // if (color) {
-    //   $('#color_' + color).prop("checked", true);
-    // }
-
     // submit button event listener
     var submitButton = document.getElementById('submit_button');
     submitButton.addEventListener('click', function() {
