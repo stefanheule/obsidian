@@ -186,7 +186,6 @@ static uint8_t sync_buffer[NUM_CONFIG + 1];
 #define DEBUG_NICE_DATE
 #endif
 
-#define SCREENSHOT_ALT_THEME_7
 #ifdef SCREENSHOT_ALT_THEME_3
 #define DEBUG_NICE_TIME
 #define DEBUG_NICE_DATE
