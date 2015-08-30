@@ -22,10 +22,10 @@ install_deploy: build
 	pebble install --phone 10.0.0.5
 
 menu_icon:
-	$(MAKE) config OBSIDIAN_CONFIG="SCREENSHOT_MENU_ICON"
+	$(MAKE) write_header OBSIDIAN_CONFIG="SCREENSHOT_MENU_ICON"
 	$(MAKE) build
 	$(MAKE) install_emulator
-	$(MAKE) clean_config
+	$(MAKE) clean_header
 
 screenshots:
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_MAIN" OBSIDIAN_FILE="main"
@@ -40,19 +40,19 @@ screenshots:
 	scripts/assemble_screenshots.sh
 
 screenshot:
-	$(MAKE) config
+	$(MAKE) write_header
 	$(MAKE) build
 	$(MAKE) install_emulator
 	scripts/take_screenshot.sh screenshots/$(OBSIDIAN_FILE).png
-	$(MAKE) clean_config
+	$(MAKE) clean_header
 
-config:
+write_header:
 	echo "#define $(OBSIDIAN_CONFIG)" > src/config.h
 
-clean: clean_config
+clean: clean_header
 	pebble clean
 
-clean_config:
+clean_header:
 	echo "" > src/config.h
 
-.PHONY: all deploy build config install_emulator install_deploy menu_icon screenshots screenshot config clean clean_config
+.PHONY: all deploy build config install_emulator install_deploy menu_icon screenshots screenshot write_header clean clean_header
