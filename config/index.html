@@ -4,6 +4,7 @@
   <title>Obsidian Configuration</title>
   <link rel='stylesheet' type='text/css' href='css/slate.min.css'>
   <script src='js/slate.js'></script>
+  <script src='js/gcolor.js'></script>
   <style>
   .title {
     padding-top: 20px;
@@ -21,70 +22,70 @@
       <div class='item-container-content'>
         <label class='item'>
           Outer Background Color
-          <input id='CONFIG_COLOR_OUTER_BACKGROUND' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_OUTER_BACKGROUND' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Inner Background Color
-          <input id='CONFIG_COLOR_INNER_BACKGROUND' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_INNER_BACKGROUND' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Minute Hand Color
-          <input id='CONFIG_COLOR_MINUTE_HAND' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_MINUTE_HAND' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Minute Hand Inner Color
-          <input id='CONFIG_COLOR_INNER_MINUTE_HAND' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_INNER_MINUTE_HAND' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Hour Hand Color
-          <input id='CONFIG_COLOR_HOUR_HAND' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_HOUR_HAND' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Hour Hand Inner Color
-          <input id='CONFIG_COLOR_INNER_HOUR_HAND' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_INNER_HOUR_HAND' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Circle Color
-          <input id='CONFIG_COLOR_CIRCLE' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_CIRCLE' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Tick Color
-          <input id='CONFIG_COLOR_TICKS' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_TICKS' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Day of the Week Color
-          <input id='CONFIG_COLOR_DAY_OF_WEEK' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_DAY_OF_WEEK' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Date Color
-          <input id='CONFIG_COLOR_DATE' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_DATE' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
@@ -97,9 +98,9 @@
         <label class="item">
           Battery Icon
           <select id='CONFIG_BATTERY_LOGO' dir='rtl' class="item-select">
-            <option class="item-select-option">Always</option>
-            <option class="item-select-option">When low (30% or below)</option>
-            <option class="item-select-option">Never</option>
+            <option class="item-select-option" value="1">Always</option>
+            <option class="item-select-option" value="2">When low (30% or below)</option>
+            <option class="item-select-option" value="3">Never</option>
           </select>
         </label>
       </div>
@@ -107,28 +108,28 @@
       <div class='item-container-content'>
         <label class='item'>
           Battery Icon Color
-          <input id='CONFIG_COLOR_BATTERY_LOGO' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_BATTERY_LOGO' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
            Low Battery (30%) Color
-          <input id='CONFIG_COLOR_BATTERY_30' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_BATTERY_30' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Low Battery (20%) Color
-          <input id='CONFIG_COLOR_BATTERY_20' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_BATTERY_20' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
           Low Battery (10%) Color
-          <input id='CONFIG_COLOR_BATTERY_10' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_BATTERY_10' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
@@ -175,7 +176,7 @@
       <div class='item-container-content'>
         <label class='item'>
           Bluetooth Icon Color
-          <input id='CONFIG_COLOR_BLUETOOTH_LOGO' type='text' class='item-color item-color-normal' value='#000000'>
+          <input id='CONFIG_COLOR_BLUETOOTH_LOGO' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
@@ -187,12 +188,34 @@
       </div>
     </div>
   <script>
-  function getConfigData() {
-    var options = {
-      'CONFIG_TEST': 5,
-    };
+  function getAllConfigHtmlNodes() {
+    return $('[id]').filter(function () {
+      return /^CONFIG_.*$/.test(this.id);
+    });
+  }
+  function readConfigFromDom() {
 
-    console.log('Read options from DOM: ' + JSON.stringify(options));
+    var options = {};
+
+    getAllConfigHtmlNodes().each(function () {
+      var el = $(this);
+      var val;
+      if (el.hasClass('item-color')) {
+        val = parseInt(el.val().substr(2), 16);
+      } else if (el.hasClass('item-toggle')) {
+        val = el.is(':checked');
+      } else if (el.hasClass('item-select')) {
+        val = +el.val();
+      } else {
+        console.log("[ error ] Unexpected element:");
+        console.log(this);
+        return;
+      }
+      options[this.id] = val;
+    });
+
+    console.log('[ info ] configuration read from DOM:');
+    console.log(options);
     return options;
   }
 
@@ -207,6 +230,52 @@
     }
     return defaultValue || false;
   }
+
+  function readValuesFromStorage() {
+    // default options
+    var defaults = {
+      CONFIG_COLOR_OUTER_BACKGROUND: GColor.DarkGray,
+      CONFIG_COLOR_INNER_BACKGROUND: GColor.White,
+      CONFIG_COLOR_MINUTE_HAND: GColor.Black,
+      CONFIG_COLOR_INNER_MINUTE_HAND: GColor.LightGray,
+      CONFIG_COLOR_HOUR_HAND: GColor.JaegerGreen,
+      CONFIG_COLOR_INNER_HOUR_HAND: GColor.LightGray,
+      CONFIG_COLOR_CIRCLE: GColor.Black,
+      CONFIG_COLOR_TICKS: GColor.Black,
+      CONFIG_COLOR_DAY_OF_WEEK: GColor.JaegerGreen,
+      CONFIG_COLOR_DATE: GColor.Black,
+      CONFIG_BATTERY_LOGO: 1,
+      CONFIG_COLOR_BATTERY_LOGO: GColor.Black,
+      CONFIG_COLOR_BATTERY_30: GColor.Yellow,
+      CONFIG_COLOR_BATTERY_20: GColor.Orange,
+      CONFIG_COLOR_BATTERY_10: GColor.Red,
+      CONFIG_BLUETOOTH_LOGO: true,
+      CONFIG_VIBRATE_DISCONNECT: true,
+      CONFIG_VIBRATE_RECONNECT: true,
+      CONFIG_MESSAGE_DISCONNECT: true,
+      CONFIG_MESSAGE_RECONNECT: true,
+      CONFIG_COLOR_BLUETOOTH_LOGO: GColor.JaegerGreen,
+    };
+
+    return defaults;
+  }
+
+  var config = readValuesFromStorage();
+  getAllConfigHtmlNodes().each(function () {
+    var el = $(this);
+    var val = config[this.id];
+    if (el.hasClass('item-color')) {
+      el.val('#' + GColor.toHex(val));
+    } else if (el.hasClass('item-toggle')) {
+      if (val)
+        el.attr('checked', val);
+    } else if (el.hasClass('item-select')) {
+      el.val(val);
+    } else {
+      console.log("[ error ] Unexpected element:");
+      console.log(this);
+    }
+  });
  
   // get default values from the url
   $(document).ready(function() {
@@ -218,12 +287,12 @@
     // submit button event listener
     var submitButton = document.getElementById('submit_button');
     submitButton.addEventListener('click', function() {
-      console.log('Submit');
+      console.log('[ info ] user clicked submit');
 
       // Set the return URL depending on the runtime environment
       var return_to = getQueryParam('return_to', 'pebblejs://close#');
-      console.log(return_to + encodeURIComponent(JSON.stringify(getConfigData())));
-      //document.location = return_to + encodeURIComponent(JSON.stringify(getConfigData()));
+      var url = return_to + encodeURIComponent(JSON.stringify(readConfigFromDom()));
+      //document.location = url;
     });
   });
   </script>
