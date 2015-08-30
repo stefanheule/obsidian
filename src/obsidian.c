@@ -724,18 +724,33 @@ static void handle_bluetooth(bool connected) {
     // redraw background (to turn on/off the logo)
     layer_mark_dirty(layer_background);
 
+    bool show_popup = false;
+    bool vibrate = false;
+    if ((config_message_reconnect && connected) || (config_message_disconnect && !connected)) {
+        show_popup = true;
+    }
+    if ((config_vibrate_reconnect && connected) || (config_vibrate_disconnect && !connected)) {
+        vibrate = true;
+    }
+
     // vibrate
-    vibes_double_pulse();
+    if (vibrate) {
+        vibes_double_pulse();
+    }
 
     // turn light on
-    light_enable_interaction();
+    if (show_popup) {
+        light_enable_interaction();
+    }
 
     // show popup
-    show_bluetooth_popup = true;
-    if (timer_bluetooth_popup) {
-        app_timer_reschedule(timer_bluetooth_popup, OBSIDIAN_BLUETOOTH_POPUP_MS);
-    } else {
-        timer_bluetooth_popup = app_timer_register(OBSIDIAN_BLUETOOTH_POPUP_MS, timer_callback_bluetooth_popup, NULL);
+    if (show_popup) {
+        show_bluetooth_popup = true;
+        if (timer_bluetooth_popup) {
+            app_timer_reschedule(timer_bluetooth_popup, OBSIDIAN_BLUETOOTH_POPUP_MS);
+        } else {
+            timer_bluetooth_popup = app_timer_register(OBSIDIAN_BLUETOOTH_POPUP_MS, timer_callback_bluetooth_popup, NULL);
+        }
     }
 }
 
@@ -774,7 +789,7 @@ static void window_unload(Window *window) {
 /**
  * Helper to process new configuration.
  */
-static bool sync_helper(const uint32_t key, const Tuple *new_tuple, uint8_t* value) {
+static bool sync_helper(const uint32_t key, const Tuple *new_tuple, uint8_t *value) {
     if ((*value) != new_tuple->value->uint8) {
         (*value) = new_tuple->value->uint8;
         persist_write_int(key, *value);
@@ -791,49 +806,71 @@ static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, con
     bool dirty = false;
     switch (key) {
         case CONFIG_COLOR_OUTER_BACKGROUND:
-            dirty = sync_helper(key, new_tuple, &config_color_outer_background); break;
+            dirty = sync_helper(key, new_tuple, &config_color_outer_background);
+            break;
         case CONFIG_COLOR_INNER_BACKGROUND:
-            dirty = sync_helper(key, new_tuple, &config_color_inner_background); break;
+            dirty = sync_helper(key, new_tuple, &config_color_inner_background);
+            break;
         case CONFIG_COLOR_MINUTE_HAND:
-            dirty = sync_helper(key, new_tuple, &config_color_minute_hand); break;
+            dirty = sync_helper(key, new_tuple, &config_color_minute_hand);
+            break;
         case CONFIG_COLOR_INNER_MINUTE_HAND:
-            dirty = sync_helper(key, new_tuple, &config_color_inner_minute_hand); break;
+            dirty = sync_helper(key, new_tuple, &config_color_inner_minute_hand);
+            break;
         case CONFIG_COLOR_HOUR_HAND:
-            dirty = sync_helper(key, new_tuple, &config_color_hour_hand); break;
+            dirty = sync_helper(key, new_tuple, &config_color_hour_hand);
+            break;
         case CONFIG_COLOR_INNER_HOUR_HAND:
-            dirty = sync_helper(key, new_tuple, &config_color_inner_hour_hand); break;
+            dirty = sync_helper(key, new_tuple, &config_color_inner_hour_hand);
+            break;
         case CONFIG_COLOR_CIRCLE:
-            dirty = sync_helper(key, new_tuple, &config_color_circle); break;
+            dirty = sync_helper(key, new_tuple, &config_color_circle);
+            break;
         case CONFIG_COLOR_TICKS:
-            dirty = sync_helper(key, new_tuple, &config_color_ticks); break;
+            dirty = sync_helper(key, new_tuple, &config_color_ticks);
+            break;
         case CONFIG_COLOR_DAY_OF_WEEK:
-            dirty = sync_helper(key, new_tuple, &config_color_day_of_week); break;
+            dirty = sync_helper(key, new_tuple, &config_color_day_of_week);
+            break;
         case CONFIG_COLOR_DATE:
-            dirty = sync_helper(key, new_tuple, &config_color_date); break;
+            dirty = sync_helper(key, new_tuple, &config_color_date);
+            break;
         case CONFIG_BATTERY_LOGO:
-            dirty = sync_helper(key, new_tuple, &config_battery_logo); break;
+            dirty = sync_helper(key, new_tuple, &config_battery_logo);
+            break;
         case CONFIG_COLOR_BATTERY_LOGO:
-            dirty = sync_helper(key, new_tuple, &config_color_battery_logo); break;
+            dirty = sync_helper(key, new_tuple, &config_color_battery_logo);
+            break;
         case CONFIG_COLOR_BATTERY_30:
-            dirty = sync_helper(key, new_tuple, &config_color_battery_30); break;
+            dirty = sync_helper(key, new_tuple, &config_color_battery_30);
+            break;
         case CONFIG_COLOR_BATTERY_20:
-            dirty = sync_helper(key, new_tuple, &config_color_battery_20); break;
+            dirty = sync_helper(key, new_tuple, &config_color_battery_20);
+            break;
         case CONFIG_COLOR_BATTERY_10:
-            dirty = sync_helper(key, new_tuple, &config_color_battery_10); break;
+            dirty = sync_helper(key, new_tuple, &config_color_battery_10);
+            break;
         case CONFIG_COLOR_BLUETOOTH_LOGO:
-            dirty = sync_helper(key, new_tuple, &config_color_bluetooth_logo); break;
+            dirty = sync_helper(key, new_tuple, &config_color_bluetooth_logo);
+            break;
         case CONFIG_COLOR_BLUETOOTH_LOGO_2:
-            dirty = sync_helper(key, new_tuple, &config_color_bluetooth_logo_2); break;
+            dirty = sync_helper(key, new_tuple, &config_color_bluetooth_logo_2);
+            break;
         case CONFIG_BLUETOOTH_LOGO:
-            dirty = sync_helper(key, new_tuple, &config_bluetooth_logo); break;
+            dirty = sync_helper(key, new_tuple, &config_bluetooth_logo);
+            break;
         case CONFIG_VIBRATE_DISCONNECT:
-            dirty = sync_helper(key, new_tuple, &config_vibrate_disconnect); break;
+            dirty = sync_helper(key, new_tuple, &config_vibrate_disconnect);
+            break;
         case CONFIG_VIBRATE_RECONNECT:
-            dirty = sync_helper(key, new_tuple, &config_vibrate_reconnect); break;
+            dirty = sync_helper(key, new_tuple, &config_vibrate_reconnect);
+            break;
         case CONFIG_MESSAGE_DISCONNECT:
-            dirty = sync_helper(key, new_tuple, &config_message_disconnect); break;
+            dirty = sync_helper(key, new_tuple, &config_message_disconnect);
+            break;
         case CONFIG_MESSAGE_RECONNECT:
-            dirty = sync_helper(key, new_tuple, &config_message_reconnect); break;
+            dirty = sync_helper(key, new_tuple, &config_message_reconnect);
+            break;
 
         default:
             // ignore unknown keys
@@ -860,28 +897,28 @@ static void config_init() {
             app_message_outbox_size_maximum());
 
     Tuplet initial_values[] = {
-        TupletInteger(CONFIG_COLOR_OUTER_BACKGROUND, config_color_outer_background),
-        TupletInteger(CONFIG_COLOR_INNER_BACKGROUND, config_color_inner_background),
-        TupletInteger(CONFIG_COLOR_MINUTE_HAND, config_color_minute_hand),
-        TupletInteger(CONFIG_COLOR_INNER_MINUTE_HAND, config_color_inner_minute_hand),
-        TupletInteger(CONFIG_COLOR_HOUR_HAND, config_color_hour_hand),
-        TupletInteger(CONFIG_COLOR_INNER_HOUR_HAND, config_color_inner_hour_hand),
-        TupletInteger(CONFIG_COLOR_CIRCLE, config_color_circle),
-        TupletInteger(CONFIG_COLOR_TICKS, config_color_ticks),
-        TupletInteger(CONFIG_COLOR_DAY_OF_WEEK, config_color_day_of_week),
-        TupletInteger(CONFIG_COLOR_DATE, config_color_date),
-        TupletInteger(CONFIG_BATTERY_LOGO, config_battery_logo),
-        TupletInteger(CONFIG_COLOR_BATTERY_LOGO, config_color_battery_logo),
-        TupletInteger(CONFIG_COLOR_BATTERY_30, config_color_battery_30),
-        TupletInteger(CONFIG_COLOR_BATTERY_20, config_color_battery_20),
-        TupletInteger(CONFIG_COLOR_BATTERY_10, config_color_battery_10),
-        TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO, config_color_bluetooth_logo),
-        TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO_2, config_color_bluetooth_logo_2),
-        TupletInteger(CONFIG_BLUETOOTH_LOGO, config_bluetooth_logo),
-        TupletInteger(CONFIG_VIBRATE_DISCONNECT, config_vibrate_disconnect),
-        TupletInteger(CONFIG_VIBRATE_RECONNECT, config_vibrate_reconnect),
-        TupletInteger(CONFIG_MESSAGE_DISCONNECT, config_message_disconnect),
-        TupletInteger(CONFIG_MESSAGE_RECONNECT, config_message_reconnect),
+            TupletInteger(CONFIG_COLOR_OUTER_BACKGROUND, config_color_outer_background),
+            TupletInteger(CONFIG_COLOR_INNER_BACKGROUND, config_color_inner_background),
+            TupletInteger(CONFIG_COLOR_MINUTE_HAND, config_color_minute_hand),
+            TupletInteger(CONFIG_COLOR_INNER_MINUTE_HAND, config_color_inner_minute_hand),
+            TupletInteger(CONFIG_COLOR_HOUR_HAND, config_color_hour_hand),
+            TupletInteger(CONFIG_COLOR_INNER_HOUR_HAND, config_color_inner_hour_hand),
+            TupletInteger(CONFIG_COLOR_CIRCLE, config_color_circle),
+            TupletInteger(CONFIG_COLOR_TICKS, config_color_ticks),
+            TupletInteger(CONFIG_COLOR_DAY_OF_WEEK, config_color_day_of_week),
+            TupletInteger(CONFIG_COLOR_DATE, config_color_date),
+            TupletInteger(CONFIG_BATTERY_LOGO, config_battery_logo),
+            TupletInteger(CONFIG_COLOR_BATTERY_LOGO, config_color_battery_logo),
+            TupletInteger(CONFIG_COLOR_BATTERY_30, config_color_battery_30),
+            TupletInteger(CONFIG_COLOR_BATTERY_20, config_color_battery_20),
+            TupletInteger(CONFIG_COLOR_BATTERY_10, config_color_battery_10),
+            TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO, config_color_bluetooth_logo),
+            TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO_2, config_color_bluetooth_logo_2),
+            TupletInteger(CONFIG_BLUETOOTH_LOGO, config_bluetooth_logo),
+            TupletInteger(CONFIG_VIBRATE_DISCONNECT, config_vibrate_disconnect),
+            TupletInteger(CONFIG_VIBRATE_RECONNECT, config_vibrate_reconnect),
+            TupletInteger(CONFIG_MESSAGE_DISCONNECT, config_message_disconnect),
+            TupletInteger(CONFIG_MESSAGE_RECONNECT, config_message_reconnect),
     };
 
     app_sync_init(
