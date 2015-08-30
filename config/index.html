@@ -184,7 +184,13 @@
 
     <div class='item-container'>
       <div class='button-container'>
-        <input id='submit_button' type='button' class='item-button' value='SUBMIT'>
+        <input id='submit_button' type='button' class='item-button' value='Save'>
+      </div>
+    </div>
+
+    <div class='item-container'>
+      <div class='button-container'>
+        <input id='reset_button' type='button' class='item-button' value='Restore defaults'>
       </div>
     </div>
   <script>
@@ -193,6 +199,13 @@
       return /^CONFIG_.*$/.test(this.id);
     });
   }
+
+  function writeToStorage(config) {
+    for (k in config) {
+      localStorage.setItem(k, config[k]);
+    }
+  }
+
   function readConfigFromDom() {
     var options = {};
     getAllConfigHtmlNodes().each(function () {
@@ -210,9 +223,6 @@
         return;
       }
       options[this.id] = val;
-
-      // store settings
-      localStorage.setItem(this.id, val);
     });
 
     console.log('[ info ] configuration read from DOM:');
@@ -232,7 +242,7 @@
     return defaultValue || false;
   }
 
-  function readValuesFromStorage() {
+  function readValuesFromStorage(use_defaults) {
     // default options
     var defaults = {
       CONFIG_COLOR_OUTER_BACKGROUND: GColor.DarkGray,
@@ -259,7 +269,7 @@
     };
 
     // use defaults
-    if (localStorage.getItem("CONFIG_COLOR_OUTER_BACKGROUND") === null) {
+    if (use_defaults || localStorage.getItem("CONFIG_COLOR_OUTER_BACKGROUND") === null) {
       console.log("[ info ] loading default values");
       return defaults;
     }
@@ -274,22 +284,25 @@
     return options;
   }
 
-  var config = readValuesFromStorage();
-  getAllConfigHtmlNodes().each(function () {
-    var el = $(this);
-    var val = config[this.id];
-    if (el.hasClass('item-color')) {
-      el.val('#' + GColor.toHex(val));
-    } else if (el.hasClass('item-toggle')) {
-      val = val == "true" ? true : false;
-      if (val) el.attr('checked', true);
-    } else if (el.hasClass('item-select')) {
-      el.val(val);
-    } else {
-      console.log("[ error ] Unexpected element:");
-      console.log(this);
-    }
-  });
+  function applyValues(config) {
+    getAllConfigHtmlNodes().each(function () {
+      var el = $(this);
+      var val = config[this.id];
+      if (el.hasClass('item-color')) {
+        el.val('#' + GColor.toHex(val));
+      } else if (el.hasClass('item-toggle')) {
+        val = val == "true" ? true : false;
+        if (val) el.attr('checked', true);
+      } else if (el.hasClass('item-select')) {
+        el.val(val);
+      } else {
+        console.log("[ error ] Unexpected element:");
+        console.log(this);
+      }
+    });
+  }
+
+  applyValues(readValuesFromStorage());
 
   // get default values from the url
   $(document).ready(function() {
@@ -300,8 +313,23 @@
 
       // Set the return URL depending on the runtime environment
       var return_to = getQueryParam('return_to', 'pebblejs://close#');
-      var url = return_to + encodeURIComponent(JSON.stringify(readConfigFromDom()));
+      var config = readConfigFromDom();
+      var url = return_to + encodeURIComponent(JSON.stringify(config));
+
+      // store settings
+      writeToStorage(config);
+
       //document.location = url;
+    });
+
+    // submit button event listener
+    var resetButton = document.getElementById('reset_button');
+    resetButton.addEventListener('click', function() {
+      console.log('[ info ] user clicked reset');
+
+      var config = readValuesFromStorage(true);
+      writeToStorage(config);
+      applyValues(config);
     });
   });
   </script>
