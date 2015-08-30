@@ -9,6 +9,7 @@ hspace=50
 border=0
 width=$((n*144+(n-1)*hspace+2*border))
 height=$((194+2*border))
+normalheight=$((168+2*border))
 x1=$((0*(144+hspace)+border))
 x2=$((1*(144+hspace)+border))
 x3=$((2*(144+hspace)+border))
@@ -54,3 +55,29 @@ convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verd
 convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verdana.ttf -annotate +$textx2+$texty 'Date moved left' tmp.png
 convert tmp.png -pointsize 15 -font /usr/share/fonts/truetype/msttcorefonts/verdana.ttf -annotate +$textx3+$texty 'Date moved right' tmp.png
 mv tmp.png screenshots/date.png
+
+# main
+convert data/white.png -background white -resize ${width}x${normalheight}! tmp.png
+composite -compose atop -geometry +$x1+$border screenshots/main.png tmp.png tmp.png
+composite -compose atop -geometry +$x2+$border screenshots/theme-1.png tmp.png tmp.png
+composite -compose atop -geometry +$x3+$border screenshots/theme-2.png tmp.png tmp.png
+mv tmp.png screenshots/overiew.png
+
+# themes
+convert data/white.png -background white -resize ${width}x${normalheight}! tmp.png
+composite -compose atop -geometry +$x1+$border screenshots/theme-3.png tmp.png tmp.png
+composite -compose atop -geometry +$x2+$border screenshots/theme-4.png tmp.png tmp.png
+composite -compose atop -geometry +$x3+$border screenshots/theme-5.png tmp.png tmp.png
+mv tmp.png screenshots/theme-overview-2.png
+
+# themes
+convert data/white.png -background white -resize ${width}x${normalheight}! tmp.png
+composite -compose atop -geometry +$x1+$border screenshots/theme-6.png tmp.png tmp.png
+composite -compose atop -geometry +$x2+$border screenshots/theme-7.png tmp.png tmp.png
+composite -compose atop -geometry +$x3+$border screenshots/theme-8.png tmp.png tmp.png
+mv tmp.png screenshots/theme-overview-1.png
+
+for f in screenshots/*.png; do
+  pngcrush -rem time $f tmp.png
+  mv tmp.png $f
+done
