@@ -61,7 +61,7 @@ convert data/white.png -background white -resize ${width}x${normalheight}! tmp.p
 composite -compose atop -geometry +$x1+$border screenshots/main.png tmp.png tmp.png
 composite -compose atop -geometry +$x2+$border screenshots/theme-1.png tmp.png tmp.png
 composite -compose atop -geometry +$x3+$border screenshots/theme-2.png tmp.png tmp.png
-mv tmp.png screenshots/overiew.png
+mv tmp.png screenshots/overview.png
 
 # themes
 convert data/white.png -background white -resize ${width}x${normalheight}! tmp.png
