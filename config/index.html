@@ -137,6 +137,13 @@
 
     <div class='item-container'>
       <div class='item-container-header'>Bluetooth</div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+          Bluetooth Icon Color
+          <input id='CONFIG_COLOR_BLUETOOTH_LOGO' type='text' class='item-color item-color-normal'>
+        </label>
+      </div>
       
       <div class='item-container-content'>
         <label class='item'>
@@ -173,13 +180,6 @@
         </label>
       </div>
       
-      <div class='item-container-content'>
-        <label class='item'>
-          Bluetooth Icon Color
-          <input id='CONFIG_COLOR_BLUETOOTH_LOGO' type='text' class='item-color item-color-normal'>
-        </label>
-      </div>
-
     </div>
 
     <div class='item-container'>
@@ -260,12 +260,12 @@
       CONFIG_COLOR_BATTERY_30: GColor.Yellow,
       CONFIG_COLOR_BATTERY_20: GColor.Orange,
       CONFIG_COLOR_BATTERY_10: GColor.Red,
+      CONFIG_COLOR_BLUETOOTH_LOGO: GColor.JaegerGreen,
       CONFIG_BLUETOOTH_LOGO: true,
       CONFIG_VIBRATE_DISCONNECT: true,
       CONFIG_VIBRATE_RECONNECT: true,
       CONFIG_MESSAGE_DISCONNECT: true,
       CONFIG_MESSAGE_RECONNECT: true,
-      CONFIG_COLOR_BLUETOOTH_LOGO: GColor.JaegerGreen,
     };
 
     // use defaults
@@ -302,6 +302,17 @@
     });
   }
 
+  function submit(config) {
+    // Set the return URL depending on the runtime environment
+    var return_to = getQueryParam('return_to', 'pebblejs://close#');
+    var url = return_to + encodeURIComponent(JSON.stringify(config));
+
+    // store settings
+    writeToStorage(config);
+
+    //document.location = url;
+  }
+
   applyValues(readValuesFromStorage());
 
   // get default values from the url
@@ -311,15 +322,8 @@
     submitButton.addEventListener('click', function() {
       console.log('[ info ] user clicked submit');
 
-      // Set the return URL depending on the runtime environment
-      var return_to = getQueryParam('return_to', 'pebblejs://close#');
       var config = readConfigFromDom();
-      var url = return_to + encodeURIComponent(JSON.stringify(config));
-
-      // store settings
-      writeToStorage(config);
-
-      //document.location = url;
+      submit(config);
     });
 
     // submit button event listener
@@ -328,8 +332,7 @@
       console.log('[ info ] user clicked reset');
 
       var config = readValuesFromStorage(true);
-      writeToStorage(config);
-      applyValues(config);
+      submit(config);
     });
   });
   </script>
