@@ -36,7 +36,7 @@
 //// Default values for the configuration
 ////////////////////////////////////////////
 
-static uint8_t config_color_outer_background = GColorBlackARGB8;
+static uint8_t config_color_outer_background = GColorDarkGrayARGB8;
 static uint8_t config_color_inner_background = GColorWhiteARGB8;
 static uint8_t config_color_minute_hand = GColorBlackARGB8;
 static uint8_t config_color_inner_minute_hand = GColorLightGrayARGB8;
@@ -632,7 +632,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 //    graphics_context_set_stroke_width(ctx, 5);
 //    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
 //    graphics_draw_line(ctx, hour_hand, center);
-//    graphics_context_set_stroke_width(ctx, 4);
+    graphics_context_set_stroke_width(ctx, 4);
     graphics_context_set_stroke_color(ctx, COLOR(config_color_hour_hand));
     graphics_draw_line(ctx, hour_hand, center);
     graphics_context_set_stroke_width(ctx, 1);
