@@ -9,15 +9,62 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
-#define COLOR_BATTERY_WARNING_BACKGROUND_1 GColorYellow
-#define COLOR_BATTERY_WARNING_BACKGROUND_2 GColorOrange
-#define COLOR_BATTERY_WARNING_BACKGROUND_3 GColorRed
-#define COLOR_BACKGROUND GColorWhite
-#define COLOR_BACKGROUND_OUTER GColorDarkGray
-#define COLOR_NORMAL GColorBlack
-//#define COLOR_ACCENT GColorBlue
-#define COLOR_ACCENT GColorJaegerGreen
-#define COLOR_BATTERY GColorBlack
+#define CONFIG_COLOR_OUTER_BACKGROUND 1
+#define CONFIG_COLOR_INNER_BACKGROUND 2
+#define CONFIG_COLOR_MINUTE_HAND 3
+#define CONFIG_COLOR_INNER_MINUTE_HAND 4
+#define CONFIG_COLOR_HOUR_HAND 5
+#define CONFIG_COLOR_INNER_HOUR_HAND 6
+#define CONFIG_COLOR_CIRCLE 7
+#define CONFIG_COLOR_TICKS 8
+#define CONFIG_COLOR_DAY_OF_WEEK 9
+#define CONFIG_COLOR_DATE 10
+#define CONFIG_BATTERY_LOGO 11
+#define CONFIG_COLOR_BATTERY_LOGO 12
+#define CONFIG_COLOR_BATTERY_30 13
+#define CONFIG_COLOR_BATTERY_20 14
+#define CONFIG_COLOR_BATTERY_10 15
+#define CONFIG_COLOR_BLUETOOTH_LOGO 16
+#define CONFIG_COLOR_BLUETOOTH_LOGO_2 17
+#define CONFIG_BLUETOOTH_LOGO 18
+#define CONFIG_VIBRATE_DISCONNECT 19
+#define CONFIG_VIBRATE_RECONNECT 20
+#define CONFIG_MESSAGE_DISCONNECT 21
+#define CONFIG_MESSAGE_RECONNECT 22
+
+////////////////////////////////////////////
+//// Default values for the configuration
+////////////////////////////////////////////
+
+static uint8_t config_color_outer_background = GColorBlackARGB8;
+static uint8_t config_color_inner_background = GColorWhiteARGB8;
+static uint8_t config_color_minute_hand = GColorBlackARGB8;
+static uint8_t config_color_inner_minute_hand = GColorLightGrayARGB8;
+static uint8_t config_color_hour_hand = GColorJaegerGreenARGB8;
+static uint8_t config_color_inner_hour_hand = GColorLightGrayARGB8;
+static uint8_t config_color_circle = GColorBlackARGB8;
+static uint8_t config_color_ticks = GColorBlackARGB8;
+static uint8_t config_color_day_of_week = GColorJaegerGreenARGB8;
+static uint8_t config_color_date = GColorBlackARGB8;
+static uint8_t config_battery_logo = 1;
+static uint8_t config_color_battery_logo = GColorBlackARGB8;
+static uint8_t config_color_battery_30 = GColorYellowARGB8;
+static uint8_t config_color_battery_20 = GColorOrangeARGB8;
+static uint8_t config_color_battery_10 = GColorRedARGB8;
+static uint8_t config_color_bluetooth_logo = GColorJaegerGreenARGB8;
+static uint8_t config_color_bluetooth_logo_2 = GColorWhiteARGB8;
+static bool config_bluetooth_logo = true;
+static bool config_vibrate_disconnect = true;
+static bool config_vibrate_reconnect = true;
+static bool config_message_disconnect = true;
+static bool config_message_reconnect = true;
+
+
+////////////////////////////////////////////
+//// Static configuration and useful macros
+////////////////////////////////////////////
+
+#define COLOR(c) ((GColor8) { .argb = (c) })
 
 //#define OBSIDIAN_SHOW_NUMBERS
 #define OBSIDIAN_LONG_TICKS
@@ -197,13 +244,13 @@ static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 #define BLUETOOTH_LOGO_STEP 3
 
     // background
-    graphics_context_set_fill_color(ctx, COLOR_ACCENT);
+    graphics_context_set_fill_color(ctx, COLOR(config_color_bluetooth_logo));
     graphics_fill_rect(ctx, GRect(origin.x - 2, origin.y - 2, BLUETOOTH_LOGO_STEP * 2 + 5, BLUETOOTH_LOGO_STEP * 4 + 5),
                        2, GCornersAll);
 
     // logo on the inside
     graphics_context_set_antialiased(ctx, false);
-    graphics_context_set_stroke_color(ctx, GColorWhite);
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_bluetooth_logo_2));
     graphics_context_set_stroke_width(ctx, 1);
 
     graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
@@ -245,13 +292,13 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
     if (!show_bluetooth_popup) return;
 #endif
 
-    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
-    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    graphics_context_set_stroke_color(ctx, GColorBlack);
     graphics_context_set_stroke_width(ctx, 4);
     GRect notification_rect = GRect(-10, 168 - 50 - 7, 144 + 20, 50);
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
     graphics_draw_round_rect(ctx, notification_rect, 8);
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    graphics_context_set_text_color(ctx, GColorBlack);
     graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
                        GRect(2, notification_rect.origin.y + 4, 105, 40),
                        GTextOverflowModeWordWrap, GTextAlignmentCenter,
@@ -331,16 +378,16 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // background
-    GColor8 outer_color = COLOR_BACKGROUND_OUTER;
+    uint8_t outer_color = config_color_outer_background;
     if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
-        outer_color = COLOR_BATTERY_WARNING_BACKGROUND_3;
+        outer_color = config_color_battery_10;
     } else if (battery_state.charge_percent <= 20 && !battery_state.is_charging && !battery_state.is_plugged) {
-        outer_color = COLOR_BATTERY_WARNING_BACKGROUND_2;
+        outer_color = config_color_battery_20;
     } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
-        outer_color = COLOR_BATTERY_WARNING_BACKGROUND_1;
+        outer_color = config_color_battery_30;
     }
 
-    graphics_context_set_fill_color(ctx, outer_color);
+    graphics_context_set_fill_color(ctx, COLOR(outer_color));
     graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
 
     // battery
@@ -356,9 +403,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 //    }
 
     // background
-    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
+    graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
     graphics_fill_circle(ctx, center, radius);
-    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_circle));
     graphics_context_set_stroke_width(ctx, 4);
     graphics_draw_circle(ctx, center, radius + 3);
 
@@ -408,7 +455,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // hour ticks
-    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
     graphics_context_set_stroke_width(ctx, 2);
     for (int i = 0; i < 12; ++i) {
         int32_t angle = i * TRIG_MAX_ANGLE / 12;
@@ -498,9 +545,11 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
         if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
                                    GPoint(72 + d_center.x - day_size.w / 2 - border, d_y_start + d_center.y - border),
-                                   GPoint(72 + d_center.x + day_size.w / 2 + border, d_y_start + d_center.y + d_height + border)) ||
+                                   GPoint(72 + d_center.x + day_size.w / 2 + border,
+                                          d_y_start + d_center.y + d_height + border)) ||
               line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(72 + d_center.x - date_size.w / 2 - border, d_y_start + d_center.y + d_offset - border),
+                                   GPoint(72 + d_center.x - date_size.w / 2 - border,
+                                          d_y_start + d_center.y + d_offset - border),
                                    GPoint(72 + d_center.x + date_size.w / 2 + border,
                                           d_y_start + d_center.y + d_height + d_offset + border)))) {
             found = true;
@@ -517,10 +566,10 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
-    graphics_context_set_text_color(ctx, COLOR_ACCENT);
+    graphics_context_set_text_color(ctx, COLOR(config_color_day_of_week));
     graphics_draw_text(ctx, buffer_2, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
-    graphics_context_set_text_color(ctx, COLOR_NORMAL);
+    graphics_context_set_text_color(ctx, COLOR(config_color_date));
     graphics_draw_text(ctx, buffer_1, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
 #endif
@@ -549,8 +598,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                 b_center.x = -b_center.x;
             }
             if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                       GPoint(b_x + b_center.x - 5 - b_border, b_y + b_center.y - b_border),
-                                       GPoint(b_x + b_center.x + 5 + b_border, b_y + b_center.y + 17 + b_border))) {
+                                      GPoint(b_x + b_center.x - 5 - b_border, b_y + b_center.y - b_border),
+                                      GPoint(b_x + b_center.x + 5 + b_border, b_y + b_center.y + 17 + b_border))) {
                 found = true;
                 break;
             }
@@ -569,31 +618,31 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 //    graphics_draw_line(ctx, second_hand, center);
 
     // minute hand
-    graphics_context_set_stroke_width(ctx, 5);
-    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
-    graphics_draw_line(ctx, minute_hand, center);
+//    graphics_context_set_stroke_width(ctx, 5);
+//    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
+//    graphics_draw_line(ctx, minute_hand, center);
     graphics_context_set_stroke_width(ctx, 4);
-    graphics_context_set_stroke_color(ctx, COLOR_NORMAL);
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_minute_hand));
     graphics_draw_line(ctx, minute_hand, center);
     graphics_context_set_stroke_width(ctx, 1);
-    graphics_context_set_stroke_color(ctx, GColorLightGray);
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_inner_minute_hand));
     graphics_draw_line(ctx, get_radial_point(radius - 12, minute_angle), center);
 
     // hour hand
-    graphics_context_set_stroke_width(ctx, 5);
-    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
-    graphics_draw_line(ctx, hour_hand, center);
-    graphics_context_set_stroke_width(ctx, 4);
-    graphics_context_set_stroke_color(ctx, COLOR_ACCENT);
+//    graphics_context_set_stroke_width(ctx, 5);
+//    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
+//    graphics_draw_line(ctx, hour_hand, center);
+//    graphics_context_set_stroke_width(ctx, 4);
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_hour_hand));
     graphics_draw_line(ctx, hour_hand, center);
     graphics_context_set_stroke_width(ctx, 1);
-    graphics_context_set_stroke_color(ctx, GColorLightGray);
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_inner_hour_hand));
     graphics_draw_line(ctx, get_radial_point(radius * 55 / 100 - 2, hour_angle), center);
 
     // dot in the middle
-    graphics_context_set_fill_color(ctx, COLOR_NORMAL);
+    graphics_context_set_fill_color(ctx, COLOR(config_color_minute_hand));
     graphics_fill_circle(ctx, center, 5);
-    graphics_context_set_fill_color(ctx, COLOR_BACKGROUND);
+    graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
     graphics_fill_circle(ctx, center, 2);
 
     // battery status
@@ -611,8 +660,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
                        GPoint(battery.origin.x + battery.size.w, battery.origin.y + battery.size.h - 3));
 #else
     const GRect battery = GRect(125, 3, 14, 8);
-    graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
-    graphics_context_set_fill_color(ctx, COLOR_BATTERY);
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_battery_logo));
+    graphics_context_set_fill_color(ctx, COLOR(config_color_battery_logo));
     graphics_draw_rect(ctx, battery);
     graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4), 0,
                        GCornerNone);
@@ -697,6 +746,77 @@ static void window_unload(Window *window) {
 #endif
 }
 
+static AppSync sync;
+static uint8_t sync_buffer[32];
+
+static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, const Tuple *old_tuple, void *context) {
+    bool dirty = false;
+    switch (key) {
+        case CONFIG_COLOR_DATE:
+//            if (pcb_background.argb != new_tuple->value->uint8) {
+//                pcb_background.argb = new_tuple->value->uint8;
+//                persist_write_int(BACKGROUND_COLOR_KEY, pcb_background.argb);
+//                dirty = true;
+//            }
+            dirty = true;
+            break;
+
+        default:
+            // ignore unknown keys
+            break;
+    }
+    if (dirty && layer_background) {
+        layer_mark_dirty(layer_background);
+    }
+}
+
+static void sync_error_handler(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
+}
+
+/**
+ * Config initialization.
+ */
+static void config_init() {
+    app_message_open(
+            app_message_inbox_size_maximum(),
+            app_message_outbox_size_maximum());
+
+    Tuplet initial_values[] = {
+        TupletInteger(CONFIG_COLOR_OUTER_BACKGROUND, config_color_outer_background),
+        TupletInteger(CONFIG_COLOR_INNER_BACKGROUND, config_color_inner_background),
+        TupletInteger(CONFIG_COLOR_MINUTE_HAND, config_color_minute_hand),
+        TupletInteger(CONFIG_COLOR_INNER_MINUTE_HAND, config_color_inner_minute_hand),
+        TupletInteger(CONFIG_COLOR_HOUR_HAND, config_color_hour_hand),
+        TupletInteger(CONFIG_COLOR_INNER_HOUR_HAND, config_color_inner_hour_hand),
+        TupletInteger(CONFIG_COLOR_CIRCLE, config_color_circle),
+        TupletInteger(CONFIG_COLOR_TICKS, config_color_ticks),
+        TupletInteger(CONFIG_COLOR_DAY_OF_WEEK, config_color_day_of_week),
+        TupletInteger(CONFIG_COLOR_DATE, config_color_date),
+        TupletInteger(CONFIG_BATTERY_LOGO, config_battery_logo),
+        TupletInteger(CONFIG_COLOR_BATTERY_LOGO, config_color_battery_logo),
+        TupletInteger(CONFIG_COLOR_BATTERY_30, config_color_battery_30),
+        TupletInteger(CONFIG_COLOR_BATTERY_20, config_color_battery_20),
+        TupletInteger(CONFIG_COLOR_BATTERY_10, config_color_battery_10),
+        TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO, config_color_bluetooth_logo),
+        TupletInteger(CONFIG_BLUETOOTH_LOGO, config_bluetooth_logo),
+        TupletInteger(CONFIG_VIBRATE_DISCONNECT, config_vibrate_disconnect),
+        TupletInteger(CONFIG_VIBRATE_RECONNECT, config_vibrate_reconnect),
+        TupletInteger(CONFIG_MESSAGE_DISCONNECT, config_message_disconnect),
+        TupletInteger(CONFIG_MESSAGE_RECONNECT, config_message_reconnect),
+    };
+    app_sync_init(
+            &sync, sync_buffer, sizeof(sync_buffer),
+            initial_values, ARRAY_LENGTH(initial_values),
+            sync_changed_handler, sync_error_handler, NULL);
+}
+
+/**
+ * Config de-initialization.
+ */
+static void config_deinit() {
+
+}
+
 /**
  * Initialization.
  */
@@ -718,6 +838,8 @@ static void init() {
     tick_timer_service_subscribe(unit, handle_second_tick);
     battery_state_service_subscribe(handle_battery);
     bluetooth_connection_service_subscribe(handle_bluetooth);
+
+    //config_init();
 }
 
 /**
@@ -729,6 +851,8 @@ static void deinit() {
     bluetooth_connection_service_unsubscribe();
 
     window_destroy(window);
+
+    //config_deinit();
 }
 
 /**
