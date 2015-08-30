@@ -109,6 +109,12 @@ static bool show_bluetooth_popup;
 /** The timer for the bluetooth popup */
 AppTimer *timer_bluetooth_popup;
 
+/** Sync state */
+static AppSync sync;
+
+/** Buffer for syncing */
+static uint8_t sync_buffer[NUM_CONFIG + 1];
+
 
 ////////////////////////////////////////////
 //// screenshot configurations
@@ -748,9 +754,9 @@ static void window_unload(Window *window) {
 #endif
 }
 
-static AppSync sync;
-static uint8_t sync_buffer[NUM_CONFIG + 1];
-
+/**
+ * Helper to process new configuration.
+ */
 static bool sync_helper(const uint32_t key, const Tuple *new_tuple, uint8_t* value) {
     if ((*value) != new_tuple->value->uint8) {
         (*value) = new_tuple->value->uint8;
@@ -761,6 +767,9 @@ static bool sync_helper(const uint32_t key, const Tuple *new_tuple, uint8_t* val
     return false;
 }
 
+/**
+ * Handle the receipt of a new configuration
+ */
 static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, const Tuple *old_tuple, void *context) {
     bool dirty = false;
     switch (key) {
@@ -818,7 +827,11 @@ static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, con
     }
 }
 
+/**
+ * Sync error handler
+ */
 static void sync_error_handler(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
+    // there's not much we can do
 }
 
 /**
