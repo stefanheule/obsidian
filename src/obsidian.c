@@ -1048,7 +1048,7 @@ static void init() {
 #endif
 #ifdef SCREENSHOT_ALT_THEME_6
     config_hour_ticks = 1;
-    config_minute_ticks = 1;
+    config_minute_ticks = 2;
     config_color_outer_background = GColorWhiteARGB8;
     config_color_inner_background = GColorWhiteARGB8;
     config_color_minute_hand = GColorRedARGB8;

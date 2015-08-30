@@ -65,17 +65,17 @@ mv tmp.png screenshots/overview.png
 
 # themes
 convert data/white.png -background white -resize ${width}x${normalheight}! tmp.png
-composite -compose atop -geometry +$x1+$border screenshots/theme-3.png tmp.png tmp.png
+composite -compose atop -geometry +$x1+$border screenshots/theme-6.png tmp.png tmp.png
 composite -compose atop -geometry +$x2+$border screenshots/theme-4.png tmp.png tmp.png
-composite -compose atop -geometry +$x3+$border screenshots/theme-5.png tmp.png tmp.png
-mv tmp.png screenshots/theme-overview-2.png
+composite -compose atop -geometry +$x3+$border screenshots/theme-3.png tmp.png tmp.png
+mv tmp.png screenshots/theme-overview-1.png
 
 # themes
 convert data/white.png -background white -resize ${width}x${normalheight}! tmp.png
-composite -compose atop -geometry +$x1+$border screenshots/theme-6.png tmp.png tmp.png
+composite -compose atop -geometry +$x1+$border screenshots/theme-5.png tmp.png tmp.png
 composite -compose atop -geometry +$x2+$border screenshots/theme-7.png tmp.png tmp.png
 composite -compose atop -geometry +$x3+$border screenshots/theme-8.png tmp.png tmp.png
-mv tmp.png screenshots/theme-overview-1.png
+mv tmp.png screenshots/theme-overview-2.png
 
 for f in screenshots/*.png; do
   pngcrush -rem time $f tmp.png
