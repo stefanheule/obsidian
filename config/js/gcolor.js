@@ -125,10 +125,13 @@ var GColor = (function () {
   // Converts a GColor color to a hex number (e.g. FFFFFF)
   function GColorToHex(color) {
     var col = color - 192;
-    var r = (((col >> 4) & 0x3) << 6) << 16;
-    var g = (((col >> 2) & 0x3) << 6) << 8;
-    var b = (((col >> 0) & 0x3) << 6) << 0;
-    var res = (r + g + b).toString(16);
+    var r = (col >> 4) & 0x3;
+    var g = (col >> 2) & 0x3;
+    var b = (col >> 0) & 0x3;
+    r = r | (r << 2) | (r << 4) | (r << 6);
+    g = g | (g << 2) | (g << 4) | (g << 6);
+    b = b | (b << 2) | (b << 4) | (b << 6);
+    var res = ((r << 16) + (g << 8) + b).toString(16);
     while (res.length < 6) res = '0' + res;
     return res;
   }
