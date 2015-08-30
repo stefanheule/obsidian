@@ -754,7 +754,7 @@ static uint8_t sync_buffer[NUM_CONFIG + 1];
 static bool sync_helper(const uint32_t key, const Tuple *new_tuple, uint8_t* value) {
     if ((*value) != new_tuple->value->uint8) {
         (*value) = new_tuple->value->uint8;
-        //persist_write_int(BACKGROUND_COLOR_KEY, pcb_background.argb);
+        persist_write_int(key, *value);
         return true;
     }
 
@@ -871,6 +871,31 @@ static void config_deinit() {
  * Initialization.
  */
 static void init() {
+    if (persist_exists(CONFIG_COLOR_OUTER_BACKGROUND)) {
+        config_color_outer_background = persist_read_int(CONFIG_COLOR_OUTER_BACKGROUND);
+        config_color_inner_background = persist_read_int(CONFIG_COLOR_INNER_BACKGROUND);
+        config_color_minute_hand = persist_read_int(CONFIG_COLOR_MINUTE_HAND);
+        config_color_inner_minute_hand = persist_read_int(CONFIG_COLOR_INNER_MINUTE_HAND);
+        config_color_hour_hand = persist_read_int(CONFIG_COLOR_HOUR_HAND);
+        config_color_inner_hour_hand = persist_read_int(CONFIG_COLOR_INNER_HOUR_HAND);
+        config_color_circle = persist_read_int(CONFIG_COLOR_CIRCLE);
+        config_color_ticks = persist_read_int(CONFIG_COLOR_TICKS);
+        config_color_day_of_week = persist_read_int(CONFIG_COLOR_DAY_OF_WEEK);
+        config_color_date = persist_read_int(CONFIG_COLOR_DATE);
+        config_battery_logo = persist_read_int(CONFIG_BATTERY_LOGO);
+        config_color_battery_logo = persist_read_int(CONFIG_COLOR_BATTERY_LOGO);
+        config_color_battery_30 = persist_read_int(CONFIG_COLOR_BATTERY_30);
+        config_color_battery_20 = persist_read_int(CONFIG_COLOR_BATTERY_20);
+        config_color_battery_10 = persist_read_int(CONFIG_COLOR_BATTERY_10);
+        config_color_bluetooth_logo = persist_read_int(CONFIG_COLOR_BLUETOOTH_LOGO);
+        config_color_bluetooth_logo_2 = persist_read_int(CONFIG_COLOR_BLUETOOTH_LOGO_2);
+        config_bluetooth_logo = persist_read_int(CONFIG_BLUETOOTH_LOGO);
+        config_vibrate_disconnect = persist_read_int(CONFIG_VIBRATE_DISCONNECT);
+        config_vibrate_reconnect = persist_read_int(CONFIG_VIBRATE_RECONNECT);
+        config_message_disconnect = persist_read_int(CONFIG_MESSAGE_DISCONNECT);
+        config_message_reconnect = persist_read_int(CONFIG_MESSAGE_RECONNECT);
+    }
+
     window = window_create();
     window_set_window_handlers(window, (WindowHandlers) {
             .load = window_load,
