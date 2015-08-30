@@ -297,7 +297,7 @@
       var el = $(this);
       var val = config[this.id];
       if (el.hasClass('item-color')) {
-        el.val('#' + GColor.toHex(val));
+        el.val('0x' + GColor.toHex(val));
       } else if (el.hasClass('item-toggle')) {
         val = val == "true" ? true : false;
         if (val) el.attr('checked', true);
