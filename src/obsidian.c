@@ -277,6 +277,8 @@ static bool intersect(const GPoint a0, const GPoint a1, const GPoint b0, const G
 static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 #define BLUETOOTH_LOGO_STEP 3
 
+    if (!config_bluetooth_logo) return;
+
     // background
     graphics_context_set_fill_color(ctx, COLOR(config_color_bluetooth_logo));
     graphics_fill_rect(ctx, GRect(origin.x - 2, origin.y - 2, BLUETOOTH_LOGO_STEP * 2 + 5, BLUETOOTH_LOGO_STEP * 4 + 5),
