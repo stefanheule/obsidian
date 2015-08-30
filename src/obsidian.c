@@ -9,7 +9,7 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
-#define NUM_CONFIG 22
+#define NUM_CONFIG 24
 
 #define CONFIG_COLOR_OUTER_BACKGROUND 1
 #define CONFIG_COLOR_INNER_BACKGROUND 2
@@ -33,6 +33,8 @@
 #define CONFIG_VIBRATE_RECONNECT 20
 #define CONFIG_MESSAGE_DISCONNECT 21
 #define CONFIG_MESSAGE_RECONNECT 22
+#define CONFIG_MINUTE_TICKS 23
+#define CONFIG_HOUR_TICKS 24
 
 ////////////////////////////////////////////
 //// Default values for the configuration
@@ -60,6 +62,8 @@ static uint8_t config_vibrate_disconnect = true;
 static uint8_t config_vibrate_reconnect = true;
 static uint8_t config_message_disconnect = true;
 static uint8_t config_message_reconnect = true;
+static uint8_t config_minute_ticks = 1;
+static uint8_t config_hour_ticks = 1;
 
 
 ////////////////////////////////////////////
@@ -71,7 +75,6 @@ static uint8_t config_message_reconnect = true;
 //#define OBSIDIAN_SHOW_NUMBERS
 #define OBSIDIAN_LONG_TICKS
 #define OBSIDIAN_FAT_TICKS
-//#define OBSIDIAN_ONLY_RELEVANT_MINUTE_TICKS
 //#define OBSIDIAN_ONLY_RELEVANT_NUMBER
 //#define OBSIDIAN_BATTERY_USE_TEXT
 
@@ -491,40 +494,45 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // hour ticks
-    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
-    graphics_context_set_stroke_width(ctx, 2);
-    for (int i = 0; i < 12; ++i) {
-        int32_t angle = i * TRIG_MAX_ANGLE / 12;
-        int tick_length = 6;
+    if (config_hour_ticks != 3) {
+        graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
+        graphics_context_set_stroke_width(ctx, 2);
+        for (int i = 0; i < 12; ++i) {
+            if (config_hour_ticks == 2 && (i % 3) != 0) continue;
+
+            int32_t angle = i * TRIG_MAX_ANGLE / 12;
+            int tick_length = 6;
 #ifdef OBSIDIAN_LONG_TICKS
-        if (i % 3 == 0) {
-            tick_length = 10;
+            if (i % 3 == 0) {
+                tick_length = 10;
 #ifdef OBSIDIAN_FAT_TICKS
-            graphics_context_set_stroke_width(ctx, 4);
-        } else {
-            graphics_context_set_stroke_width(ctx, 2);
+                graphics_context_set_stroke_width(ctx, 4);
+            } else {
+                graphics_context_set_stroke_width(ctx, 2);
 #endif
+            }
+#endif
+            graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle));
         }
-#endif
-        graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle));
     }
 
-#ifdef OBSIDIAN_ONLY_RELEVANT_MINUTE_TICKS
-    // only relevant minute ticks
-    int start_min_tick = (t->tm_min / 5) * 5;
-    graphics_context_set_stroke_width(ctx, 1);
-    for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
-        int32_t angle = i * TRIG_MAX_ANGLE / 60;
-        graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
+
+    if (config_minute_ticks == 2) {
+        // only relevant minute ticks
+        int start_min_tick = (t->tm_min / 5) * 5;
+        graphics_context_set_stroke_width(ctx, 1);
+        for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
+            int32_t angle = i * TRIG_MAX_ANGLE / 60;
+            graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
+        }
+    } else if (config_minute_ticks == 1) {
+        // all minute ticks
+        graphics_context_set_stroke_width(ctx, 1);
+        for (int i = 0; i < 60; ++i) {
+            int32_t angle = i * TRIG_MAX_ANGLE / 60;
+            graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
+        }
     }
-#else
-    // all minute ticks
-    graphics_context_set_stroke_width(ctx, 1);
-    for (int i = 0; i < 60; ++i) {
-        int32_t angle = i * TRIG_MAX_ANGLE / 60;
-        graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
-    }
-#endif
 
 #ifdef DEBUG_DATE_POSITION
     t->tm_hour = 12;
@@ -749,7 +757,8 @@ static void handle_bluetooth(bool connected) {
         if (timer_bluetooth_popup) {
             app_timer_reschedule(timer_bluetooth_popup, OBSIDIAN_BLUETOOTH_POPUP_MS);
         } else {
-            timer_bluetooth_popup = app_timer_register(OBSIDIAN_BLUETOOTH_POPUP_MS, timer_callback_bluetooth_popup, NULL);
+            timer_bluetooth_popup = app_timer_register(OBSIDIAN_BLUETOOTH_POPUP_MS, timer_callback_bluetooth_popup,
+                                                       NULL);
         }
     }
 }
@@ -919,6 +928,8 @@ static void config_init() {
             TupletInteger(CONFIG_VIBRATE_RECONNECT, config_vibrate_reconnect),
             TupletInteger(CONFIG_MESSAGE_DISCONNECT, config_message_disconnect),
             TupletInteger(CONFIG_MESSAGE_RECONNECT, config_message_reconnect),
+            TupletInteger(CONFIG_MINUTE_TICKS, config_minute_ticks),
+            TupletInteger(CONFIG_HOUR_TICKS, config_hour_ticks),
     };
 
     app_sync_init(
@@ -961,6 +972,8 @@ static void init() {
         config_vibrate_reconnect = persist_read_int(CONFIG_VIBRATE_RECONNECT);
         config_message_disconnect = persist_read_int(CONFIG_MESSAGE_DISCONNECT);
         config_message_reconnect = persist_read_int(CONFIG_MESSAGE_RECONNECT);
+        config_minute_ticks = persist_read_int(CONFIG_MINUTE_TICKS);
+        config_hour_ticks = persist_read_int(CONFIG_HOUR_TICKS);
     }
 
 // some alternative themes (for screenshots)

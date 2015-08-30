@@ -19,6 +19,28 @@
     <div class='item-container'>
       <div class='item-container-header'>Appearance</div>
 
+      <div class="item-container-content">
+        <label class="item">
+          Show Hour Ticks
+          <select id='CONFIG_HOUR_TICKS' dir='rtl' class="item-select">
+            <option class="item-select-option" value="1">All</option>
+            <option class="item-select-option" value="2">Only 3, 6, 9, 12</option>
+            <option class="item-select-option" value="3">None</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="item-container-content">
+        <label class="item">
+          Show Minute Ticks
+          <select id='CONFIG_MINUTE_TICKS' dir='rtl' class="item-select">
+            <option class="item-select-option" value="1">All</option>
+            <option class="item-select-option" value="2">Only relevant ticks</option>
+            <option class="item-select-option" value="3">None</option>
+          </select>
+        </label>
+      </div>
+
       <div class='item-container-content'>
         <label class='item'>
           Outer Background Color
@@ -274,6 +296,8 @@
       CONFIG_VIBRATE_RECONNECT: true,
       CONFIG_MESSAGE_DISCONNECT: true,
       CONFIG_MESSAGE_RECONNECT: true,
+      CONFIG_MINUTE_TICKS: 1,
+      CONFIG_HOUR_TICKS: 1,
     };
 
     // use defaults
