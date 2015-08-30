@@ -9,6 +9,8 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
+#define NUM_CONFIG 22
+
 #define CONFIG_COLOR_OUTER_BACKGROUND 1
 #define CONFIG_COLOR_INNER_BACKGROUND 2
 #define CONFIG_COLOR_MINUTE_HAND 3
@@ -53,11 +55,11 @@ static uint8_t config_color_battery_20 = GColorOrangeARGB8;
 static uint8_t config_color_battery_10 = GColorRedARGB8;
 static uint8_t config_color_bluetooth_logo = GColorJaegerGreenARGB8;
 static uint8_t config_color_bluetooth_logo_2 = GColorWhiteARGB8;
-static bool config_bluetooth_logo = true;
-static bool config_vibrate_disconnect = true;
-static bool config_vibrate_reconnect = true;
-static bool config_message_disconnect = true;
-static bool config_message_reconnect = true;
+static uint8_t config_bluetooth_logo = true;
+static uint8_t config_vibrate_disconnect = true;
+static uint8_t config_vibrate_reconnect = true;
+static uint8_t config_message_disconnect = true;
+static uint8_t config_message_reconnect = true;
 
 
 ////////////////////////////////////////////
@@ -747,19 +749,65 @@ static void window_unload(Window *window) {
 }
 
 static AppSync sync;
-static uint8_t sync_buffer[32];
+static uint8_t sync_buffer[NUM_CONFIG + 1];
+
+static bool sync_helper(const uint32_t key, const Tuple *new_tuple, uint8_t* value) {
+    if ((*value) != new_tuple->value->uint8) {
+        (*value) = new_tuple->value->uint8;
+        //persist_write_int(BACKGROUND_COLOR_KEY, pcb_background.argb);
+        return true;
+    }
+
+    return false;
+}
 
 static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, const Tuple *old_tuple, void *context) {
     bool dirty = false;
     switch (key) {
+        case CONFIG_COLOR_OUTER_BACKGROUND:
+            dirty = sync_helper(key, new_tuple, &config_color_outer_background); break;
+        case CONFIG_COLOR_INNER_BACKGROUND:
+            dirty = sync_helper(key, new_tuple, &config_color_inner_background); break;
+        case CONFIG_COLOR_MINUTE_HAND:
+            dirty = sync_helper(key, new_tuple, &config_color_minute_hand); break;
+        case CONFIG_COLOR_INNER_MINUTE_HAND:
+            dirty = sync_helper(key, new_tuple, &config_color_inner_minute_hand); break;
+        case CONFIG_COLOR_HOUR_HAND:
+            dirty = sync_helper(key, new_tuple, &config_color_hour_hand); break;
+        case CONFIG_COLOR_INNER_HOUR_HAND:
+            dirty = sync_helper(key, new_tuple, &config_color_inner_hour_hand); break;
+        case CONFIG_COLOR_CIRCLE:
+            dirty = sync_helper(key, new_tuple, &config_color_circle); break;
+        case CONFIG_COLOR_TICKS:
+            dirty = sync_helper(key, new_tuple, &config_color_ticks); break;
+        case CONFIG_COLOR_DAY_OF_WEEK:
+            dirty = sync_helper(key, new_tuple, &config_color_day_of_week); break;
         case CONFIG_COLOR_DATE:
-//            if (pcb_background.argb != new_tuple->value->uint8) {
-//                pcb_background.argb = new_tuple->value->uint8;
-//                persist_write_int(BACKGROUND_COLOR_KEY, pcb_background.argb);
-//                dirty = true;
-//            }
-            dirty = true;
-            break;
+            dirty = sync_helper(key, new_tuple, &config_color_date); break;
+        case CONFIG_BATTERY_LOGO:
+            dirty = sync_helper(key, new_tuple, &config_battery_logo); break;
+        case CONFIG_COLOR_BATTERY_LOGO:
+            dirty = sync_helper(key, new_tuple, &config_color_battery_logo); break;
+        case CONFIG_COLOR_BATTERY_30:
+            dirty = sync_helper(key, new_tuple, &config_color_battery_30); break;
+        case CONFIG_COLOR_BATTERY_20:
+            dirty = sync_helper(key, new_tuple, &config_color_battery_20); break;
+        case CONFIG_COLOR_BATTERY_10:
+            dirty = sync_helper(key, new_tuple, &config_color_battery_10); break;
+        case CONFIG_COLOR_BLUETOOTH_LOGO:
+            dirty = sync_helper(key, new_tuple, &config_color_bluetooth_logo); break;
+        case CONFIG_COLOR_BLUETOOTH_LOGO_2:
+            dirty = sync_helper(key, new_tuple, &config_color_bluetooth_logo_2); break;
+        case CONFIG_BLUETOOTH_LOGO:
+            dirty = sync_helper(key, new_tuple, &config_bluetooth_logo); break;
+        case CONFIG_VIBRATE_DISCONNECT:
+            dirty = sync_helper(key, new_tuple, &config_vibrate_disconnect); break;
+        case CONFIG_VIBRATE_RECONNECT:
+            dirty = sync_helper(key, new_tuple, &config_vibrate_reconnect); break;
+        case CONFIG_MESSAGE_DISCONNECT:
+            dirty = sync_helper(key, new_tuple, &config_message_disconnect); break;
+        case CONFIG_MESSAGE_RECONNECT:
+            dirty = sync_helper(key, new_tuple, &config_message_reconnect); break;
 
         default:
             // ignore unknown keys
@@ -798,12 +846,14 @@ static void config_init() {
         TupletInteger(CONFIG_COLOR_BATTERY_20, config_color_battery_20),
         TupletInteger(CONFIG_COLOR_BATTERY_10, config_color_battery_10),
         TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO, config_color_bluetooth_logo),
+        TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO_2, config_color_bluetooth_logo_2),
         TupletInteger(CONFIG_BLUETOOTH_LOGO, config_bluetooth_logo),
         TupletInteger(CONFIG_VIBRATE_DISCONNECT, config_vibrate_disconnect),
         TupletInteger(CONFIG_VIBRATE_RECONNECT, config_vibrate_reconnect),
         TupletInteger(CONFIG_MESSAGE_DISCONNECT, config_message_disconnect),
         TupletInteger(CONFIG_MESSAGE_RECONNECT, config_message_reconnect),
     };
+
     app_sync_init(
             &sync, sync_buffer, sizeof(sync_buffer),
             initial_values, ARRAY_LENGTH(initial_values),
@@ -814,7 +864,7 @@ static void config_init() {
  * Config de-initialization.
  */
 static void config_deinit() {
-
+    app_sync_deinit(&sync);
 }
 
 /**
@@ -839,7 +889,7 @@ static void init() {
     battery_state_service_subscribe(handle_battery);
     bluetooth_connection_service_subscribe(handle_bluetooth);
 
-    //config_init();
+    config_init();
 }
 
 /**
@@ -852,7 +902,7 @@ static void deinit() {
 
     window_destroy(window);
 
-    //config_deinit();
+    config_deinit();
 }
 
 /**
