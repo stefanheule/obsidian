@@ -173,6 +173,32 @@ static uint8_t sync_buffer[NUM_CONFIG + 1];
 #define DEBUG_BLUETOOTH_POPUP
 #endif
 
+#ifdef SCREENSHOT_ALT_THEME_1
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_2
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#define SCREENSHOT_ALT_THEME_3
+#ifdef SCREENSHOT_ALT_THEME_3
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_4
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_5
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
 
 
 ////////////////////////////////////////////
@@ -654,30 +680,19 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_fill_circle(ctx, center, 2);
 
     // battery status
-#ifndef DEBUG_NO_BATTERY_ICON
-#ifdef OBSIDIAN_BATTERY_USE_TEXT
-    const GRect battery = GRect(118, 2, 22, 11);
-    snprintf(buffer_1, sizeof(buffer_1), "%d", battery_state.charge_percent);//battery_state.charge_percent);
-    graphics_context_set_text_color(ctx, COLOR_BATTERY);
-    graphics_draw_text(ctx, buffer_1, font_open_sans, GRect(battery.origin.x, battery.origin.y-1, battery.size.w, battery.size.h),
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
-    graphics_context_set_stroke_color(ctx, COLOR_BATTERY);
-    graphics_draw_rect(ctx, GRect(battery.origin.x, battery.origin.y, battery.size.w, battery.size.h));
-    graphics_context_set_stroke_width(ctx, 2);
-    graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 3),
-                       GPoint(battery.origin.x + battery.size.w, battery.origin.y + battery.size.h - 3));
-#else
-    const GRect battery = GRect(125, 3, 14, 8);
-    graphics_context_set_stroke_color(ctx, COLOR(config_color_battery_logo));
-    graphics_context_set_fill_color(ctx, COLOR(config_color_battery_logo));
-    graphics_draw_rect(ctx, battery);
-    graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4), 0,
-                       GCornerNone);
-    graphics_context_set_stroke_width(ctx, 1);
-    graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
-                       GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
-#endif
-#endif
+    if (config_battery_logo == 1 ||
+        (config_battery_logo == 2 && battery_state.charge_percent <= 30 && !battery_state.is_charging &&
+         !battery_state.is_plugged)) {
+        const GRect battery = GRect(125, 3, 14, 8);
+        graphics_context_set_stroke_color(ctx, COLOR(config_color_battery_logo));
+        graphics_context_set_fill_color(ctx, COLOR(config_color_battery_logo));
+        graphics_draw_rect(ctx, battery);
+        graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4),
+                           0, GCornerNone);
+        graphics_context_set_stroke_width(ctx, 1);
+        graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
+                           GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
+    }
 
     // draw the bluetooth popup
     bluetooth_popup(ctx, bluetooth);
@@ -908,6 +923,46 @@ static void init() {
         config_message_disconnect = persist_read_int(CONFIG_MESSAGE_DISCONNECT);
         config_message_reconnect = persist_read_int(CONFIG_MESSAGE_RECONNECT);
     }
+
+// some alternative themes (for screenshots)
+#ifdef SCREENSHOT_ALT_THEME_1
+    uint8_t accent_col = GColorRedARGB8;
+#endif
+#ifdef SCREENSHOT_ALT_THEME_2
+    uint8_t accent_col = GColorBlueARGB8;
+#endif
+#if defined(SCREENSHOT_ALT_THEME_1) || defined(SCREENSHOT_ALT_THEME_2)
+    config_color_day_of_week = accent_col;
+    config_color_hour_hand = accent_col;
+#endif
+#ifdef SCREENSHOT_ALT_THEME_3
+    uint8_t col1 = GColorChromeYellowARGB8;
+    uint8_t col2 = GColorVividCeruleanARGB8;
+    config_color_outer_background = col2;
+    config_color_inner_background = col2;
+    config_color_minute_hand = col1;
+    config_color_hour_hand = col1;
+    config_color_circle = col2;
+    config_color_ticks = col2;
+    config_color_day_of_week = col2;
+    config_color_date = col2;
+    config_battery_logo = 3;
+    config_color_inner_minute_hand = col1;
+    config_color_inner_hour_hand = config_color_inner_minute_hand;
+#endif
+#ifdef SCREENSHOT_ALT_THEME_4
+    config_color_outer_background = GColorBlackARGB8;
+    config_color_inner_background = GColorBlackARGB8;
+    config_color_minute_hand = GColorWhiteARGB8;
+    config_color_hour_hand = GColorBabyBlueEyesARGB8;
+    config_color_circle = GColorBlackARGB8;
+    config_color_ticks = GColorBlackARGB8;
+    config_color_day_of_week = GColorBabyBlueEyesARGB8;
+    config_color_date = GColorWhiteARGB8;
+    config_battery_logo = 3;
+    config_color_inner_minute_hand = GColorLightGrayARGB8;
+    config_color_inner_hour_hand = config_color_inner_minute_hand;
+#endif
 
     window = window_create();
     window_set_window_handlers(window, (WindowHandlers) {
