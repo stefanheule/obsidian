@@ -9,6 +9,9 @@ deploy: install_deploy
 build:
 	pebble build
 
+config:
+	pebble emu-app-config --emulator basalt
+
 travis_build:
 	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
 
@@ -52,4 +55,4 @@ clean: clean_config
 clean_config:
 	echo "" > src/config.h
 
-.PHONY: all deploy build install_emulator install_deploy menu_icon screenshots screenshot config clean clean_config
+.PHONY: all deploy build config install_emulator install_deploy menu_icon screenshots screenshot config clean clean_config
