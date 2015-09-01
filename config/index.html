@@ -323,8 +323,8 @@
       if (el.hasClass('item-color')) {
         el.val('0x' + GColor.toHex(val));
       } else if (el.hasClass('item-toggle')) {
-        val = val == "true" ? true : false;
-        if (val) el.attr('checked', true);
+        val = val === "true" || val === true ? true : false;
+        el.attr('checked', val);
       } else if (el.hasClass('item-select')) {
         el.val(val);
       } else {
