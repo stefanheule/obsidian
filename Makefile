@@ -12,8 +12,8 @@ build:
 config:
 	pebble emu-app-config --emulator basalt
 
-log: build
-	pebble log --emulator basalt
+log:
+	pebble logs --emulator basalt
 
 travis_build:
 	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
