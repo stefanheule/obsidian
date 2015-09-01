@@ -116,7 +116,7 @@ AppTimer *timer_bluetooth_popup;
 static AppSync sync;
 
 /** Buffer for syncing */
-static uint8_t sync_buffer[NUM_CONFIG + 1];
+static uint8_t sync_buffer[NUM_CONFIG * 8 + 2];
 
 
 ////////////////////////////////////////////
