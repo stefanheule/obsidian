@@ -812,7 +812,9 @@ static void window_unload(Window *window) {
 /**
  * Helper to process new configuration.
  */
-static bool sync_helper(const uint32_t key, const Tuple *new_tuple, uint8_t *value) {
+static bool sync_helper(const uint32_t key, DictionaryIterator *iter, uint8_t *value) {
+    Tuple* new_tuple = dict_find(iter, key);
+    if (new_tuple == NULL) return false;
     if ((*value) != new_tuple->value->uint8) {
         (*value) = new_tuple->value->uint8;
         persist_write_int(key, *value);
@@ -822,86 +824,32 @@ static bool sync_helper(const uint32_t key, const Tuple *new_tuple, uint8_t *val
     return false;
 }
 
-/**
- * Handle the receipt of a new configuration
- */
-static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, const Tuple *old_tuple, void *context) {
+static void inbox_received_handler(DictionaryIterator *iter, void *context) {
     bool dirty = false;
-    switch (key) {
-        case CONFIG_COLOR_OUTER_BACKGROUND:
-            dirty = sync_helper(key, new_tuple, &config_color_outer_background);
-            break;
-        case CONFIG_COLOR_INNER_BACKGROUND:
-            dirty = sync_helper(key, new_tuple, &config_color_inner_background);
-            break;
-        case CONFIG_COLOR_MINUTE_HAND:
-            dirty = sync_helper(key, new_tuple, &config_color_minute_hand);
-            break;
-        case CONFIG_COLOR_INNER_MINUTE_HAND:
-            dirty = sync_helper(key, new_tuple, &config_color_inner_minute_hand);
-            break;
-        case CONFIG_COLOR_HOUR_HAND:
-            dirty = sync_helper(key, new_tuple, &config_color_hour_hand);
-            break;
-        case CONFIG_COLOR_INNER_HOUR_HAND:
-            dirty = sync_helper(key, new_tuple, &config_color_inner_hour_hand);
-            break;
-        case CONFIG_COLOR_CIRCLE:
-            dirty = sync_helper(key, new_tuple, &config_color_circle);
-            break;
-        case CONFIG_COLOR_TICKS:
-            dirty = sync_helper(key, new_tuple, &config_color_ticks);
-            break;
-        case CONFIG_COLOR_DAY_OF_WEEK:
-            dirty = sync_helper(key, new_tuple, &config_color_day_of_week);
-            break;
-        case CONFIG_COLOR_DATE:
-            dirty = sync_helper(key, new_tuple, &config_color_date);
-            break;
-        case CONFIG_BATTERY_LOGO:
-            dirty = sync_helper(key, new_tuple, &config_battery_logo);
-            break;
-        case CONFIG_COLOR_BATTERY_LOGO:
-            dirty = sync_helper(key, new_tuple, &config_color_battery_logo);
-            break;
-        case CONFIG_COLOR_BATTERY_30:
-            dirty = sync_helper(key, new_tuple, &config_color_battery_30);
-            break;
-        case CONFIG_COLOR_BATTERY_20:
-            dirty = sync_helper(key, new_tuple, &config_color_battery_20);
-            break;
-        case CONFIG_COLOR_BATTERY_10:
-            dirty = sync_helper(key, new_tuple, &config_color_battery_10);
-            break;
-        case CONFIG_COLOR_BLUETOOTH_LOGO:
-            dirty = sync_helper(key, new_tuple, &config_color_bluetooth_logo);
-            break;
-        case CONFIG_COLOR_BLUETOOTH_LOGO_2:
-            dirty = sync_helper(key, new_tuple, &config_color_bluetooth_logo_2);
-            break;
-        case CONFIG_BLUETOOTH_LOGO:
-            dirty = sync_helper(key, new_tuple, &config_bluetooth_logo);
-            break;
-        case CONFIG_VIBRATE_DISCONNECT:
-            dirty = sync_helper(key, new_tuple, &config_vibrate_disconnect);
-            break;
-        case CONFIG_VIBRATE_RECONNECT:
-            dirty = sync_helper(key, new_tuple, &config_vibrate_reconnect);
-            break;
-        case CONFIG_MESSAGE_DISCONNECT:
-            dirty = sync_helper(key, new_tuple, &config_message_disconnect);
-            break;
-        case CONFIG_MESSAGE_RECONNECT:
-            dirty = sync_helper(key, new_tuple, &config_message_reconnect);
-            break;
-
-        default:
-            // ignore unknown keys
-            break;
-    }
-    if (dirty && layer_background) {
-        layer_mark_dirty(layer_background);
-    }
+    dirty |= sync_helper(CONFIG_COLOR_OUTER_BACKGROUND, iter, &config_color_outer_background);
+    dirty |= sync_helper(CONFIG_COLOR_INNER_BACKGROUND, iter, &config_color_inner_background);
+    dirty |= sync_helper(CONFIG_COLOR_MINUTE_HAND, iter, &config_color_minute_hand);
+    dirty |= sync_helper(CONFIG_COLOR_INNER_MINUTE_HAND, iter, &config_color_inner_minute_hand);
+    dirty |= sync_helper(CONFIG_COLOR_HOUR_HAND, iter, &config_color_hour_hand);
+    dirty |= sync_helper(CONFIG_COLOR_INNER_HOUR_HAND, iter, &config_color_inner_hour_hand);
+    dirty |= sync_helper(CONFIG_COLOR_CIRCLE, iter, &config_color_circle);
+    dirty |= sync_helper(CONFIG_COLOR_TICKS, iter, &config_color_ticks);
+    dirty |= sync_helper(CONFIG_COLOR_DAY_OF_WEEK, iter, &config_color_day_of_week);
+    dirty |= sync_helper(CONFIG_COLOR_DATE, iter, &config_color_date);
+    dirty |= sync_helper(CONFIG_BATTERY_LOGO, iter, &config_battery_logo);
+    dirty |= sync_helper(CONFIG_COLOR_BATTERY_LOGO, iter, &config_color_battery_logo);
+    dirty |= sync_helper(CONFIG_COLOR_BATTERY_30, iter, &config_color_battery_30);
+    dirty |= sync_helper(CONFIG_COLOR_BATTERY_20, iter, &config_color_battery_20);
+    dirty |= sync_helper(CONFIG_COLOR_BATTERY_10, iter, &config_color_battery_10);
+    dirty |= sync_helper(CONFIG_COLOR_BLUETOOTH_LOGO, iter, &config_color_bluetooth_logo);
+    dirty |= sync_helper(CONFIG_COLOR_BLUETOOTH_LOGO_2, iter, &config_color_bluetooth_logo_2);
+    dirty |= sync_helper(CONFIG_BLUETOOTH_LOGO, iter, &config_bluetooth_logo);
+    dirty |= sync_helper(CONFIG_VIBRATE_DISCONNECT, iter, &config_vibrate_disconnect);
+    dirty |= sync_helper(CONFIG_VIBRATE_RECONNECT, iter, &config_vibrate_reconnect);
+    dirty |= sync_helper(CONFIG_MESSAGE_DISCONNECT, iter, &config_message_disconnect);
+    dirty |= sync_helper(CONFIG_MESSAGE_RECONNECT, iter, &config_message_reconnect);
+    dirty |= sync_helper(CONFIG_MINUTE_TICKS, iter, &config_minute_ticks);
+    dirty |= sync_helper(CONFIG_HOUR_TICKS, iter, &config_hour_ticks);
 }
 
 /**
@@ -909,47 +857,15 @@ static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, con
  */
 static void sync_error_handler(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
     // there's not much we can do
+    //APP_LOG(1, "sync err %d, %d", dict_error, app_message_error);
 }
 
 /**
  * Config initialization.
  */
 static void config_init() {
-    app_message_open(
-            app_message_inbox_size_maximum(),
-            app_message_outbox_size_maximum());
-
-    Tuplet initial_values[] = {
-            TupletInteger(CONFIG_COLOR_OUTER_BACKGROUND, config_color_outer_background),
-            TupletInteger(CONFIG_COLOR_INNER_BACKGROUND, config_color_inner_background),
-            TupletInteger(CONFIG_COLOR_MINUTE_HAND, config_color_minute_hand),
-            TupletInteger(CONFIG_COLOR_INNER_MINUTE_HAND, config_color_inner_minute_hand),
-            TupletInteger(CONFIG_COLOR_HOUR_HAND, config_color_hour_hand),
-            TupletInteger(CONFIG_COLOR_INNER_HOUR_HAND, config_color_inner_hour_hand),
-            TupletInteger(CONFIG_COLOR_CIRCLE, config_color_circle),
-            TupletInteger(CONFIG_COLOR_TICKS, config_color_ticks),
-            TupletInteger(CONFIG_COLOR_DAY_OF_WEEK, config_color_day_of_week),
-            TupletInteger(CONFIG_COLOR_DATE, config_color_date),
-            TupletInteger(CONFIG_BATTERY_LOGO, config_battery_logo),
-            TupletInteger(CONFIG_COLOR_BATTERY_LOGO, config_color_battery_logo),
-            TupletInteger(CONFIG_COLOR_BATTERY_30, config_color_battery_30),
-            TupletInteger(CONFIG_COLOR_BATTERY_20, config_color_battery_20),
-            TupletInteger(CONFIG_COLOR_BATTERY_10, config_color_battery_10),
-            TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO, config_color_bluetooth_logo),
-            TupletInteger(CONFIG_COLOR_BLUETOOTH_LOGO_2, config_color_bluetooth_logo_2),
-            TupletInteger(CONFIG_BLUETOOTH_LOGO, config_bluetooth_logo),
-            TupletInteger(CONFIG_VIBRATE_DISCONNECT, config_vibrate_disconnect),
-            TupletInteger(CONFIG_VIBRATE_RECONNECT, config_vibrate_reconnect),
-            TupletInteger(CONFIG_MESSAGE_DISCONNECT, config_message_disconnect),
-            TupletInteger(CONFIG_MESSAGE_RECONNECT, config_message_reconnect),
-            TupletInteger(CONFIG_MINUTE_TICKS, config_minute_ticks),
-            TupletInteger(CONFIG_HOUR_TICKS, config_hour_ticks),
-    };
-
-    app_sync_init(
-            &sync, sync_buffer, sizeof(sync_buffer),
-            initial_values, ARRAY_LENGTH(initial_values),
-            sync_changed_handler, sync_error_handler, NULL);
+    app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+    app_message_register_inbox_received(inbox_received_handler);
 }
 
 /**
