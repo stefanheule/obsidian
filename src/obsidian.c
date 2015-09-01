@@ -9,8 +9,6 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
-#define NUM_CONFIG 24
-
 #define CONFIG_COLOR_OUTER_BACKGROUND 1
 #define CONFIG_COLOR_INNER_BACKGROUND 2
 #define CONFIG_COLOR_MINUTE_HAND 3
@@ -111,12 +109,6 @@ static bool show_bluetooth_popup;
 
 /** The timer for the bluetooth popup */
 AppTimer *timer_bluetooth_popup;
-
-/** Sync state */
-static AppSync sync;
-
-/** Buffer for syncing */
-static uint8_t sync_buffer[NUM_CONFIG * 8 + 2];
 
 
 ////////////////////////////////////////////
@@ -853,29 +845,6 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
 }
 
 /**
- * Sync error handler
- */
-static void sync_error_handler(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-    // there's not much we can do
-    //APP_LOG(1, "sync err %d, %d", dict_error, app_message_error);
-}
-
-/**
- * Config initialization.
- */
-static void config_init() {
-    app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
-    app_message_register_inbox_received(inbox_received_handler);
-}
-
-/**
- * Config de-initialization.
- */
-static void config_deinit() {
-    app_sync_deinit(&sync);
-}
-
-/**
  * Initialization.
  */
 static void init() {
@@ -1029,7 +998,8 @@ static void init() {
     battery_state_service_subscribe(handle_battery);
     bluetooth_connection_service_subscribe(handle_bluetooth);
 
-    config_init();
+    app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+    app_message_register_inbox_received(inbox_received_handler);
 }
 
 /**
@@ -1042,7 +1012,7 @@ static void deinit() {
 
     window_destroy(window);
 
-    config_deinit();
+    app_message_deregister_callbacks();
 }
 
 /**
