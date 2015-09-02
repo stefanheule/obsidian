@@ -842,6 +842,9 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
     dirty |= sync_helper(CONFIG_MESSAGE_RECONNECT, iter, &config_message_reconnect);
     dirty |= sync_helper(CONFIG_MINUTE_TICKS, iter, &config_minute_ticks);
     dirty |= sync_helper(CONFIG_HOUR_TICKS, iter, &config_hour_ticks);
+    if (dirty) {
+        layer_mark_dirty(layer_background);
+    }
 }
 
 /**
