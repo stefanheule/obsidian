@@ -2,3 +2,8 @@ build
 CMakeLists.txt
 .lock-waf_linux2_build
 .idea/workspace.xml
+resources/images/banner.png
+resources/images/banner_rect.png
+resources/images/with_outline.png
+resources/images/logo_48.png
+resources/images/logo_144.png

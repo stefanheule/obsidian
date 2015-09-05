@@ -15,6 +15,9 @@ config:
 log:
 	pebble logs --emulator basalt
 
+resources:
+	scripts/assemble_resources.sh
+
 travis_build:
 	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
 
@@ -66,4 +69,4 @@ clean: clean_header
 clean_header:
 	echo "" > src/config.h
 
-.PHONY: all deploy build config log install_emulator install_deploy menu_icon screenshots screenshot write_header clean clean_header
+.PHONY: all deploy build config log resources install_emulator install_deploy menu_icon screenshots screenshot write_header clean clean_header
