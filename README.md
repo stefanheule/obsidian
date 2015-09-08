@@ -1,6 +1,6 @@
 # Obsidian [![Build status](https://travis-ci.org/stefanheule/obsidian.svg?branch=master)](https://travis-ci.org/stefanheule/obsidian)
 
-![Screenshot](screenshots/overview.png)
+![Obsidian banner](resources/images/banner.png)
 
 This is a usable and elegant analog watchface for the Pebble Time.  It's main features are:
 
@@ -27,6 +27,8 @@ The watchface always shows a small battery indicator in the top right corner.  H
 ![Screenshot of the battery alert](screenshots/battery.png)
 
 Finally, it is fully configurable, both in terms of what it looks like as well as its behavior (vibration, bluetooth message, etc.).  Some screenshots of different configurations:
+
+![Alternative color theme](screenshots/overview.png)
 
 ![Alternative color theme](screenshots/theme-overview-1.png)
 
