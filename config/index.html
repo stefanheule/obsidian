@@ -243,7 +243,7 @@
       if (el.hasClass('item-color')) {
         val = GColor.fromHex(el.val().substr(2));
       } else if (el.hasClass('item-toggle')) {
-        val = el.is(':checked');
+        val = +el.is(':checked');
       } else if (el.hasClass('item-select')) {
         val = +el.val();
       } else {
@@ -291,11 +291,11 @@
       CONFIG_COLOR_BATTERY_10: GColor.Red,
       CONFIG_COLOR_BLUETOOTH_LOGO: GColor.JaegerGreen,
       CONFIG_COLOR_BLUETOOTH_LOGO_2: GColor.White,
-      CONFIG_BLUETOOTH_LOGO: true,
-      CONFIG_VIBRATE_DISCONNECT: true,
-      CONFIG_VIBRATE_RECONNECT: true,
-      CONFIG_MESSAGE_DISCONNECT: true,
-      CONFIG_MESSAGE_RECONNECT: true,
+      CONFIG_BLUETOOTH_LOGO: +true,
+      CONFIG_VIBRATE_DISCONNECT: +true,
+      CONFIG_VIBRATE_RECONNECT: +true,
+      CONFIG_MESSAGE_DISCONNECT: +true,
+      CONFIG_MESSAGE_RECONNECT: +true,
       CONFIG_MINUTE_TICKS: 1,
       CONFIG_HOUR_TICKS: 1,
     };
@@ -310,7 +310,7 @@
 
     var options = {};
     for (k in defaults) {
-      options[k] = localStorage.getItem(k);
+      options[k] = +localStorage.getItem(k);
     }
 
     return options;
@@ -323,8 +323,7 @@
       if (el.hasClass('item-color')) {
         el.val('0x' + GColor.toHex(val));
       } else if (el.hasClass('item-toggle')) {
-        val = val === "true" || val === true ? true : false;
-        el.attr('checked', val);
+        el.prop('checked', val);
       } else if (el.hasClass('item-select')) {
         el.val(val);
       } else {
@@ -332,6 +331,7 @@
         console.log(this);
       }
     });
+    updateUI();
   }
 
   function submit(config) {
@@ -345,7 +345,13 @@
     document.location = url;
   }
 
-  applyValues(readValuesFromStorage());
+  function updateUI() {
+    $('.item-color-normal').each(function(e) {
+      var $this = $(this);
+      var $item = $this.parent();
+      $item.find('span.value').css("background-color", '#' + this.value.substr(2));
+    });
+  }
 
   // get default values from the url
   $(document).ready(function() {
@@ -366,6 +372,8 @@
       var config = readValuesFromStorage(true);
       submit(config);
     });
+    
+    applyValues(readValuesFromStorage());
   });
   </script>
   </body>
