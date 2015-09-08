@@ -6,7 +6,7 @@ Available in the Pebble App Store:
 
 [![Available on the Pebble App Store](http://pblweb.com/badge/55ee57da2b0b31132c00008b/orange/small)](https://apps.getpebble.com/applications/55ee57da2b0b31132c00008b)
 
-Blog post introducing the initial version of Obsidian: [stefanheule.com](http://stefanheule.com/blog/obsidian-a-usable-and-elegant-analog-watchface-for-the-pebble-time/)
+Blog post introducing the initial version of Obsidian: [stefanheule.com](http://stefanheule.com/blog/obsidian-a-usable-and-elegant-analog-watchface-for-the-pebble-time/).
 
 ## Overview
 
