@@ -15,9 +15,6 @@ config:
 log:
 	pebble logs --emulator basalt
 
-resources:
-	scripts/assemble_resources.sh
-
 travis_build:
 	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
 
@@ -33,7 +30,10 @@ menu_icon:
 	$(MAKE) install_emulator
 	$(MAKE) clean_header
 
-screenshots:
+resources:
+	scripts/assemble_resources.sh
+
+screenshots: screenshot_config
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_MAIN" OBSIDIAN_FILE="main"
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_BATTERY_LOW_1" OBSIDIAN_FILE="battery-low-1"
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_BATTERY_LOW_2" OBSIDIAN_FILE="battery-low-2"
@@ -53,6 +53,11 @@ screenshots:
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_ALT_THEME_8" OBSIDIAN_FILE="theme-8"
 	scripts/assemble_screenshots.sh
 
+screenshot_config:
+	phantomjs scripts/capture-settings-screenshot.js
+	pngcrush -q -rem time tmp.png screenshots/config.png
+	rm tmp.png
+
 screenshot:
 	$(MAKE) write_header
 	$(MAKE) build
@@ -69,4 +74,4 @@ clean: clean_header
 clean_header:
 	echo "" > src/config.h
 
-.PHONY: all deploy build config log resources install_emulator install_deploy menu_icon screenshots screenshot write_header clean clean_header
+.PHONY: all deploy build config log resources install_emulator install_deploy menu_icon screenshots screenshot screenshot_config write_header clean clean_header
