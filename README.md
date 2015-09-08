@@ -48,7 +48,7 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 
 | Watchface version | Configuration version |
 |------------------:|----------------------:|
-|               1.1 |                     1 |
+|         up to 1.2 |                     1 |
 
 ## Contributing
 
