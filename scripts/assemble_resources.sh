@@ -24,9 +24,13 @@ composite -compose Src_Over -geometry +425-45 resources/images/with_outline.png 
 mv tmp.png resources/images/banner.png
 
 # cut out a rectangular banner
-cp resources/images/banner.png tmp.png
-convert -crop 320x320+400+0 tmp.png tmp.png
-mv tmp.png resources/images/banner_rect.png
+convert data/transparent.png -resize 330x330! tmp2.png
+cp resources/images/with_outline.png tmp.png
+convert -page 272x410+0+0 tmp.png tmp.png
+convert -crop 272x330+0+40 tmp.png tmp.png
+composite -compose Src_Over -geometry +29+0 tmp.png tmp2.png tmp2.png
+mv tmp2.png resources/images/banner_rect.png
+rm tmp.png
 
 # 144x144 logo
 cp screenshots/main.png tmp.png
