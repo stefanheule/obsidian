@@ -4,7 +4,7 @@ Pebble.addEventListener('ready', function() {
 });
 
 Pebble.addEventListener('showConfiguration', function() {
-  var url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
+  var url = 'https://rawgit.com/stefanheule/obsidian/config-1/config/index.html';
   console.log('[ info/app ] Showing configuration page: ' + url);
   Pebble.openURL(url);
 });

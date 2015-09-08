@@ -42,6 +42,14 @@ The configuration dialog to achieve this flexibility looks as follows:
 
 The project can be build using the command `make build`.  The `Makefile` also includes various other targets, such as ones to install the watchface in an emulator or on the Pebble watch.  There are also targets to automatically take the screenshots that are part of this distribution, but that is likely to not work in environments other than mine.  The official `pebble screenshot` tool does not work reliably for me, which is why an alternative way to obtain a screenshot is used.
 
+### Versioning
+
+The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  In addition to that, the configuration format (the JavaScript config object) is versioned, too, using a single integer.  Different version of the watchface may share the same configuration format.
+
+| Watchface version | Configuration version |
+|------------------:|----------------------:|
+|               1.1 |                     1 |
+
 ## Contributing
 
 Pull requests are welcome.
