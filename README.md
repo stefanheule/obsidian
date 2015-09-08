@@ -32,7 +32,7 @@ Finally, it is fully configurable, both in terms of what it looks like as well a
 
 ![Alternative color theme](screenshots/theme-overview-2.png)
 
-It is also highly configurable:
+The configuration dialog to achieve this flexibility looks as follows:
 
 ![Configuration](screenshots/config.png)
 
