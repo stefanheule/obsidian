@@ -10,6 +10,7 @@ This is a usable and elegant analog watchface for the Pebble Time.  It's main fe
 - Display of the battery level.
 - Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
+- Fully configurable, both in terms of appearance (colors, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
 
 ## Screenshots
 
@@ -31,13 +32,17 @@ Finally, it is fully configurable, both in terms of what it looks like as well a
 
 ![Alternative color theme](screenshots/theme-overview-2.png)
 
+It is also highly configurable:
+
+![Configuration](screenshots/config.png)
+
 ## Building from Source
 
 The project can be build using the command `make build`.  The `Makefile` also includes various other targets, such as ones to install the watchface in an emulator or on the Pebble watch.  There are also targets to automatically take the screenshots that are part of this distribution, but that is likely to not work in environments other than mine.  The official `pebble screenshot` tool does not work reliably for me, which is why an alternative way to obtain a screenshot is used.
 
 ## Contributing
 
-Pull requests are welcomed.
+Pull requests are welcome.
 
 ## License
 
