@@ -118,6 +118,13 @@ var Zepto=function(){function L(t){return null==t?String(t):j[S.call(t)]||"objec
         [false    , '#5555AA', '#5555FF', '#5500FF', '#5500AA', '#AA00FF', '#FF00FF', '#FF55FF', false    ],
         [false    , false    , false    , '#AAAAFF', '#AA55FF', '#AA55AA', false    , false    , false    ],
       ];
+      
+      // only black and white for aplite platform
+      if (location.search.search('platform=aplite') != -1) {
+        layout = [
+          ['#FFFFFF', '#000000'],
+        ];
+      }
 
       var mappingSunny = {'000000': '000000','000055': '001e41','0000aa': '004387',
                           '0000ff': '0068ca','005500': '2b4a2c','005555': '27514f',
