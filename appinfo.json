@@ -47,6 +47,7 @@
     "configurable"
   ],
   "targetPlatforms": [
+    "aplite",
     "basalt"
   ],
   "sdkVersion": "3"
