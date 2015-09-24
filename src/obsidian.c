@@ -395,10 +395,10 @@ bool line2_rect_intersect(GPoint lineA0, GPoint lineA1, GPoint lineB0, GPoint li
  */
 static void bluetooth_popup(GContext *ctx, bool connected) {
 #ifndef DEBUG_BLUETOOTH_POPUP
-    if (!show_bluetooth_popup) return;
+    //if (!show_bluetooth_popup) return;
 #endif
 
-    graphics_context_set_stroke_color(ctx, GColorBlack);
+    graphics_context_set_fill_color(ctx, GColorBlack);
     GRect notification_rect = GRect(-10, 168 - 50 - 7, 144 + 20, 50);
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
     graphics_context_set_fill_color(ctx, GColorWhite);
