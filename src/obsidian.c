@@ -395,7 +395,7 @@ bool line2_rect_intersect(GPoint lineA0, GPoint lineA1, GPoint lineB0, GPoint li
  */
 static void bluetooth_popup(GContext *ctx, bool connected) {
 #ifndef DEBUG_BLUETOOTH_POPUP
-    //if (!show_bluetooth_popup) return;
+    if (!show_bluetooth_popup) return;
 #endif
 
     graphics_context_set_fill_color(ctx, GColorBlack);
