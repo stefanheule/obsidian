@@ -398,12 +398,11 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
     if (!show_bluetooth_popup) return;
 #endif
 
-    graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_context_set_stroke_color(ctx, GColorBlack);
-    graphics_context_set_stroke_width(ctx, 4);
     GRect notification_rect = GRect(-10, 168 - 50 - 7, 144 + 20, 50);
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
-    graphics_draw_round_rect(ctx, notification_rect, 8);
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    graphics_fill_rect(ctx, GRect(-10, 168 - 50 - 3, 144 + 20, 50 - 8), 0, GCornersAll);
     graphics_context_set_text_color(ctx, GColorBlack);
     graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
                        GRect(2, notification_rect.origin.y + 4, 105, 40),
@@ -950,17 +949,17 @@ static void init() {
     }
 
 // some alternative themes (for screenshots)
-#ifdef SCREENSHOT_ALT_THEME_1
+#if defined(SCREENSHOT_ALT_THEME_1) && defined(PBL_COLOR)
     uint8_t accent_col = GColorRedARGB8;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_2
+#if defined(SCREENSHOT_ALT_THEME_2) && defined(PBL_COLOR)
     uint8_t accent_col = GColorBlueARGB8;
 #endif
-#if defined(SCREENSHOT_ALT_THEME_1) || defined(SCREENSHOT_ALT_THEME_2)
+#if (defined(SCREENSHOT_ALT_THEME_1) || defined(SCREENSHOT_ALT_THEME_2)) && defined(PBL_COLOR)
     config_color_day_of_week = accent_col;
     config_color_hour_hand = accent_col;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_3
+#if defined(SCREENSHOT_ALT_THEME_3) && defined(PBL_COLOR)
     config_hour_ticks = 3;
     config_minute_ticks = 3;
     config_color_outer_background = GColorPurpleARGB8;
@@ -975,7 +974,7 @@ static void init() {
     config_color_inner_minute_hand = GColorBlackARGB8;
     config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_4
+#if defined(SCREENSHOT_ALT_THEME_4) && defined(PBL_COLOR)
     config_color_outer_background = GColorBlackARGB8;
     config_color_inner_background = GColorBlackARGB8;
     config_color_minute_hand = GColorWhiteARGB8;
@@ -988,7 +987,7 @@ static void init() {
     config_color_inner_minute_hand = GColorLightGrayARGB8;
     config_color_inner_hour_hand = config_color_inner_minute_hand;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_5
+#if defined(SCREENSHOT_ALT_THEME_5) && defined(PBL_COLOR)
     uint8_t col1 = GColorChromeYellowARGB8;
     uint8_t col2 = GColorVividCeruleanARGB8;
     config_hour_ticks = 3;
@@ -1005,7 +1004,7 @@ static void init() {
     config_color_inner_minute_hand = col1;
     config_color_inner_hour_hand = config_color_inner_minute_hand;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_6
+#if defined(SCREENSHOT_ALT_THEME_6) && defined(PBL_COLOR)
     config_hour_ticks = 1;
     config_minute_ticks = 2;
     config_color_outer_background = GColorWhiteARGB8;
@@ -1020,7 +1019,7 @@ static void init() {
     config_color_inner_minute_hand = GColorRedARGB8;
     config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_7
+#if defined(SCREENSHOT_ALT_THEME_7) && defined(PBL_COLOR)
     config_hour_ticks = 1;
     config_minute_ticks = 2;
     config_color_outer_background = GColorWhiteARGB8;
@@ -1035,7 +1034,7 @@ static void init() {
     config_color_inner_minute_hand = GColorBlackARGB8;
     config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_8
+#if defined(SCREENSHOT_ALT_THEME_8) && defined(PBL_COLOR)
     config_hour_ticks = 1;
     config_minute_ticks = 2;
     config_color_outer_background = GColorWhiteARGB8;

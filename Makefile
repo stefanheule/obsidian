@@ -12,14 +12,23 @@ build:
 config:
 	pebble emu-app-config --emulator basalt
 
+config_aplite:
+	pebble emu-app-config --emulator aplite
+
 log:
 	pebble logs --emulator basalt
+
+log_aplite:
+	pebble logs --emulator aplite
 
 travis_build:
 	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
 
 install_emulator: build
 	pebble install --emulator basalt
+
+install_emulator_aplite: build
+	pebble install --emulator aplite
 
 install_deploy: build
 	pebble install --phone 10.0.0.5
@@ -54,15 +63,23 @@ screenshots: screenshot_config
 	scripts/assemble_screenshots.sh
 
 screenshot_config:
-	phantomjs scripts/capture-settings-screenshot.js
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=basalt
 	pngcrush -q -rem time tmp.png screenshots/config.png
+	rm tmp.png
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=aplite
+	pngcrush -q -rem time tmp.png screenshots/config_aplite.png
 	rm tmp.png
 
 screenshot:
 	$(MAKE) write_header
 	$(MAKE) build
+	pebble kill
 	$(MAKE) install_emulator
 	scripts/take_screenshot.sh screenshots/$(OBSIDIAN_FILE).png
+	pebble kill
+	$(MAKE) install_emulator_aplite
+	scripts/take_screenshot.sh screenshots/aplite_$(OBSIDIAN_FILE).png
+	pebble kill
 	$(MAKE) clean_header
 
 write_header:

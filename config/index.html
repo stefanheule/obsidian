@@ -229,6 +229,9 @@
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
   }
+  function isBasalt() {
+    return getParameterByName('platform') == 'basalt';
+  }
 
   function getAllConfigHtmlNodes() {
     return $('[id]').filter(function () {
