@@ -10,7 +10,7 @@ Available in the Pebble App Store:
 
 ## Overview
 
-This is a usable and elegant analog watchface for the Pebble Time.  It's main features are:
+This is a usable and elegant analog watchface for the Pebble, Pebble Steel, Pebble Time and Pebble Time Steel.  It's main features are:
 
 - High contrast colors, clearly visible in most light conditions.
 - Display of the current date (day and month) as well as day of the week.
@@ -20,7 +20,7 @@ This is a usable and elegant analog watchface for the Pebble Time.  It's main fe
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
 - Fully configurable, both in terms of appearance (colors, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
 
-## Screenshots
+## Screenshots (Pebble Time and Pebble Time Steel)
 
 The main goal when building this watchface was for it to be practical.  For instance, the date display should never be obstructed by the watch hands:
 
@@ -45,6 +45,16 @@ Finally, it is fully configurable, both in terms of what it looks like as well a
 The configuration dialog to achieve this flexibility looks as follows:
 
 ![Configuration](screenshots/config.png)
+
+## Screenshots (Pebble and Pebble Steel)
+
+On the original Pebble and Pebble Steel, the colors are limited to black and white, but all other features are still available.  Some screenshots:
+
+![Screenshot of the date display moving on aplite platform](screenshots/aplite_date.png)
+
+![Screenshot of the bluetooth alerts on aplite platform](screenshots/aplite_bluetooth.png)
+
+![Configuration on aplite platform](screenshots/aplite_config.png)
 
 ## Building from Source
 
