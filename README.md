@@ -71,9 +71,13 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 
 ## Changelog
 
-### Version 1.3
+**Version 1.3**
 
-Adding a version for the aplite platform.
+- Adding a version for the aplite platform.
+
+**Version 1.0, 1.1, 1.2**
+
+- Initial version
 
 ## Contributing
 
