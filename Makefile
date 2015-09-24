@@ -67,7 +67,7 @@ screenshot_config:
 	pngcrush -q -rem time tmp.png screenshots/config.png
 	rm tmp.png
 	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=aplite
-	pngcrush -q -rem time tmp.png screenshots/config_aplite.png
+	pngcrush -q -rem time tmp.png screenshots/aplite_config.png
 	rm tmp.png
 
 screenshot:
