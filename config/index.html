@@ -281,26 +281,31 @@
     return defaultValue || false;
   }
 
+  function COLOR_FALLBACK(color, bw) {
+    if (isBasalt()) return color;
+    return bw;
+  }
+
   function readValuesFromStorage(use_defaults) {
     // default options
     var defaults = {
-      CONFIG_COLOR_OUTER_BACKGROUND: GColor.DarkGray,
-      CONFIG_COLOR_INNER_BACKGROUND: GColor.White,
-      CONFIG_COLOR_MINUTE_HAND: GColor.Black,
-      CONFIG_COLOR_INNER_MINUTE_HAND: GColor.LightGray,
-      CONFIG_COLOR_HOUR_HAND: GColor.JaegerGreen,
-      CONFIG_COLOR_INNER_HOUR_HAND: GColor.LightGray,
-      CONFIG_COLOR_CIRCLE: GColor.Black,
-      CONFIG_COLOR_TICKS: GColor.Black,
-      CONFIG_COLOR_DAY_OF_WEEK: GColor.JaegerGreen,
-      CONFIG_COLOR_DATE: GColor.Black,
+      CONFIG_COLOR_OUTER_BACKGROUND: COLOR_FALLBACK(GColor.DarkGray, GColor.Black),
+      CONFIG_COLOR_INNER_BACKGROUND: COLOR_FALLBACK(GColor.White, GColor.White),
+      CONFIG_COLOR_MINUTE_HAND: COLOR_FALLBACK(GColor.Black, GColor.Black),
+      CONFIG_COLOR_INNER_MINUTE_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
+      CONFIG_COLOR_HOUR_HAND: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
+      CONFIG_COLOR_INNER_HOUR_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
+      CONFIG_COLOR_CIRCLE: COLOR_FALLBACK(GColor.Black, GColor.White),
+      CONFIG_COLOR_TICKS: COLOR_FALLBACK(GColor.Black, GColor.Black),
+      CONFIG_COLOR_DAY_OF_WEEK: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
+      CONFIG_COLOR_DATE: COLOR_FALLBACK(GColor.Black, GColor.Black),
       CONFIG_BATTERY_LOGO: 1,
-      CONFIG_COLOR_BATTERY_LOGO: GColor.Black,
-      CONFIG_COLOR_BATTERY_30: GColor.Yellow,
-      CONFIG_COLOR_BATTERY_20: GColor.Orange,
-      CONFIG_COLOR_BATTERY_10: GColor.Red,
-      CONFIG_COLOR_BLUETOOTH_LOGO: GColor.JaegerGreen,
-      CONFIG_COLOR_BLUETOOTH_LOGO_2: GColor.White,
+      CONFIG_COLOR_BATTERY_LOGO: COLOR_FALLBACK(GColor.Black, GColor.White),
+      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(GColor.Yellow, GColor.Black),
+      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(GColor.Orange, GColor.Black),
+      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(GColor.Red, GColor.Black),
+      CONFIG_COLOR_BLUETOOTH_LOGO: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
+      CONFIG_COLOR_BLUETOOTH_LOGO_2: COLOR_FALLBACK(GColor.White, GColor.White),
       CONFIG_BLUETOOTH_LOGO: +true,
       CONFIG_VIBRATE_DISCONNECT: +true,
       CONFIG_VIBRATE_RECONNECT: +true,
