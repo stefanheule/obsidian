@@ -31,10 +31,16 @@ shutter -e -n --window QEMU -o $file
 
 # check image dimensions (sanity check)
 if ! identify $file | grep 150x197 > /dev/null; then
-  identify $file
-  echo "ERROR: unexpected image size"
-  exit 1
+  # aplite has different expected dimensions
+  if ! identify $file | grep 146x193 > /dev/null; then
+    identify $file
+    echo "ERROR: unexpected image size"
+    exit 1
+  else
+    # clip the image (i.e., remove the border from the emulator window)
+    convert $file -crop 144x168+1+24 $file
+  fi
+else
+  # clip the image (i.e., remove the border from the emulator window)
+  convert $file -crop 144x168+3+26 $file
 fi
-
-# clip the image (i.e., remove the border from the emulator window)
-convert $file -crop 144x168+3+26 $file

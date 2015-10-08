@@ -38,23 +38,23 @@
 //// Default values for the configuration
 ////////////////////////////////////////////
 
-static uint8_t config_color_outer_background = GColorDarkGrayARGB8;
-static uint8_t config_color_inner_background = GColorWhiteARGB8;
-static uint8_t config_color_minute_hand = GColorBlackARGB8;
-static uint8_t config_color_inner_minute_hand = GColorLightGrayARGB8;
-static uint8_t config_color_hour_hand = GColorJaegerGreenARGB8;
-static uint8_t config_color_inner_hour_hand = GColorLightGrayARGB8;
-static uint8_t config_color_circle = GColorBlackARGB8;
-static uint8_t config_color_ticks = GColorBlackARGB8;
-static uint8_t config_color_day_of_week = GColorJaegerGreenARGB8;
-static uint8_t config_color_date = GColorBlackARGB8;
+static uint8_t config_color_outer_background = COLOR_FALLBACK(GColorDarkGrayARGB8, GColorBlack);
+static uint8_t config_color_inner_background = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhite);
+static uint8_t config_color_minute_hand = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
+static uint8_t config_color_inner_minute_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlack);
+static uint8_t config_color_hour_hand = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
+static uint8_t config_color_inner_hour_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlack);
+static uint8_t config_color_circle = COLOR_FALLBACK(GColorBlackARGB8, GColorWhite);
+static uint8_t config_color_ticks = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
+static uint8_t config_color_day_of_week = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
+static uint8_t config_color_date = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
 static uint8_t config_battery_logo = 1;
-static uint8_t config_color_battery_logo = GColorBlackARGB8;
-static uint8_t config_color_battery_30 = GColorYellowARGB8;
-static uint8_t config_color_battery_20 = GColorOrangeARGB8;
-static uint8_t config_color_battery_10 = GColorRedARGB8;
-static uint8_t config_color_bluetooth_logo = GColorJaegerGreenARGB8;
-static uint8_t config_color_bluetooth_logo_2 = GColorWhiteARGB8;
+static uint8_t config_color_battery_logo = COLOR_FALLBACK(GColorBlackARGB8, GColorWhite);
+static uint8_t config_color_battery_30 = COLOR_FALLBACK(GColorYellowARGB8, GColorBlack);
+static uint8_t config_color_battery_20 = COLOR_FALLBACK(GColorOrangeARGB8, GColorBlack);
+static uint8_t config_color_battery_10 = COLOR_FALLBACK(GColorRedARGB8, GColorBlack);
+static uint8_t config_color_bluetooth_logo = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
+static uint8_t config_color_bluetooth_logo_2 = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhite);
 static uint8_t config_bluetooth_logo = true;
 static uint8_t config_vibrate_disconnect = true;
 static uint8_t config_vibrate_reconnect = true;
@@ -68,7 +68,7 @@ static uint8_t config_hour_ticks = 1;
 //// Static configuration and useful macros
 ////////////////////////////////////////////
 
-#define COLOR(c) ((GColor8) { .argb = (c) })
+#define COLOR(c) COLOR_FALLBACK((GColor8) { .argb = (c) }, c)
 
 //#define OBSIDIAN_SHOW_NUMBERS
 #define OBSIDIAN_LONG_TICKS
@@ -77,6 +77,7 @@ static uint8_t config_hour_ticks = 1;
 //#define OBSIDIAN_BATTERY_USE_TEXT
 
 #define OBSIDIAN_BLUETOOTH_POPUP_MS 5000
+
 
 
 ////////////////////////////////////////////
@@ -211,6 +212,62 @@ AppTimer *timer_bluetooth_popup;
 
 
 ////////////////////////////////////////////
+//// Shim implementation for black/white pebble
+////////////////////////////////////////////
+
+#ifndef PBL_COLOR
+void graphics_context_set_stroke_width(GContext * ctx, uint8_t stroke_width) {}
+
+// implementation by MathewReiss (http://forums.getpebble.com/discussion/21208/building-for-aplite-and-basalt)
+void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, int8_t width) {
+    // (Based on code found here http://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm#C)
+    // Order points so that lower x is first
+    int16_t x0, x1, y0, y1;
+    if (p0.x <= p1.x) {
+        x0 = p0.x; x1 = p1.x; y0 = p0.y; y1 = p1.y;
+    } else {
+        x0 = p1.x; x1 = p0.x; y0 = p1.y; y1 = p0.y;
+    }
+
+    // Init loop variables
+    int16_t dx = x1-x0;
+    int16_t dy = abs(y1-y0);
+    int16_t sy = y0<y1 ? 1 : -1;
+    int16_t err = (dx>dy ? dx : -dy)/2;
+    int16_t e2;
+
+    // Calculate whether line thickness will be added vertically or horizontally based on line angle
+    int8_t xdiff, ydiff;
+
+    if (dx > dy) {
+        xdiff = 0;
+        ydiff = width/2;
+    } else {
+        xdiff = width/2;
+        ydiff = 0;
+    }
+
+    // Use Bresenham's integer algorithm, with slight modification for line width, to draw line at any angle
+    while (true) {
+        // Draw line thickness at each point by drawing another line
+        // (horizontally when > +/-45 degrees, vertically when <= +/-45 degrees)
+        graphics_draw_line(ctx, GPoint(x0-xdiff, y0-ydiff), GPoint(x0+xdiff, y0+ydiff));
+
+        if (x0==x1 && y0==y1) break;
+        e2 = err;
+        if (e2 >-dx) { err -= dy; x0++; }
+        if (e2 < dy) { err += dx; y0 += sy; }
+    }
+}
+#else
+void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, int8_t width) {
+    graphics_context_set_stroke_width(ctx, width);
+    graphics_draw_line(ctx, p0, p1);
+}
+#endif
+
+
+////////////////////////////////////////////
 //// Implementation
 ////////////////////////////////////////////
 
@@ -294,22 +351,26 @@ static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
                        2, GCornersAll);
 
     // logo on the inside
+#ifdef PBL_COLOR
     graphics_context_set_antialiased(ctx, false);
+#endif
     graphics_context_set_stroke_color(ctx, COLOR(config_color_bluetooth_logo_2));
-    graphics_context_set_stroke_width(ctx, 1);
 
-    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
-                       GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP));
+    graphics_draw_line_with_width(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
+                       GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP), 1);
 
-    graphics_draw_line(ctx, GPoint(origin.x + 0, origin.y + BLUETOOTH_LOGO_STEP),
-                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + 3 * BLUETOOTH_LOGO_STEP));
-    graphics_draw_line(ctx, GPoint(origin.x + 0, origin.y + 3 * BLUETOOTH_LOGO_STEP),
-                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP));
+    graphics_draw_line_with_width(ctx, GPoint(origin.x + 0, origin.y + BLUETOOTH_LOGO_STEP),
+                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + 3 * BLUETOOTH_LOGO_STEP), 1);
+    graphics_draw_line_with_width(ctx, GPoint(origin.x + 0, origin.y + 3 * BLUETOOTH_LOGO_STEP),
+                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP), 1);
 
-    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
-                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP));
-    graphics_draw_line(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP),
-                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + 3 * BLUETOOTH_LOGO_STEP));
+    graphics_draw_line_with_width(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
+                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP), 1);
+    graphics_draw_line_with_width(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP),
+                       GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + 3 * BLUETOOTH_LOGO_STEP), 1);
+#ifdef PBL_COLOR
+    graphics_context_set_antialiased(ctx, true);
+#endif
 }
 
 /**
@@ -337,42 +398,40 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
     if (!show_bluetooth_popup) return;
 #endif
 
-    graphics_context_set_fill_color(ctx, GColorWhite);
-    graphics_context_set_stroke_color(ctx, GColorBlack);
-    graphics_context_set_stroke_width(ctx, 4);
+    graphics_context_set_fill_color(ctx, GColorBlack);
     GRect notification_rect = GRect(-10, 168 - 50 - 7, 144 + 20, 50);
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
-    graphics_draw_round_rect(ctx, notification_rect, 8);
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    graphics_fill_rect(ctx, GRect(-10, 168 - 50 - 3, 144 + 20, 50 - 8), 0, GCornersAll);
     graphics_context_set_text_color(ctx, GColorBlack);
     graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
                        GRect(2, notification_rect.origin.y + 4, 105, 40),
                        GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     if (connected) {
-        graphics_context_set_fill_color(ctx, GColorGreen);
+        graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorGreen, GColorBlack));
     } else {
-        graphics_context_set_fill_color(ctx, GColorRed);
+        graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorRed, GColorBlack));
     }
 
     GPoint icon_center = GPoint(120 + 3, notification_rect.origin.y + notification_rect.size.h - 26);
     graphics_fill_circle(ctx, icon_center, 9);
-    graphics_context_set_stroke_width(ctx, 2);
     graphics_context_set_stroke_color(ctx, GColorWhite);
 
     if (connected) {
-        graphics_draw_line(ctx,
+        graphics_draw_line_with_width(ctx,
                            GPoint(icon_center.x + 4, icon_center.y - 3),
-                           GPoint(icon_center.x - 2, icon_center.y + 3));
-        graphics_draw_line(ctx,
+                           GPoint(icon_center.x - 2, icon_center.y + 3), 2);
+        graphics_draw_line_with_width(ctx,
                            GPoint(icon_center.x - 4, icon_center.y + 0),
-                           GPoint(icon_center.x - 2, icon_center.y + 3));
+                           GPoint(icon_center.x - 2, icon_center.y + 3), 2);
     } else {
-        graphics_draw_line(ctx,
+        graphics_draw_line_with_width(ctx,
                            GPoint(icon_center.x + 3, icon_center.y - 3),
-                           GPoint(icon_center.x - 3, icon_center.y + 3));
-        graphics_draw_line(ctx,
+                           GPoint(icon_center.x - 3, icon_center.y + 3), 2);
+        graphics_draw_line_with_width(ctx,
                            GPoint(icon_center.x - 3, icon_center.y - 3),
-                           GPoint(icon_center.x + 3, icon_center.y + 3));
+                           GPoint(icon_center.x + 3, icon_center.y + 3), 2);
     }
 }
 
@@ -448,11 +507,10 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 //    }
 
     // background
+    graphics_context_set_fill_color(ctx, COLOR(config_color_circle));
+    graphics_fill_circle(ctx, center, radius + 3+2);
     graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
     graphics_fill_circle(ctx, center, radius);
-    graphics_context_set_stroke_color(ctx, COLOR(config_color_circle));
-    graphics_context_set_stroke_width(ctx, 4);
-    graphics_draw_circle(ctx, center, radius + 3);
 
     // numbers
 #if defined(OBSIDIAN_SHOW_NUMBERS) || defined(OBSIDIAN_ONLY_RELEVANT_NUMBER)
@@ -500,9 +558,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // hour ticks
+    uint8_t width = 2;
     if (config_hour_ticks != 3) {
         graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
-        graphics_context_set_stroke_width(ctx, 2);
         for (int i = 0; i < 12; ++i) {
             if (config_hour_ticks == 2 && (i % 3) != 0) continue;
 
@@ -512,13 +570,13 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             if (i % 3 == 0) {
                 tick_length = 10;
 #ifdef OBSIDIAN_FAT_TICKS
-                graphics_context_set_stroke_width(ctx, 4);
+                width = 4;
             } else {
-                graphics_context_set_stroke_width(ctx, 2);
+                width = 2;
 #endif
             }
 #endif
-            graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle));
+            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle), width);
         }
     }
 
@@ -526,17 +584,15 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     if (config_minute_ticks == 2) {
         // only relevant minute ticks
         int start_min_tick = (t->tm_min / 5) * 5;
-        graphics_context_set_stroke_width(ctx, 1);
         for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
+            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle), 1);
         }
     } else if (config_minute_ticks == 1) {
         // all minute ticks
-        graphics_context_set_stroke_width(ctx, 1);
         for (int i = 0; i < 60; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            graphics_draw_line(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle));
+            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle), 1);
         }
     }
 
@@ -668,26 +724,16 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 //    graphics_draw_line(ctx, second_hand, center);
 
     // minute hand
-//    graphics_context_set_stroke_width(ctx, 5);
-//    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
-//    graphics_draw_line(ctx, minute_hand, center);
-    graphics_context_set_stroke_width(ctx, 4);
     graphics_context_set_stroke_color(ctx, COLOR(config_color_minute_hand));
-    graphics_draw_line(ctx, minute_hand, center);
-    graphics_context_set_stroke_width(ctx, 1);
+    graphics_draw_line_with_width(ctx, minute_hand, center, 4);
     graphics_context_set_stroke_color(ctx, COLOR(config_color_inner_minute_hand));
-    graphics_draw_line(ctx, get_radial_point(radius - 12, minute_angle), center);
+    graphics_draw_line_with_width(ctx, get_radial_point(radius - 12, minute_angle), center, 1);
 
     // hour hand
-//    graphics_context_set_stroke_width(ctx, 5);
-//    graphics_context_set_stroke_color(ctx, COLOR_BACKGROUND);
-//    graphics_draw_line(ctx, hour_hand, center);
-    graphics_context_set_stroke_width(ctx, 4);
     graphics_context_set_stroke_color(ctx, COLOR(config_color_hour_hand));
-    graphics_draw_line(ctx, hour_hand, center);
-    graphics_context_set_stroke_width(ctx, 1);
+    graphics_draw_line_with_width(ctx, hour_hand, center, 4);
     graphics_context_set_stroke_color(ctx, COLOR(config_color_inner_hour_hand));
-    graphics_draw_line(ctx, get_radial_point(radius * 55 / 100 - 2, hour_angle), center);
+    graphics_draw_line_with_width(ctx, get_radial_point(radius * 55 / 100 - 2, hour_angle), center, 1);
 
     // dot in the middle
     graphics_context_set_fill_color(ctx, COLOR(config_color_minute_hand));
@@ -705,9 +751,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         graphics_draw_rect(ctx, battery);
         graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4),
                            0, GCornerNone);
-        graphics_context_set_stroke_width(ctx, 1);
-        graphics_draw_line(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
-                           GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5));
+        graphics_draw_line_with_width(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
+                           GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5), 1);
     }
 
     // draw the bluetooth popup
@@ -904,17 +949,17 @@ static void init() {
     }
 
 // some alternative themes (for screenshots)
-#ifdef SCREENSHOT_ALT_THEME_1
+#if defined(SCREENSHOT_ALT_THEME_1) && defined(PBL_COLOR)
     uint8_t accent_col = GColorRedARGB8;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_2
+#if defined(SCREENSHOT_ALT_THEME_2) && defined(PBL_COLOR)
     uint8_t accent_col = GColorBlueARGB8;
 #endif
-#if defined(SCREENSHOT_ALT_THEME_1) || defined(SCREENSHOT_ALT_THEME_2)
+#if (defined(SCREENSHOT_ALT_THEME_1) || defined(SCREENSHOT_ALT_THEME_2)) && defined(PBL_COLOR)
     config_color_day_of_week = accent_col;
     config_color_hour_hand = accent_col;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_3
+#if defined(SCREENSHOT_ALT_THEME_3) && defined(PBL_COLOR)
     config_hour_ticks = 3;
     config_minute_ticks = 3;
     config_color_outer_background = GColorPurpleARGB8;
@@ -929,7 +974,7 @@ static void init() {
     config_color_inner_minute_hand = GColorBlackARGB8;
     config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_4
+#if defined(SCREENSHOT_ALT_THEME_4) && defined(PBL_COLOR)
     config_color_outer_background = GColorBlackARGB8;
     config_color_inner_background = GColorBlackARGB8;
     config_color_minute_hand = GColorWhiteARGB8;
@@ -942,7 +987,7 @@ static void init() {
     config_color_inner_minute_hand = GColorLightGrayARGB8;
     config_color_inner_hour_hand = config_color_inner_minute_hand;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_5
+#if defined(SCREENSHOT_ALT_THEME_5) && defined(PBL_COLOR)
     uint8_t col1 = GColorChromeYellowARGB8;
     uint8_t col2 = GColorVividCeruleanARGB8;
     config_hour_ticks = 3;
@@ -959,7 +1004,7 @@ static void init() {
     config_color_inner_minute_hand = col1;
     config_color_inner_hour_hand = config_color_inner_minute_hand;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_6
+#if defined(SCREENSHOT_ALT_THEME_6) && defined(PBL_COLOR)
     config_hour_ticks = 1;
     config_minute_ticks = 2;
     config_color_outer_background = GColorWhiteARGB8;
@@ -974,7 +1019,7 @@ static void init() {
     config_color_inner_minute_hand = GColorRedARGB8;
     config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_7
+#if defined(SCREENSHOT_ALT_THEME_7) && defined(PBL_COLOR)
     config_hour_ticks = 1;
     config_minute_ticks = 2;
     config_color_outer_background = GColorWhiteARGB8;
@@ -989,7 +1034,7 @@ static void init() {
     config_color_inner_minute_hand = GColorBlackARGB8;
     config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
-#ifdef SCREENSHOT_ALT_THEME_8
+#if defined(SCREENSHOT_ALT_THEME_8) && defined(PBL_COLOR)
     config_hour_ticks = 1;
     config_minute_ticks = 2;
     config_color_outer_background = GColorWhiteARGB8;
