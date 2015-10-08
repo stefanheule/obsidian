@@ -23,7 +23,7 @@ Pebble.addEventListener('ready', function() {
 
 Pebble.addEventListener('showConfiguration', function() {
   var url = 'https://rawgit.com/stefanheule/obsidian/config-2/config/index.html';
-  url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
+  //url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
   url += '?platform=' + encodeURIComponent(getPlatform());
   url += '&watch=' + encodeURIComponent(getDetails());
   console.log('[ info/app ] Showing configuration page: ' + url);
