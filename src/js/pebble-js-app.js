@@ -22,7 +22,7 @@ Pebble.addEventListener('ready', function() {
 });
 
 Pebble.addEventListener('showConfiguration', function() {
-  var url = 'https://rawgit.com/stefanheule/obsidian/config-1/config/index.html';
+  var url = 'https://rawgit.com/stefanheule/obsidian/config-2/config/index.html';
   url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
   url += '?platform=' + encodeURIComponent(getPlatform());
   url += '&watch=' + encodeURIComponent(getDetails());
