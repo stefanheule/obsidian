@@ -624,18 +624,18 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // determine where we can draw the date without overlap
     const GPoint d_points[] = {
             // array of candidate points to draw the date strings at
-            GPoint(0, 0),
-            GPoint(10, -3),
-            GPoint(17, -7),
-            GPoint(26, -13),
-            GPoint(29, -19),
-            GPoint(33, -25),
-            GPoint(33, -32),
-            GPoint(33, -39),
+            GPoint(0, 16),
+            GPoint(10, 16-3),
+            GPoint(17, 16-7),
+            GPoint(26, 16-13),
+            GPoint(29, 16-19),
+            GPoint(33, 16-25),
+            GPoint(33, 16-32),
+            GPoint(33, 16-39),
     };
     const int d_offset = 15;
     const int d_height = 21;
-    const int d_y_start = 100;
+    const int d_y_start = height/2;
     bool found = false;
     uint16_t i;
     GPoint d_center;
@@ -649,8 +649,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             d_center.x = -d_center.x;
         }
 #ifdef PBL_ROUND
-        d_center.x = d_center.x * 8/6;
-        d_center.y = d_center.y * 8/6;
+        d_center.x = d_center.x * 7 / 6;
+        d_center.y = d_center.y * 7 / 6;
 #endif
         date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
         GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
