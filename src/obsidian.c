@@ -487,6 +487,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // background
+#ifndef PBL_ROUND
     uint8_t outer_color = config_color_outer_background;
     if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
         outer_color = config_color_battery_10;
@@ -495,9 +496,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
         outer_color = config_color_battery_30;
     }
-
     graphics_context_set_fill_color(ctx, COLOR(outer_color));
     graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
+#endif
 
     // battery
 //    const int max_battery_points = 50;
@@ -512,10 +513,23 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 //    }
 
     // background
+#if !defined(PBL_ROUND)
     graphics_context_set_fill_color(ctx, COLOR(config_color_circle));
     graphics_fill_circle(ctx, center, radius + 3+2);
     graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
     graphics_fill_circle(ctx, center, radius);
+#else
+    uint8_t inner_color = config_color_inner_background;
+    if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
+        inner_color = config_color_battery_10;
+    } else if (battery_state.charge_percent <= 20 && !battery_state.is_charging && !battery_state.is_plugged) {
+        inner_color = config_color_battery_20;
+    } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
+        inner_color = config_color_battery_30;
+    }
+    graphics_context_set_fill_color(ctx, COLOR(inner_color));
+    graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
+#endif
 
     // numbers
 #if defined(OBSIDIAN_SHOW_NUMBERS) || defined(OBSIDIAN_ONLY_RELEVANT_NUMBER)
