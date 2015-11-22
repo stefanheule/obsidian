@@ -2,7 +2,10 @@
 OBSIDIAN_CONFIG=""
 OBSIDIAN_FILE="out"
 
-all: install_emulator_chalk
+# platform
+P="chalk"
+
+all: install_emulator
 
 deploy: install_deploy
 
@@ -10,34 +13,16 @@ build:
 	pebble build
 
 config:
-	pebble emu-app-config --emulator basalt
-
-config_aplite:
-	pebble emu-app-config --emulator aplite
-
-config_chalk:
-	pebble emu-app-config --emulator chalk
+	pebble emu-app-config --emulator $(P)
 
 log:
-	pebble logs --emulator basalt
-
-log_aplite:
-	pebble logs --emulator aplite
-
-log_chalk:
-	pebble logs --emulator chalk
+	pebble logs --emulator $(P)
 
 travis_build:
 	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
 
 install_emulator: build
-	pebble install --emulator basalt
-
-install_emulator_aplite: build
-	pebble install --emulator aplite
-
-install_emulator_chalk: build
-	pebble install --emulator chalk
+	pebble install --emulator $(P)
 
 install_deploy: build
 	pebble install --phone 10.0.0.5
@@ -78,16 +63,26 @@ screenshot_config:
 	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=aplite
 	pngcrush -q -rem time tmp.png screenshots/aplite_config.png
 	rm tmp.png
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=chalk
+	pngcrush -q -rem time tmp.png screenshots/chalk_config.png
+	rm tmp.png
 
 screenshot:
 	$(MAKE) write_header
 	$(MAKE) build
+
+	# pebble kill
+	# $(MAKE) install_emulator P="aplite"
+	# pebble screenshot screenshots/aplite/$(OBSIDIAN_FILE).png
+
+	# pebble kill
+	# $(MAKE) install_emulator P="basalt"
+	# pebble screenshot screenshots/basalt/$(OBSIDIAN_FILE).png
+
 	pebble kill
-	$(MAKE) install_emulator
-	scripts/take_screenshot.sh screenshots/$(OBSIDIAN_FILE).png
-	pebble kill
-	$(MAKE) install_emulator_aplite
-	scripts/take_screenshot.sh screenshots/aplite_$(OBSIDIAN_FILE).png
+	$(MAKE) install_emulator P="chalk"
+	pebble screenshot screenshots/chalk/$(OBSIDIAN_FILE).png
+
 	pebble kill
 	$(MAKE) clean_header
 
