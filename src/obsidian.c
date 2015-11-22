@@ -402,14 +402,15 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
     if (!show_bluetooth_popup) return;
 #endif
 
+    int16_t yoffset = PBL_IF_ROUND_ELSE(70, 50);
     graphics_context_set_fill_color(ctx, GColorBlack);
-    GRect notification_rect = GRect(-10, height - 50 - 7, width + 20, 50);
+    GRect notification_rect = GRect(-10, height - yoffset - 7, width + 20, 50);
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
     graphics_context_set_fill_color(ctx, GColorWhite);
-    graphics_fill_rect(ctx, GRect(-10, height - 50 - 3, width + 20, 50 - 8), 0, GCornersAll);
+    graphics_fill_rect(ctx, GRect(-10, height - yoffset - 3, width + 20, 50 - 8), 0, GCornersAll);
     graphics_context_set_text_color(ctx, GColorBlack);
     graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
-                       GRect(2, notification_rect.origin.y + 4, 105, 40),
+                       GRect(PBL_IF_ROUND_ELSE(22, 2), notification_rect.origin.y + 4, 105, 40),
                        GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     if (connected) {
@@ -418,7 +419,7 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
         graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorRed, GColorBlack));
     }
 
-    GPoint icon_center = GPoint(120 + 3, notification_rect.origin.y + notification_rect.size.h - 26);
+    GPoint icon_center = GPoint(PBL_IF_ROUND_ELSE(135, 120) + 3, notification_rect.origin.y + notification_rect.size.h - 26);
     graphics_fill_circle(ctx, icon_center, 9);
     graphics_context_set_stroke_color(ctx, GColorWhite);
 
