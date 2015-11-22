@@ -49,7 +49,7 @@ static uint8_t config_color_ticks = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack
 static uint8_t config_color_day_of_week = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
 static uint8_t config_color_date = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
 static uint8_t config_battery_logo = 1;
-static uint8_t config_color_battery_logo = COLOR_FALLBACK(GColorBlackARGB8, GColorWhite);
+static uint8_t config_color_battery_logo = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorDarkGrayARGB8, GColorBlackARGB8), GColorWhite);
 static uint8_t config_color_battery_30 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorPastelYellowARGB8, GColorYellowARGB8), GColorBlack);
 static uint8_t config_color_battery_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorRajahARGB8, GColorOrangeARGB8), GColorBlack);
 static uint8_t config_color_battery_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorMelonARGB8, GColorRedARGB8), GColorBlack);
@@ -440,7 +440,7 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
     }
 }
 
-//#define DEBUG_DATE_POSITION
+#define DEBUG_DATE_POSITION
 #ifdef DEBUG_DATE_POSITION
 static int debug_iter = 0;
 #endif
@@ -720,7 +720,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         GPoint b_center;
         const int b_border = 3;
         const int b_x = width / 2;
-        const int b_y = 38;
+        const int b_y = PBL_IF_ROUND_ELSE(40, 38);
         // loop through all points and use the first one that doesn't overlap with the watch hands
         for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
             b_center = b_points[(i + 1) / 2];
@@ -769,7 +769,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     if (config_battery_logo == 1 ||
         (config_battery_logo == 2 && battery_state.charge_percent <= 30 && !battery_state.is_charging &&
          !battery_state.is_plugged)) {
-        const GRect battery = GRect(125, 3, 14, 8);
+        const GRect battery = PBL_IF_ROUND_ELSE(GRect((width-14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
         graphics_context_set_stroke_color(ctx, COLOR(config_color_battery_logo));
         graphics_context_set_fill_color(ctx, COLOR(config_color_battery_logo));
         graphics_draw_rect(ctx, battery);
