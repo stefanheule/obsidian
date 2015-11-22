@@ -2,7 +2,7 @@
 OBSIDIAN_CONFIG=""
 OBSIDIAN_FILE="out"
 
-all: install_emulator
+all: install_emulator_chalk
 
 deploy: install_deploy
 
@@ -15,11 +15,17 @@ config:
 config_aplite:
 	pebble emu-app-config --emulator aplite
 
+config_chalk:
+	pebble emu-app-config --emulator chalk
+
 log:
 	pebble logs --emulator basalt
 
 log_aplite:
 	pebble logs --emulator aplite
+
+log_chalk:
+	pebble logs --emulator chalk
 
 travis_build:
 	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
@@ -29,6 +35,9 @@ install_emulator: build
 
 install_emulator_aplite: build
 	pebble install --emulator aplite
+
+install_emulator_chalk: build
+	pebble install --emulator chalk
 
 install_deploy: build
 	pebble install --phone 10.0.0.5
