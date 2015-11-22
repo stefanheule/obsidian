@@ -108,6 +108,9 @@ static GFont font_open_sans;
 
 /** System font. */
 static GFont font_system_18px_bold;
+#ifdef PBL_ROUND
+static GFont font_system_24px_bold;
+#endif
 
 /** Is the bluetooth popup current supposed to be shown? */
 static bool show_bluetooth_popup;
@@ -648,7 +651,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             GPoint(33, 16-32),
             GPoint(33, 16-39),
     };
-    const int d_offset = 15;
+    const int d_offset = PBL_IF_ROUND_ELSE(20, 15);
     const int d_height = 21;
     const int d_y_start = height/2;
     bool found = false;
@@ -665,7 +668,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         }
 #ifdef PBL_ROUND
         d_center.x = d_center.x * 7 / 6;
-        d_center.y = d_center.y * 7 / 6;
+        //d_center.y = d_center.y * 7 / 6;
 #endif
         date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
         GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
@@ -697,26 +700,26 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
     graphics_context_set_text_color(ctx, COLOR(config_color_day_of_week));
-    graphics_draw_text(ctx, buffer_2, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
+    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     graphics_context_set_text_color(ctx, COLOR(config_color_date));
-    graphics_draw_text(ctx, buffer_1, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
+    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
 #endif
 
     // bluetooth status
+    const GPoint b_points[] = {
+        // array of candidate points to draw the bluetooth logo at
+        GPoint(0, 0),
+        GPoint(4, 1),
+        GPoint(8, 2),
+        GPoint(12, 4),
+        GPoint(16, 6),
+        GPoint(20, 9),
+        GPoint(24, 12),
+    };
     if (!bluetooth) {
         // determine where we can draw the bluetooth logo without overlap
-        const GPoint b_points[] = {
-                // array of candidate points to draw the bluetooth logo at
-                GPoint(0, 0),
-                GPoint(4, 1),
-                GPoint(8, 2),
-                GPoint(12, 4),
-                GPoint(16, 6),
-                GPoint(20, 9),
-                GPoint(24, 12),
-        };
         GPoint b_center;
         const int b_border = 3;
         const int b_x = width / 2;
@@ -730,7 +733,6 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
                                       GPoint(b_x + b_center.x - 5 - b_border, b_y + b_center.y - b_border),
                                       GPoint(b_x + b_center.x + 5 + b_border, b_y + b_center.y + 17 + b_border))) {
-                found = true;
                 break;
             }
         }
@@ -769,7 +771,27 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     if (config_battery_logo == 1 ||
         (config_battery_logo == 2 && battery_state.charge_percent <= 30 && !battery_state.is_charging &&
          !battery_state.is_plugged)) {
-        const GRect battery = PBL_IF_ROUND_ELSE(GRect((width-14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
+        GRect battery = PBL_IF_ROUND_ELSE(GRect((width-14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
+#ifdef PBL_ROUND
+        // determine where we can draw the bluetooth logo without overlap
+        GPoint b_center;
+        const int b_x = width / 2;
+        const int b_y = 25;
+        const int b_border = 3;
+        // loop through all points and use the first one that doesn't overlap with the watch hands
+        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
+            b_center = b_points[(i + 1) / 2];
+            if (i % 2 == 0) {
+                b_center.x = -b_center.x;
+            }
+            if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
+                                      GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
+                                      GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
+                break;
+            }
+        }
+        battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
+#endif
         graphics_context_set_stroke_color(ctx, COLOR(config_color_battery_logo));
         graphics_context_set_fill_color(ctx, COLOR(config_color_battery_logo));
         graphics_draw_rect(ctx, battery);
@@ -855,6 +877,9 @@ static void window_load(Window *window) {
     font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
 #endif
     font_system_18px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+#ifdef PBL_ROUND
+    font_system_24px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
+#endif
 
     // initialize
     show_bluetooth_popup = false;
