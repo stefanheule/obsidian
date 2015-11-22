@@ -598,7 +598,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
             }
 #endif
-            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle),
+            graphics_draw_line_with_width(ctx, get_radial_point(radius+PBL_IF_ROUND_ELSE(3, 0), angle), get_radial_point(radius - tick_length, angle),
                                           tick_width);
         }
     }
@@ -609,13 +609,13 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         int start_min_tick = (t->tm_min / 5) * 5;
         for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle), 1);
+            graphics_draw_line_with_width(ctx, get_radial_point(radius+PBL_IF_ROUND_ELSE(3, 0), angle), get_radial_point(radius - 3, angle), 1);
         }
     } else if (config_minute_ticks == 1) {
         // all minute ticks
         for (int i = 0; i < 60; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle), 1);
+            graphics_draw_line_with_width(ctx, get_radial_point(radius+PBL_IF_ROUND_ELSE(3, 0), angle), get_radial_point(radius - 3, angle), 1);
         }
     }
 
@@ -626,7 +626,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
     // compute angles
     int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
-    GPoint minute_hand = get_radial_point(radius - 10, minute_angle);
+    GPoint minute_hand = get_radial_point(radius - PBL_IF_ROUND_ELSE(16, 10), minute_angle);
     int hour_tick = ((t->tm_hour % 12) * 6) + (t->tm_min / 10);
     int32_t hour_angle = hour_tick * TRIG_MAX_ANGLE / (12 * 6);
     GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_angle);
@@ -753,7 +753,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_color(ctx, COLOR(config_color_minute_hand));
     graphics_draw_line_with_width(ctx, minute_hand, center, 4);
     graphics_context_set_stroke_color(ctx, COLOR(config_color_inner_minute_hand));
-    graphics_draw_line_with_width(ctx, get_radial_point(radius - 12, minute_angle), center, 1);
+    graphics_draw_line_with_width(ctx, get_radial_point(radius - PBL_IF_ROUND_ELSE(18, 12), minute_angle), center, 1);
 
     // hour hand
     graphics_context_set_stroke_color(ctx, COLOR(config_color_hour_hand));
