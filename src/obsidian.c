@@ -443,7 +443,7 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
     }
 }
 
-#define DEBUG_DATE_POSITION
+//#define DEBUG_DATE_POSITION
 #ifdef DEBUG_DATE_POSITION
 static int debug_iter = 0;
 #endif

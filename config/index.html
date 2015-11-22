@@ -285,7 +285,7 @@
   }
 
   function COLOR_FALLBACK(color, bw) {
-    if (isBasalt()) return color;
+    if (isBasalt() || isChalk()) return color;
     return bw;
   }
 
