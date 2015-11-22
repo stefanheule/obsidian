@@ -71,13 +71,13 @@ screenshot:
 	$(MAKE) write_header
 	$(MAKE) build
 
-	# pebble kill
-	# $(MAKE) install_emulator P="aplite"
-	# pebble screenshot screenshots/aplite/$(OBSIDIAN_FILE).png
+	pebble kill
+	$(MAKE) install_emulator P="aplite"
+	pebble screenshot screenshots/aplite/$(OBSIDIAN_FILE).png
 
-	# pebble kill
-	# $(MAKE) install_emulator P="basalt"
-	# pebble screenshot screenshots/basalt/$(OBSIDIAN_FILE).png
+	pebble kill
+	$(MAKE) install_emulator P="basalt"
+	pebble screenshot screenshots/basalt/$(OBSIDIAN_FILE).png
 
 	pebble kill
 	$(MAKE) install_emulator P="chalk"
