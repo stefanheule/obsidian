@@ -97,6 +97,10 @@ static char buffer_2[30];
 /** The center of the watch */
 static GPoint center;
 
+/** The height and width of the watch */
+static int16_t height;
+static int16_t width;
+
 #ifdef OBSIDIAN_SHOW_NUMBERS
 /** Open Sans font. */
 static GFont font_open_sans;
@@ -399,10 +403,10 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
 #endif
 
     graphics_context_set_fill_color(ctx, GColorBlack);
-    GRect notification_rect = GRect(-10, 168 - 50 - 7, 144 + 20, 50);
+    GRect notification_rect = GRect(-10, height - 50 - 7, width + 20, 50);
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
     graphics_context_set_fill_color(ctx, GColorWhite);
-    graphics_fill_rect(ctx, GRect(-10, 168 - 50 - 3, 144 + 20, 50 - 8), 0, GCornersAll);
+    graphics_fill_rect(ctx, GRect(-10, height - 50 - 3, width + 20, 50 - 8), 0, GCornersAll);
     graphics_context_set_text_color(ctx, GColorBlack);
     graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
                        GRect(2, notification_rect.origin.y + 4, 105, 40),
@@ -515,18 +519,18 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // numbers
 #if defined(OBSIDIAN_SHOW_NUMBERS) || defined(OBSIDIAN_ONLY_RELEVANT_NUMBER)
     static const GPoint number_points[] = {
-            {144 / 2 - 9,       26}, // 12
-            {144 / 2 + 23,      28}, // 1
-            {144 / 2 + 45,      47}, // 2
-            {144 / 2 + 49,      77}, // 3
-            {144 / 2 + 45,      102}, // 4
-            {144 / 2 + 24,      124}, // 5
-            {144 / 2 - 4,       128}, // 6
-            {144 / 2 - 6 - 23,  124}, // 7
-            {144 / 2 - 6 - 43,  103}, // 8
-            {144 / 2 - 6 - 51,  77}, // 9
-            {144 / 2 - 12 - 43, 48}, // 10
-            {144 / 2 - 12 - 23, 28}, // 11
+            {width / 2 - 9,       168 - height + 26}, // 12
+            {width / 2 + 23,      168 - height + 28}, // 1
+            {width / 2 + 45,      168 - height + 47}, // 2
+            {width / 2 + 49,      168 - height + 77}, // 3
+            {width / 2 + 45,      168 - height + 102}, // 4
+            {width / 2 + 24,      168 - height + 124}, // 5
+            {width / 2 - 4,       168 - height + 128}, // 6
+            {width / 2 - 6 - 23,  168 - height + 124}, // 7
+            {width / 2 - 6 - 43,  168 - height + 103}, // 8
+            {width / 2 - 6 - 51,  168 - height + 77}, // 9
+            {width / 2 - 12 - 43, 168 - height + 48}, // 10
+            {width / 2 - 12 - 23, 168 - height + 28}, // 11
     };
     static const char *numbers[] = {
             "12",
@@ -558,7 +562,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // hour ticks
-    uint8_t width = 2;
+    uint8_t tick_width = 2;
     if (config_hour_ticks != 3) {
         graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
         for (int i = 0; i < 12; ++i) {
@@ -570,13 +574,14 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             if (i % 3 == 0) {
                 tick_length = 10;
 #ifdef OBSIDIAN_FAT_TICKS
-                width = 4;
+                tick_width = 4;
             } else {
-                width = 2;
+                tick_width = 2;
 #endif
             }
 #endif
-            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle), width);
+            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle),
+                                          tick_width);
         }
     }
 
@@ -643,20 +648,24 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         if (i % 2 == 0) {
             d_center.x = -d_center.x;
         }
-        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
+#ifdef PBL_ROUND
+        d_center.x = d_center.x * 8/6;
+        d_center.y = d_center.y * 8/6;
+#endif
+        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
         GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
                                                                 GTextOverflowModeWordWrap, GTextAlignmentCenter);
-        day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
+        day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
         GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
         if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(72 + d_center.x - day_size.w / 2 - border, d_y_start + d_center.y - border),
-                                   GPoint(72 + d_center.x + day_size.w / 2 + border,
+                                   GPoint(width/2 + d_center.x - day_size.w / 2 - border, d_y_start + d_center.y - border),
+                                   GPoint(width/2 + d_center.x + day_size.w / 2 + border,
                                           d_y_start + d_center.y + d_height + border)) ||
               line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(72 + d_center.x - date_size.w / 2 - border,
+                                   GPoint(width/2 + d_center.x - date_size.w / 2 - border,
                                           d_y_start + d_center.y + d_offset - border),
-                                   GPoint(72 + d_center.x + date_size.w / 2 + border,
+                                   GPoint(width/2 + d_center.x + date_size.w / 2 + border,
                                           d_y_start + d_center.y + d_height + d_offset + border)))) {
             found = true;
             break;
@@ -666,8 +675,8 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // this should not happen, but if it does, then use the default position
     if (!found) {
         d_center = d_points[0];
-        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
-        day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
+        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
+        day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
     }
 
     // actuallyl draw the date text
@@ -695,7 +704,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         };
         GPoint b_center;
         const int b_border = 3;
-        const int b_x = 144 / 2;
+        const int b_x = width / 2;
         const int b_y = 38;
         // loop through all points and use the first one that doesn't overlap with the watch hands
         for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
@@ -1062,6 +1071,8 @@ static void init() {
 
     GRect bounds = layer_get_bounds(window_get_root_layer(window));
     center = grect_center_point(&bounds);
+    height = bounds.size.h;
+    width = bounds.size.w;
 
     TimeUnits unit = MINUTE_UNIT;
 #ifdef DEBUG_DATE_POSITION
