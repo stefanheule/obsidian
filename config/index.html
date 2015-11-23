@@ -232,6 +232,9 @@
   function isBasalt() {
     return getParameterByName('platform') == 'basalt';
   }
+  function isChalk() {
+    return getParameterByName('platform') == 'chalk';
+  }
 
   function getAllConfigHtmlNodes() {
     return $('[id]').filter(function () {
@@ -282,8 +285,13 @@
   }
 
   function COLOR_FALLBACK(color, bw) {
-    if (isBasalt()) return color;
+    if (isBasalt() || isChalk()) return color;
     return bw;
+  }
+
+  function PBL_IF_ROUND_ELSE(round, other) {
+    if (isChalk()) return round;
+    return other;
   }
 
   function readValuesFromStorage(use_defaults) {
@@ -295,15 +303,15 @@
       CONFIG_COLOR_INNER_MINUTE_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
       CONFIG_COLOR_HOUR_HAND: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
       CONFIG_COLOR_INNER_HOUR_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
-      CONFIG_COLOR_CIRCLE: COLOR_FALLBACK(GColor.Black, GColor.White),
+      CONFIG_COLOR_CIRCLE: COLOR_FALLBACK(GColor.Black, GColor.Black),
       CONFIG_COLOR_TICKS: COLOR_FALLBACK(GColor.Black, GColor.Black),
       CONFIG_COLOR_DAY_OF_WEEK: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
       CONFIG_COLOR_DATE: COLOR_FALLBACK(GColor.Black, GColor.Black),
       CONFIG_BATTERY_LOGO: 1,
-      CONFIG_COLOR_BATTERY_LOGO: COLOR_FALLBACK(GColor.Black, GColor.White),
-      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(GColor.Yellow, GColor.Black),
-      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(GColor.Orange, GColor.Black),
-      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(GColor.Red, GColor.Black),
+      CONFIG_COLOR_BATTERY_LOGO: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.DarkGray, GColor.Black), GColor.White),
+      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.PastelYellow, GColor.Yellow), GColor.Black),
+      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Rajah, GColor.Orange), GColor.Black),
+      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Melon, GColor.Red), GColor.Black),
       CONFIG_COLOR_BLUETOOTH_LOGO: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
       CONFIG_COLOR_BLUETOOTH_LOGO_2: COLOR_FALLBACK(GColor.White, GColor.White),
       CONFIG_BLUETOOTH_LOGO: +true,
@@ -389,6 +397,14 @@
     });
     
     applyValues(readValuesFromStorage());
+
+    // hide outer background color for chalk
+    if (isChalk()) {
+      var el = document.getElementById("CONFIG_COLOR_OUTER_BACKGROUND").parentElement.parentElement;
+      el.style.display = "none";
+      el = document.getElementById("CONFIG_COLOR_CIRCLE").parentElement.parentElement;
+      el.style.display = "none";
+    }
   });
   </script>
   </body>

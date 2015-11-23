@@ -2,6 +2,9 @@
 OBSIDIAN_CONFIG=""
 OBSIDIAN_FILE="out"
 
+# platform
+P="chalk"
+
 all: install_emulator
 
 deploy: install_deploy
@@ -10,25 +13,16 @@ build:
 	pebble build
 
 config:
-	pebble emu-app-config --emulator basalt
-
-config_aplite:
-	pebble emu-app-config --emulator aplite
+	pebble emu-app-config --emulator $(P)
 
 log:
-	pebble logs --emulator basalt
-
-log_aplite:
-	pebble logs --emulator aplite
+	pebble logs --emulator $(P)
 
 travis_build:
 	~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
 
 install_emulator: build
-	pebble install --emulator basalt
-
-install_emulator_aplite: build
-	pebble install --emulator aplite
+	pebble install --emulator $(P)
 
 install_deploy: build
 	pebble install --phone 10.0.0.5
@@ -63,22 +57,32 @@ screenshots: screenshot_config
 	scripts/assemble_screenshots.sh
 
 screenshot_config:
-	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=basalt
-	pngcrush -q -rem time tmp.png screenshots/config.png
-	rm tmp.png
 	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=aplite
-	pngcrush -q -rem time tmp.png screenshots/aplite_config.png
+	pngcrush -q -rem time tmp.png screenshots/aplite/config.png
+	rm tmp.png
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=basalt
+	pngcrush -q -rem time tmp.png screenshots/basalt/config.png
+	rm tmp.png
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=chalk
+	pngcrush -q -rem time tmp.png screenshots/chalk/config.png
 	rm tmp.png
 
 screenshot:
 	$(MAKE) write_header
 	$(MAKE) build
+
 	pebble kill
-	$(MAKE) install_emulator
-	scripts/take_screenshot.sh screenshots/$(OBSIDIAN_FILE).png
+	$(MAKE) install_emulator P="aplite"
+	pebble screenshot screenshots/aplite/$(OBSIDIAN_FILE).png
+
 	pebble kill
-	$(MAKE) install_emulator_aplite
-	scripts/take_screenshot.sh screenshots/aplite_$(OBSIDIAN_FILE).png
+	$(MAKE) install_emulator P="basalt"
+	pebble screenshot screenshots/basalt/$(OBSIDIAN_FILE).png
+
+	pebble kill
+	$(MAKE) install_emulator P="chalk"
+	pebble screenshot screenshots/chalk/$(OBSIDIAN_FILE).png
+
 	pebble kill
 	$(MAKE) clean_header
 

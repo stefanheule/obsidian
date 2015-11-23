@@ -44,15 +44,15 @@ static uint8_t config_color_minute_hand = COLOR_FALLBACK(GColorBlackARGB8, GColo
 static uint8_t config_color_inner_minute_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlack);
 static uint8_t config_color_hour_hand = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
 static uint8_t config_color_inner_hour_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlack);
-static uint8_t config_color_circle = COLOR_FALLBACK(GColorBlackARGB8, GColorWhite);
+static uint8_t config_color_circle = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
 static uint8_t config_color_ticks = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
 static uint8_t config_color_day_of_week = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
 static uint8_t config_color_date = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
 static uint8_t config_battery_logo = 1;
-static uint8_t config_color_battery_logo = COLOR_FALLBACK(GColorBlackARGB8, GColorWhite);
-static uint8_t config_color_battery_30 = COLOR_FALLBACK(GColorYellowARGB8, GColorBlack);
-static uint8_t config_color_battery_20 = COLOR_FALLBACK(GColorOrangeARGB8, GColorBlack);
-static uint8_t config_color_battery_10 = COLOR_FALLBACK(GColorRedARGB8, GColorBlack);
+static uint8_t config_color_battery_logo = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorDarkGrayARGB8, GColorBlackARGB8), GColorWhite);
+static uint8_t config_color_battery_30 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorPastelYellowARGB8, GColorYellowARGB8), GColorBlack);
+static uint8_t config_color_battery_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorRajahARGB8, GColorOrangeARGB8), GColorBlack);
+static uint8_t config_color_battery_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorMelonARGB8, GColorRedARGB8), GColorBlack);
 static uint8_t config_color_bluetooth_logo = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
 static uint8_t config_color_bluetooth_logo_2 = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhite);
 static uint8_t config_bluetooth_logo = true;
@@ -97,6 +97,10 @@ static char buffer_2[30];
 /** The center of the watch */
 static GPoint center;
 
+/** The height and width of the watch */
+static int16_t height;
+static int16_t width;
+
 #ifdef OBSIDIAN_SHOW_NUMBERS
 /** Open Sans font. */
 static GFont font_open_sans;
@@ -104,6 +108,9 @@ static GFont font_open_sans;
 
 /** System font. */
 static GFont font_system_18px_bold;
+#ifdef PBL_ROUND
+static GFont font_system_24px_bold;
+#endif
 
 /** Is the bluetooth popup current supposed to be shown? */
 static bool show_bluetooth_popup;
@@ -398,14 +405,15 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
     if (!show_bluetooth_popup) return;
 #endif
 
+    int16_t yoffset = PBL_IF_ROUND_ELSE(70, 50);
     graphics_context_set_fill_color(ctx, GColorBlack);
-    GRect notification_rect = GRect(-10, 168 - 50 - 7, 144 + 20, 50);
+    GRect notification_rect = GRect(-10, height - yoffset - 7, width + 20, 50);
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
     graphics_context_set_fill_color(ctx, GColorWhite);
-    graphics_fill_rect(ctx, GRect(-10, 168 - 50 - 3, 144 + 20, 50 - 8), 0, GCornersAll);
+    graphics_fill_rect(ctx, GRect(-10, height - yoffset - 3, width + 20, 50 - 8), 0, GCornersAll);
     graphics_context_set_text_color(ctx, GColorBlack);
     graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
-                       GRect(2, notification_rect.origin.y + 4, 105, 40),
+                       GRect(PBL_IF_ROUND_ELSE(22, 2), notification_rect.origin.y + 4, 105, 40),
                        GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     if (connected) {
@@ -414,7 +422,7 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
         graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorRed, GColorBlack));
     }
 
-    GPoint icon_center = GPoint(120 + 3, notification_rect.origin.y + notification_rect.size.h - 26);
+    GPoint icon_center = GPoint(PBL_IF_ROUND_ELSE(135, 120) + 3, notification_rect.origin.y + notification_rect.size.h - 26);
     graphics_fill_circle(ctx, icon_center, 9);
     graphics_context_set_stroke_color(ctx, GColorWhite);
 
@@ -482,6 +490,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // background
+#ifndef PBL_ROUND
     uint8_t outer_color = config_color_outer_background;
     if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
         outer_color = config_color_battery_10;
@@ -490,9 +499,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
         outer_color = config_color_battery_30;
     }
-
     graphics_context_set_fill_color(ctx, COLOR(outer_color));
     graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
+#endif
 
     // battery
 //    const int max_battery_points = 50;
@@ -507,26 +516,39 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 //    }
 
     // background
+#if !defined(PBL_ROUND)
     graphics_context_set_fill_color(ctx, COLOR(config_color_circle));
     graphics_fill_circle(ctx, center, radius + 3+2);
     graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
     graphics_fill_circle(ctx, center, radius);
+#else
+    uint8_t inner_color = config_color_inner_background;
+    if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
+        inner_color = config_color_battery_10;
+    } else if (battery_state.charge_percent <= 20 && !battery_state.is_charging && !battery_state.is_plugged) {
+        inner_color = config_color_battery_20;
+    } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
+        inner_color = config_color_battery_30;
+    }
+    graphics_context_set_fill_color(ctx, COLOR(inner_color));
+    graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
+#endif
 
     // numbers
 #if defined(OBSIDIAN_SHOW_NUMBERS) || defined(OBSIDIAN_ONLY_RELEVANT_NUMBER)
     static const GPoint number_points[] = {
-            {144 / 2 - 9,       26}, // 12
-            {144 / 2 + 23,      28}, // 1
-            {144 / 2 + 45,      47}, // 2
-            {144 / 2 + 49,      77}, // 3
-            {144 / 2 + 45,      102}, // 4
-            {144 / 2 + 24,      124}, // 5
-            {144 / 2 - 4,       128}, // 6
-            {144 / 2 - 6 - 23,  124}, // 7
-            {144 / 2 - 6 - 43,  103}, // 8
-            {144 / 2 - 6 - 51,  77}, // 9
-            {144 / 2 - 12 - 43, 48}, // 10
-            {144 / 2 - 12 - 23, 28}, // 11
+            {width / 2 - 9,       168 - height + 26}, // 12
+            {width / 2 + 23,      168 - height + 28}, // 1
+            {width / 2 + 45,      168 - height + 47}, // 2
+            {width / 2 + 49,      168 - height + 77}, // 3
+            {width / 2 + 45,      168 - height + 102}, // 4
+            {width / 2 + 24,      168 - height + 124}, // 5
+            {width / 2 - 4,       168 - height + 128}, // 6
+            {width / 2 - 6 - 23,  168 - height + 124}, // 7
+            {width / 2 - 6 - 43,  168 - height + 103}, // 8
+            {width / 2 - 6 - 51,  168 - height + 77}, // 9
+            {width / 2 - 12 - 43, 168 - height + 48}, // 10
+            {width / 2 - 12 - 23, 168 - height + 28}, // 11
     };
     static const char *numbers[] = {
             "12",
@@ -558,7 +580,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // hour ticks
-    uint8_t width = 2;
+    uint8_t tick_width = 2;
     if (config_hour_ticks != 3) {
         graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
         for (int i = 0; i < 12; ++i) {
@@ -570,13 +592,14 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             if (i % 3 == 0) {
                 tick_length = 10;
 #ifdef OBSIDIAN_FAT_TICKS
-                width = 4;
+                tick_width = 4;
             } else {
-                width = 2;
+                tick_width = 2;
 #endif
             }
 #endif
-            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - tick_length, angle), width);
+            graphics_draw_line_with_width(ctx, get_radial_point(radius+PBL_IF_ROUND_ELSE(3, 0), angle), get_radial_point(radius - tick_length, angle),
+                                          tick_width);
         }
     }
 
@@ -586,13 +609,13 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         int start_min_tick = (t->tm_min / 5) * 5;
         for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle), 1);
+            graphics_draw_line_with_width(ctx, get_radial_point(radius+PBL_IF_ROUND_ELSE(3, 0), angle), get_radial_point(radius - 3, angle), 1);
         }
     } else if (config_minute_ticks == 1) {
         // all minute ticks
         for (int i = 0; i < 60; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            graphics_draw_line_with_width(ctx, get_radial_point(radius, angle), get_radial_point(radius - 3, angle), 1);
+            graphics_draw_line_with_width(ctx, get_radial_point(radius+PBL_IF_ROUND_ELSE(3, 0), angle), get_radial_point(radius - 3, angle), 1);
         }
     }
 
@@ -603,7 +626,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
 
     // compute angles
     int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
-    GPoint minute_hand = get_radial_point(radius - 10, minute_angle);
+    GPoint minute_hand = get_radial_point(radius - PBL_IF_ROUND_ELSE(16, 10), minute_angle);
     int hour_tick = ((t->tm_hour % 12) * 6) + (t->tm_min / 10);
     int32_t hour_angle = hour_tick * TRIG_MAX_ANGLE / (12 * 6);
     GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_angle);
@@ -619,18 +642,18 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // determine where we can draw the date without overlap
     const GPoint d_points[] = {
             // array of candidate points to draw the date strings at
-            GPoint(0, 0),
-            GPoint(10, -3),
-            GPoint(17, -7),
-            GPoint(26, -13),
-            GPoint(29, -19),
-            GPoint(33, -25),
-            GPoint(33, -32),
-            GPoint(33, -39),
+            GPoint(0, 16),
+            GPoint(10, 16-3),
+            GPoint(17, 16-7),
+            GPoint(26, 16-13),
+            GPoint(29, 16-19),
+            GPoint(33, 16-25),
+            GPoint(33, 16-32),
+            GPoint(33, 16-39),
     };
-    const int d_offset = 15;
+    const int d_offset = PBL_IF_ROUND_ELSE(20, 15);
     const int d_height = 21;
-    const int d_y_start = 100;
+    const int d_y_start = height/2;
     bool found = false;
     uint16_t i;
     GPoint d_center;
@@ -643,20 +666,24 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         if (i % 2 == 0) {
             d_center.x = -d_center.x;
         }
-        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
+#ifdef PBL_ROUND
+        d_center.x = d_center.x * 7 / 6;
+        //d_center.y = d_center.y * 7 / 6;
+#endif
+        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
         GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
                                                                 GTextOverflowModeWordWrap, GTextAlignmentCenter);
-        day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
+        day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
         GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
         if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(72 + d_center.x - day_size.w / 2 - border, d_y_start + d_center.y - border),
-                                   GPoint(72 + d_center.x + day_size.w / 2 + border,
+                                   GPoint(width/2 + d_center.x - day_size.w / 2 - border, d_y_start + d_center.y - border),
+                                   GPoint(width/2 + d_center.x + day_size.w / 2 + border,
                                           d_y_start + d_center.y + d_height + border)) ||
               line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(72 + d_center.x - date_size.w / 2 - border,
+                                   GPoint(width/2 + d_center.x - date_size.w / 2 - border,
                                           d_y_start + d_center.y + d_offset - border),
-                                   GPoint(72 + d_center.x + date_size.w / 2 + border,
+                                   GPoint(width/2 + d_center.x + date_size.w / 2 + border,
                                           d_y_start + d_center.y + d_height + d_offset + border)))) {
             found = true;
             break;
@@ -666,37 +693,37 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // this should not happen, but if it does, then use the default position
     if (!found) {
         d_center = d_points[0];
-        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, 144, d_height);
-        day_pos = GRect(d_center.x, d_y_start + d_center.y, 144, d_height);
+        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
+        day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
     }
 
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
     graphics_context_set_text_color(ctx, COLOR(config_color_day_of_week));
-    graphics_draw_text(ctx, buffer_2, font_system_18px_bold, day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
+    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), day_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     graphics_context_set_text_color(ctx, COLOR(config_color_date));
-    graphics_draw_text(ctx, buffer_1, font_system_18px_bold, date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
+    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
 #endif
 
     // bluetooth status
+    const GPoint b_points[] = {
+        // array of candidate points to draw the bluetooth logo at
+        GPoint(0, 0),
+        GPoint(4, 1),
+        GPoint(8, 2),
+        GPoint(12, 4),
+        GPoint(16, 6),
+        GPoint(20, 9),
+        GPoint(24, 12),
+    };
     if (!bluetooth) {
         // determine where we can draw the bluetooth logo without overlap
-        const GPoint b_points[] = {
-                // array of candidate points to draw the bluetooth logo at
-                GPoint(0, 0),
-                GPoint(4, 1),
-                GPoint(8, 2),
-                GPoint(12, 4),
-                GPoint(16, 6),
-                GPoint(20, 9),
-                GPoint(24, 12),
-        };
         GPoint b_center;
         const int b_border = 3;
-        const int b_x = 144 / 2;
-        const int b_y = 38;
+        const int b_x = width / 2;
+        const int b_y = PBL_IF_ROUND_ELSE(40, 38);
         // loop through all points and use the first one that doesn't overlap with the watch hands
         for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
             b_center = b_points[(i + 1) / 2];
@@ -706,7 +733,6 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
                                       GPoint(b_x + b_center.x - 5 - b_border, b_y + b_center.y - b_border),
                                       GPoint(b_x + b_center.x + 5 + b_border, b_y + b_center.y + 17 + b_border))) {
-                found = true;
                 break;
             }
         }
@@ -727,7 +753,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_color(ctx, COLOR(config_color_minute_hand));
     graphics_draw_line_with_width(ctx, minute_hand, center, 4);
     graphics_context_set_stroke_color(ctx, COLOR(config_color_inner_minute_hand));
-    graphics_draw_line_with_width(ctx, get_radial_point(radius - 12, minute_angle), center, 1);
+    graphics_draw_line_with_width(ctx, get_radial_point(radius - PBL_IF_ROUND_ELSE(18, 12), minute_angle), center, 1);
 
     // hour hand
     graphics_context_set_stroke_color(ctx, COLOR(config_color_hour_hand));
@@ -745,7 +771,27 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     if (config_battery_logo == 1 ||
         (config_battery_logo == 2 && battery_state.charge_percent <= 30 && !battery_state.is_charging &&
          !battery_state.is_plugged)) {
-        const GRect battery = GRect(125, 3, 14, 8);
+        GRect battery = PBL_IF_ROUND_ELSE(GRect((width-14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
+#ifdef PBL_ROUND
+        // determine where we can draw the bluetooth logo without overlap
+        GPoint b_center;
+        const int b_x = width / 2;
+        const int b_y = 25;
+        const int b_border = 3;
+        // loop through all points and use the first one that doesn't overlap with the watch hands
+        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
+            b_center = b_points[(i + 1) / 2];
+            if (i % 2 == 0) {
+                b_center.x = -b_center.x;
+            }
+            if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
+                                      GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
+                                      GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
+                break;
+            }
+        }
+        battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
+#endif
         graphics_context_set_stroke_color(ctx, COLOR(config_color_battery_logo));
         graphics_context_set_fill_color(ctx, COLOR(config_color_battery_logo));
         graphics_draw_rect(ctx, battery);
@@ -831,6 +877,9 @@ static void window_load(Window *window) {
     font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
 #endif
     font_system_18px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+#ifdef PBL_ROUND
+    font_system_24px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
+#endif
 
     // initialize
     show_bluetooth_popup = false;
@@ -1062,6 +1111,8 @@ static void init() {
 
     GRect bounds = layer_get_bounds(window_get_root_layer(window));
     center = grect_center_point(&bounds);
+    height = bounds.size.h;
+    width = bounds.size.w;
 
     TimeUnits unit = MINUTE_UNIT;
 #ifdef DEBUG_DATE_POSITION

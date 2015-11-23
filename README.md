@@ -10,7 +10,8 @@ Available in the Pebble App Store:
 
 ## Overview
 
-This is a usable and elegant analog watchface for the Pebble, Pebble Steel, Pebble Time and Pebble Time Steel.  It's main features are:
+This is a usable and elegant analog watchface for the Pebble, Pebble Steel, Pebble Time, Pebble Time Steel as well as the Pebble Time Round.
+It's main features are:
 
 - High contrast colors, clearly visible in most light conditions.
 - Display of the current date (day and month) as well as day of the week.
@@ -24,41 +25,55 @@ This is a usable and elegant analog watchface for the Pebble, Pebble Steel, Pebb
 
 The main goal when building this watchface was for it to be practical.  For instance, the date display should never be obstructed by the watch hands:
 
-![Screenshot of the date display moving](screenshots/date.png)
+![Screenshot of the date display moving](screenshots/basalt/date.png)
 
 The watchface also alerts the user when the bluetooth connection is lost or regained, by vibrating and showing an information overlay.  After a few seconds, the overlay goes away, and a small bluetooth icon stays if no connection is available:
 
-![Screenshot of the bluetooth alerts](screenshots/bluetooth.png)
+![Screenshot of the bluetooth alerts](screenshots/basalt/bluetooth.png)
 
 The watchface always shows a small battery indicator in the top right corner.  However, if the battery starts running low, the background changes to yellow, orange and finally red:
 
-![Screenshot of the battery alert](screenshots/battery.png)
+![Screenshot of the battery alert](screenshots/basalt/battery.png)
 
 Finally, it is fully configurable, both in terms of what it looks like as well as its behavior (vibration, bluetooth message, etc.).  Some screenshots of different configurations:
 
-![Alternative color theme](screenshots/overview.png)
+![Alternative color theme](screenshots/basalt/overview.png)
 
-![Alternative color theme](screenshots/theme-overview-1.png)
+![Alternative color theme](screenshots/basalt/theme-overview-1.png)
 
-![Alternative color theme](screenshots/theme-overview-2.png)
+![Alternative color theme](screenshots/basalt/theme-overview-2.png)
 
 The configuration dialog to achieve this flexibility looks as follows:
 
 ![Configuration](screenshots/config.png)
 
+## Screenshots (Pebble Time Round)
+
+The watchface also supports the Pebble Time Round:
+
+![Screenshot of the date display moving on chalk platform](screenshots/chalk/date.png)
+
+![Screenshot of the bluetooth alerts on chalk platform](screenshots/chalk/bluetooth.png)
+
+![Alternative color theme](screenshots/chalk/overview.png)
+
+![Alternative color theme](screenshots/chalk/theme-overview-1.png)
+
+![Alternative color theme](screenshots/chalk/theme-overview-2.png)
+
 ## Screenshots (Pebble and Pebble Steel)
 
 On the original Pebble and Pebble Steel, the colors are limited to black and white, but all other features are still available.  Some screenshots:
 
-![Screenshot of the date display moving on aplite platform](screenshots/aplite_date.png)
+![Screenshot of the date display moving on aplite platform](screenshots/aplite/date.png)
 
-![Screenshot of the bluetooth alerts on aplite platform](screenshots/aplite_bluetooth.png)
+![Screenshot of the bluetooth alerts on aplite platform](screenshots/aplite/bluetooth.png)
 
-![Configuration on aplite platform](screenshots/aplite_config.png)
+![Configuration on aplite platform](screenshots/aplite/config.png)
 
 ## Building from Source
 
-The project can be build using the command `make build`.  The `Makefile` also includes various other targets, such as ones to install the watchface in an emulator or on the Pebble watch.  There are also targets to automatically take the screenshots that are part of this distribution, but that is likely to not work in environments other than mine.  The official `pebble screenshot` tool does not work reliably for me, which is why an alternative way to obtain a screenshot is used.
+The project can be build using the command `make build`.  The `Makefile` also includes various other targets, such as ones to install the watchface in an emulator or on the Pebble watch.  There are also targets to automatically take the screenshots that are part of this distribution.
 
 ### Versioning
 
@@ -68,12 +83,17 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |------------------:|----------------------:|
 |         up to 1.2 |                     1 |
 |               1.3 |                     2 |
+|               1.4 |                     3 |
 
 ## Changelog
 
+**Version 1.4**
+
+- Adding a version for the chalk platform (Pebble Time Round).
+
 **Version 1.3**
 
-- Adding a version for the aplite platform.
+- Adding a version for the aplite platform (Original Pebble).
 
 **Version 1.0, 1.1, 1.2**
 

@@ -3,20 +3,19 @@
   "shortName": "Obsidian",
   "longName": "Obsidian",
   "companyName": "Stefan Heule",
-  "versionLabel": "1.3",
+  "versionLabel": "1.4",
+  "sdkVersion": "3",
+  "targetPlatforms": [
+    "aplite",
+    "basalt",
+    "chalk"
+  ],
   "watchapp": {
     "watchface": true
   },
-  "resources": {
-    "media": [
-      {
-        "menuIcon": true,
-        "type": "png",
-        "name": "IMAGE_MENU_ICON",
-        "file": "images/menu_icon.png"
-      }
-    ]
-  },
+  "capabilities": [
+    "configurable"
+  ],
   "appKeys": {
     "CONFIG_COLOR_OUTER_BACKGROUND": 1,
     "CONFIG_COLOR_INNER_BACKGROUND": 2,
@@ -43,12 +42,14 @@
     "CONFIG_MINUTE_TICKS": 23,
     "CONFIG_HOUR_TICKS": 24
   },
-  "capabilities": [
-    "configurable"
-  ],
-  "targetPlatforms": [
-    "aplite",
-    "basalt"
-  ],
-  "sdkVersion": "3"
+  "resources": {
+    "media": [
+      {
+        "menuIcon": true,
+        "type": "png",
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/menu_icon.png"
+      }
+    ]
+  }
 }
