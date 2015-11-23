@@ -57,14 +57,14 @@ screenshots: screenshot_config
 	scripts/assemble_screenshots.sh
 
 screenshot_config:
-	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=basalt
-	pngcrush -q -rem time tmp.png screenshots/config.png
-	rm tmp.png
 	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=aplite
-	pngcrush -q -rem time tmp.png screenshots/aplite_config.png
+	pngcrush -q -rem time tmp.png screenshots/aplite/config.png
+	rm tmp.png
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=basalt
+	pngcrush -q -rem time tmp.png screenshots/basalt/config.png
 	rm tmp.png
 	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=chalk
-	pngcrush -q -rem time tmp.png screenshots/chalk_config.png
+	pngcrush -q -rem time tmp.png screenshots/chalk/config.png
 	rm tmp.png
 
 screenshot:
