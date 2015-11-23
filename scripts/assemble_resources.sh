@@ -12,7 +12,7 @@ inkscape -z -e pebble_outline.png -w 799 -h 799 resources/src/pebble_outline.svg
 convert -crop 272x410+158+125 pebble_outline.png pebble_outline.png
 cp pebble_outline.png tmp.png
 composite -compose Src_Over -geometry +0+0 pebble_outline.png tmp.png tmp.png
-composite -compose Src_Over -geometry +63+116 screenshots/main.png tmp.png tmp.png
+composite -compose Src_Over -geometry +63+116 screenshots/basalt/main.png tmp.png tmp.png
 composite -compose Src_Over -geometry -20-183 pebble_border.png tmp.png tmp.png
 rm -f pebble_border.png
 rm -f pebble_outline.png
@@ -33,7 +33,7 @@ mv tmp2.png resources/images/banner_rect.png
 rm tmp.png
 
 # 144x144 logo
-cp screenshots/main.png tmp.png
+cp screenshots/basalt/main.png tmp.png
 convert -page 144x168+0+0 tmp.png tmp.png
 convert -crop 144x144+0+12 tmp.png tmp.png
 mv tmp.png resources/images/logo_144.png
