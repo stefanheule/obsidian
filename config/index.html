@@ -397,6 +397,12 @@
     });
     
     applyValues(readValuesFromStorage());
+
+    // hide outer background color for chalk
+    if (isChalk()) {
+      var el = document.getElementById("CONFIG_COLOR_OUTER_BACKGROUND").parentElement.parentElement;
+      el.style.display = "none";
+    }
   });
   </script>
   </body>
