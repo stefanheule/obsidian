@@ -65,11 +65,11 @@ The watchface also supports the Pebble Time Round:
 
 On the original Pebble and Pebble Steel, the colors are limited to black and white, but all other features are still available.  Some screenshots:
 
-![Screenshot of the date display moving on aplite platform](screenshots/aplite_date.png)
+![Screenshot of the date display moving on aplite platform](screenshots/aplite/date.png)
 
-![Screenshot of the bluetooth alerts on aplite platform](screenshots/aplite_bluetooth.png)
+![Screenshot of the bluetooth alerts on aplite platform](screenshots/aplite/bluetooth.png)
 
-![Configuration on aplite platform](screenshots/aplite_config.png)
+![Configuration on aplite platform](screenshots/aplite/config.png)
 
 ## Building from Source
 
