@@ -16,6 +16,7 @@
   "capabilities": [
     "configurable"
   ],
+  // config keys are also duplicated in src/obsidian.c, appinfo.json, src/js/pebble-js-app.js and config/index.html
   "appKeys": {
     "CONFIG_COLOR_OUTER_BACKGROUND": 1,
     "CONFIG_COLOR_INNER_BACKGROUND": 2,

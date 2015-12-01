@@ -9,6 +9,7 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
+// config keys are also duplicated in src/obsidian.c, appinfo.json, src/js/pebble-js-app.js and config/index.html
 #define CONFIG_COLOR_OUTER_BACKGROUND 1
 #define CONFIG_COLOR_INNER_BACKGROUND 2
 #define CONFIG_COLOR_MINUTE_HAND 3
