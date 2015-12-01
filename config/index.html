@@ -136,22 +136,43 @@
 
       <div class='item-container-content'>
         <label class='item'>
-           Low Battery (30%) Color
+           Low Battery (30%) Color (Icon)
           <input id='CONFIG_COLOR_BATTERY_30' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
-          Low Battery (20%) Color
+          Low Battery (20%) Color (Icon)
           <input id='CONFIG_COLOR_BATTERY_20' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
-          Low Battery (10%) Color
+          Low Battery (10%) Color (Icon)
           <input id='CONFIG_COLOR_BATTERY_10' type='text' class='item-color item-color-normal'>
+        </label>
+      </div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+           Low Battery (30%) Color (Background)
+          <input id='CONFIG_COLOR_BATTERY_BG_30' type='text' class='item-color item-color-normal'>
+        </label>
+      </div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+          Low Battery (20%) Color (Background)
+          <input id='CONFIG_COLOR_BATTERY_BG_20' type='text' class='item-color item-color-normal'>
+        </label>
+      </div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+          Low Battery (10%) Color (Background)
+          <input id='CONFIG_COLOR_BATTERY_BG_10' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
@@ -309,9 +330,12 @@
       CONFIG_COLOR_DATE: COLOR_FALLBACK(GColor.Black, GColor.Black),
       CONFIG_BATTERY_LOGO: 1,
       CONFIG_COLOR_BATTERY_LOGO: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.DarkGray, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.PastelYellow, GColor.Yellow), GColor.Black),
-      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Rajah, GColor.Orange), GColor.Black),
-      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Melon, GColor.Red), GColor.Black),
+      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Yellow, GColor.Black), GColor.White),
+      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Orange, GColor.Black), GColor.White),
+      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Red, GColor.Black), GColor.White),
+      CONFIG_COLOR_BATTERY_BG_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Yellow), GColor.Black),
+      CONFIG_COLOR_BATTERY_BG_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Orange), GColor.Black),
+      CONFIG_COLOR_BATTERY_BG_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Red), GColor.Black),
       CONFIG_COLOR_BLUETOOTH_LOGO: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
       CONFIG_COLOR_BLUETOOTH_LOGO_2: COLOR_FALLBACK(GColor.White, GColor.White),
       CONFIG_BLUETOOTH_LOGO: +true,
@@ -333,7 +357,11 @@
 
     var options = {};
     for (k in defaults) {
-      options[k] = +localStorage.getItem(k);
+      if (localStorage.getItem(k) === null) {
+        options[k] = defaults[k];
+      } else {
+        options[k] = +localStorage.getItem(k);
+      }
     }
 
     return options;
