@@ -250,11 +250,14 @@
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
   }
+  function getPlatform() {
+    return getParameterByName('platform');
+  }
   function isBasalt() {
-    return getParameterByName('platform') == 'basalt';
+    return getPlatform() == 'basalt';
   }
   function isChalk() {
-    return getParameterByName('platform') == 'chalk';
+    return getPlatform() == 'chalk';
   }
 
   function getAllConfigHtmlNodes() {
@@ -263,9 +266,13 @@
     });
   }
 
+  function getStorageKey(k) {
+    return getPlatform() + "__" + k;
+  }
+
   function writeToStorage(config) {
     for (k in config) {
-      localStorage.setItem(k, config[k]);
+      localStorage.setItem(getStorageKey(k), config[k]);
     }
   }
 
@@ -348,7 +355,7 @@
     };
 
     // use defaults
-    if (use_defaults || localStorage.getItem("CONFIG_COLOR_OUTER_BACKGROUND") === null) {
+    if (use_defaults || localStorage.getItem(getStorageKey("CONFIG_COLOR_OUTER_BACKGROUND")) === null) {
       console.log("[ info ] loading default values");
       return defaults;
     }
@@ -357,10 +364,10 @@
 
     var options = {};
     for (k in defaults) {
-      if (localStorage.getItem(k) === null) {
+      if (localStorage.getItem(getStorageKey(k)) === null) {
         options[k] = defaults[k];
       } else {
-        options[k] = +localStorage.getItem(k);
+        options[k] = +localStorage.getItem(getStorageKey(k));
       }
     }
 
