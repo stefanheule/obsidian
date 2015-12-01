@@ -84,8 +84,15 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |         up to 1.2 |                     1 |
 |               1.3 |                     2 |
 |               1.4 |                     3 |
+|               1.5 |                     4 |
 
 ## Changelog
+
+**Version 1.5 (2015-12-01)**
+
+- Allow for a different color of the battery icon on low battery (used by default on PTR).
+- Separate local storage of configurations for different platforms.
+- Fix possible bug in local storage on the watch on upgrade.
 
 **Version 1.4**
 
