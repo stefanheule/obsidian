@@ -243,6 +243,16 @@
         <input id='reset_button' type='button' class='item-button' value='Restore defaults'>
       </div>
     </div>
+
+
+    <div class='item-container'>
+      <div class='item-container-header'>Status information</div>
+
+      <div class="item-container-footer">
+      <p>Obsidian Version: <span id="version-info"></span></p>
+      <p>Platform: <span id="platform-info"></span></p>
+      </div>
+    </div>
   <script>
   function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -252,6 +262,9 @@
   }
   function getPlatform() {
     return getParameterByName('platform');
+  }
+  function getVersion() {
+    return getParameterByName('version');
   }
   function isBasalt() {
     return getPlatform() == 'basalt';
@@ -477,6 +490,10 @@
       el = document.getElementById("CONFIG_COLOR_CIRCLE").parentElement.parentElement;
       el.style.display = "none";
     }
+
+    // update version information
+    document.getElementById("version-info").innerHTML = getVersion();
+    document.getElementById("platform-info").innerHTML = getPlatform();
   });
   </script>
   </body>

@@ -26,6 +26,7 @@ Pebble.addEventListener('showConfiguration', function() {
   //url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
   url += '?platform=' + encodeURIComponent(getPlatform());
   url += '&watch=' + encodeURIComponent(getDetails());
+  url += '&version=1.5';
   console.log('[ info/app ] Showing configuration page: ' + url);
   Pebble.openURL(url);
 });
