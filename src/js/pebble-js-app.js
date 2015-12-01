@@ -31,7 +31,43 @@ Pebble.addEventListener('showConfiguration', function() {
 });
 
 Pebble.addEventListener('webviewclosed', function(e) {
-  var config = JSON.parse(decodeURIComponent(e.response));
+  var urlconfig = JSON.parse(decodeURIComponent(e.response));
+
+  // decode config
+  var keys = {
+    "CONFIG_COLOR_OUTER_BACKGROUND": 1,
+    "CONFIG_COLOR_INNER_BACKGROUND": 2,
+    "CONFIG_COLOR_MINUTE_HAND": 3,
+    "CONFIG_COLOR_INNER_MINUTE_HAND": 4,
+    "CONFIG_COLOR_HOUR_HAND": 5,
+    "CONFIG_COLOR_INNER_HOUR_HAND": 6,
+    "CONFIG_COLOR_CIRCLE": 7,
+    "CONFIG_COLOR_TICKS": 8,
+    "CONFIG_COLOR_DAY_OF_WEEK": 9,
+    "CONFIG_COLOR_DATE": 10,
+    "CONFIG_BATTERY_LOGO": 11,
+    "CONFIG_COLOR_BATTERY_LOGO": 12,
+    "CONFIG_COLOR_BATTERY_BG_30": 16,
+    "CONFIG_COLOR_BATTERY_BG_20": 14,
+    "CONFIG_COLOR_BATTERY_BG_10": 15,
+    "CONFIG_COLOR_BLUETOOTH_LOGO": 16,
+    "CONFIG_COLOR_BLUETOOTH_LOGO_2": 17,
+    "CONFIG_BLUETOOTH_LOGO": 18,
+    "CONFIG_VIBRATE_DISCONNECT": 19,
+    "CONFIG_VIBRATE_RECONNECT": 20,
+    "CONFIG_MESSAGE_DISCONNECT": 21,
+    "CONFIG_MESSAGE_RECONNECT": 22,
+    "CONFIG_MINUTE_TICKS": 23,
+    "CONFIG_HOUR_TICKS": 24,
+    "CONFIG_COLOR_BATTERY_30": 25,
+    "CONFIG_COLOR_BATTERY_20": 26,
+    "CONFIG_COLOR_BATTERY_10": 27
+  };
+  var config = {};
+  for (var k in keys) {
+    config[k] = urlconfig[keys[k]];
+  }
+
   console.log('[ info/app ] Configuration page returned: ' + JSON.stringify(config));
 
   Pebble.sendAppMessage(config, function() {
