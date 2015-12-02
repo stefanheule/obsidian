@@ -5,6 +5,8 @@ OBSIDIAN_FILE="out"
 # platform
 P="chalk"
 
+VERSION=$(shell cat appinfo.json | grep version | grep -o "[0-9]*\.[0-9]*")
+
 all: install_emulator
 
 deploy: install_deploy
@@ -57,13 +59,19 @@ screenshots: screenshot_config
 	scripts/assemble_screenshots.sh
 
 screenshot_config:
-	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=aplite
+	rm -f screenshots/aplite/config.png
+	rm -f screenshots/basalt/config.png
+	rm -f screenshots/chalk/config.png
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=aplite&version=$(VERSION)
+	sleep 1
 	pngcrush -q -rem time tmp.png screenshots/aplite/config.png
 	rm tmp.png
-	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=basalt
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=basalt&version=$(VERSION)
+	sleep 1
 	pngcrush -q -rem time tmp.png screenshots/basalt/config.png
 	rm tmp.png
-	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=chalk
+	phantomjs scripts/capture-settings-screenshot.js config/index.html?platform=chalk&version=$(VERSION)
+	sleep 1
 	pngcrush -q -rem time tmp.png screenshots/chalk/config.png
 	rm tmp.png
 

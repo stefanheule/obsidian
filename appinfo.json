@@ -3,7 +3,7 @@
   "shortName": "Obsidian",
   "longName": "Obsidian",
   "companyName": "Stefan Heule",
-  "versionLabel": "1.4",
+  "versionLabel": "1.5",
   "sdkVersion": "3",
   "targetPlatforms": [
     "aplite",
@@ -29,9 +29,9 @@
     "CONFIG_COLOR_DATE": 10,
     "CONFIG_BATTERY_LOGO": 11,
     "CONFIG_COLOR_BATTERY_LOGO": 12,
-    "CONFIG_COLOR_BATTERY_30": 13,
-    "CONFIG_COLOR_BATTERY_20": 14,
-    "CONFIG_COLOR_BATTERY_10": 15,
+    "CONFIG_COLOR_BATTERY_BG_30": 16,
+    "CONFIG_COLOR_BATTERY_BG_20": 14,
+    "CONFIG_COLOR_BATTERY_BG_10": 15,
     "CONFIG_COLOR_BLUETOOTH_LOGO": 16,
     "CONFIG_COLOR_BLUETOOTH_LOGO_2": 17,
     "CONFIG_BLUETOOTH_LOGO": 18,
@@ -40,7 +40,10 @@
     "CONFIG_MESSAGE_DISCONNECT": 21,
     "CONFIG_MESSAGE_RECONNECT": 22,
     "CONFIG_MINUTE_TICKS": 23,
-    "CONFIG_HOUR_TICKS": 24
+    "CONFIG_HOUR_TICKS": 24,
+    "CONFIG_COLOR_BATTERY_30": 25,
+    "CONFIG_COLOR_BATTERY_20": 26,
+    "CONFIG_COLOR_BATTERY_10": 27
   },
   "resources": {
     "media": [

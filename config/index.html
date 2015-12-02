@@ -136,22 +136,43 @@
 
       <div class='item-container-content'>
         <label class='item'>
-           Low Battery (30%) Color
+           Low Battery (30%) Color (Icon)
           <input id='CONFIG_COLOR_BATTERY_30' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
-          Low Battery (20%) Color
+          Low Battery (20%) Color (Icon)
           <input id='CONFIG_COLOR_BATTERY_20' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
       <div class='item-container-content'>
         <label class='item'>
-          Low Battery (10%) Color
+          Low Battery (10%) Color (Icon)
           <input id='CONFIG_COLOR_BATTERY_10' type='text' class='item-color item-color-normal'>
+        </label>
+      </div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+           Low Battery (30%) Color (Background)
+          <input id='CONFIG_COLOR_BATTERY_BG_30' type='text' class='item-color item-color-normal'>
+        </label>
+      </div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+          Low Battery (20%) Color (Background)
+          <input id='CONFIG_COLOR_BATTERY_BG_20' type='text' class='item-color item-color-normal'>
+        </label>
+      </div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+          Low Battery (10%) Color (Background)
+          <input id='CONFIG_COLOR_BATTERY_BG_10' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
@@ -222,6 +243,30 @@
         <input id='reset_button' type='button' class='item-button' value='Restore defaults'>
       </div>
     </div>
+
+    <div class='item-container'>
+      <div class='item-container-header'>Donation</div>
+      <div class="item-container-footer">
+      <p>If you'd like, feel free to show your appreciation for Obsidian.  Donations are fully optional.</p>
+      </div>
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin-left:20px">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+    </div>
+
+    <div class='item-container'>
+      <div class='item-container-header'>Status information</div>
+
+      <div class="item-container-footer">
+      <p>Obsidian Version: <span id="version-info"></span></p>
+      <p>Platform: <span id="platform-info"></span></p>
+      </div>
+    </div>
+
   <script>
   function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -229,11 +274,17 @@
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
   }
+  function getPlatform() {
+    return getParameterByName('platform');
+  }
+  function getVersion() {
+    return getParameterByName('version');
+  }
   function isBasalt() {
-    return getParameterByName('platform') == 'basalt';
+    return getPlatform() == 'basalt';
   }
   function isChalk() {
-    return getParameterByName('platform') == 'chalk';
+    return getPlatform() == 'chalk';
   }
 
   function getAllConfigHtmlNodes() {
@@ -242,9 +293,13 @@
     });
   }
 
+  function getStorageKey(k) {
+    return getPlatform() + "__" + k;
+  }
+
   function writeToStorage(config) {
     for (k in config) {
-      localStorage.setItem(k, config[k]);
+      localStorage.setItem(getStorageKey(k), config[k]);
     }
   }
 
@@ -309,9 +364,12 @@
       CONFIG_COLOR_DATE: COLOR_FALLBACK(GColor.Black, GColor.Black),
       CONFIG_BATTERY_LOGO: 1,
       CONFIG_COLOR_BATTERY_LOGO: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.DarkGray, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.PastelYellow, GColor.Yellow), GColor.Black),
-      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Rajah, GColor.Orange), GColor.Black),
-      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Melon, GColor.Red), GColor.Black),
+      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Yellow, GColor.Black), GColor.White),
+      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Orange, GColor.Black), GColor.White),
+      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Red, GColor.Black), GColor.White),
+      CONFIG_COLOR_BATTERY_BG_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Yellow), GColor.Black),
+      CONFIG_COLOR_BATTERY_BG_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Orange), GColor.Black),
+      CONFIG_COLOR_BATTERY_BG_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Red), GColor.Black),
       CONFIG_COLOR_BLUETOOTH_LOGO: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
       CONFIG_COLOR_BLUETOOTH_LOGO_2: COLOR_FALLBACK(GColor.White, GColor.White),
       CONFIG_BLUETOOTH_LOGO: +true,
@@ -324,7 +382,7 @@
     };
 
     // use defaults
-    if (use_defaults || localStorage.getItem("CONFIG_COLOR_OUTER_BACKGROUND") === null) {
+    if (use_defaults || localStorage.getItem(getStorageKey("CONFIG_COLOR_OUTER_BACKGROUND")) === null) {
       console.log("[ info ] loading default values");
       return defaults;
     }
@@ -333,7 +391,11 @@
 
     var options = {};
     for (k in defaults) {
-      options[k] = +localStorage.getItem(k);
+      if (localStorage.getItem(getStorageKey(k)) === null) {
+        options[k] = defaults[k];
+      } else {
+        options[k] = +localStorage.getItem(getStorageKey(k));
+      }
     }
 
     return options;
@@ -360,7 +422,44 @@
   function submit(config) {
     // Set the return URL depending on the runtime environment
     var return_to = getQueryParam('return_to', 'pebblejs://close#');
-    var url = return_to + encodeURIComponent(JSON.stringify(config));
+
+    // encode config for url
+    // config keys are also duplicated in src/obsidian.c, appinfo.json, src/js/pebble-js-app.js and config/index.html
+    var keys = {
+      "CONFIG_COLOR_OUTER_BACKGROUND": 1,
+      "CONFIG_COLOR_INNER_BACKGROUND": 2,
+      "CONFIG_COLOR_MINUTE_HAND": 3,
+      "CONFIG_COLOR_INNER_MINUTE_HAND": 4,
+      "CONFIG_COLOR_HOUR_HAND": 5,
+      "CONFIG_COLOR_INNER_HOUR_HAND": 6,
+      "CONFIG_COLOR_CIRCLE": 7,
+      "CONFIG_COLOR_TICKS": 8,
+      "CONFIG_COLOR_DAY_OF_WEEK": 9,
+      "CONFIG_COLOR_DATE": 10,
+      "CONFIG_BATTERY_LOGO": 11,
+      "CONFIG_COLOR_BATTERY_LOGO": 12,
+      "CONFIG_COLOR_BATTERY_BG_30": 16,
+      "CONFIG_COLOR_BATTERY_BG_20": 14,
+      "CONFIG_COLOR_BATTERY_BG_10": 15,
+      "CONFIG_COLOR_BLUETOOTH_LOGO": 16,
+      "CONFIG_COLOR_BLUETOOTH_LOGO_2": 17,
+      "CONFIG_BLUETOOTH_LOGO": 18,
+      "CONFIG_VIBRATE_DISCONNECT": 19,
+      "CONFIG_VIBRATE_RECONNECT": 20,
+      "CONFIG_MESSAGE_DISCONNECT": 21,
+      "CONFIG_MESSAGE_RECONNECT": 22,
+      "CONFIG_MINUTE_TICKS": 23,
+      "CONFIG_HOUR_TICKS": 24,
+      "CONFIG_COLOR_BATTERY_30": 25,
+      "CONFIG_COLOR_BATTERY_20": 26,
+      "CONFIG_COLOR_BATTERY_10": 27
+    };
+    var urlconfig = {};
+    for (var k in keys) {
+      urlconfig[keys[k]] = config[k];
+    }
+
+    var url = return_to + encodeURIComponent(JSON.stringify(urlconfig));
 
     // store settings
     writeToStorage(config);
@@ -405,6 +504,10 @@
       el = document.getElementById("CONFIG_COLOR_CIRCLE").parentElement.parentElement;
       el.style.display = "none";
     }
+
+    // update version information
+    document.getElementById("version-info").innerHTML = getVersion();
+    document.getElementById("platform-info").innerHTML = getPlatform();
   });
   </script>
   </body>
