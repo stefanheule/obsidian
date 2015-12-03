@@ -43,7 +43,13 @@ cp resources/images/logo_144.png tmp.png
 convert -resize 48x48+0+0 tmp.png tmp.png
 mv tmp.png resources/images/logo_48.png
 
+# pebble time round image
+cp resources/src/ptr_outline.png tmp.png
+composite -compose Src_Over -geometry +95+88 screenshots/chalk/main.png tmp.png tmp.png
+mv tmp.png resources/images/ptr.png
+
 for f in resources/images/*.png; do
   pngcrush -q -rem time $f tmp.png
   mv tmp.png $f
 done
+
