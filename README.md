@@ -85,9 +85,13 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |               1.3 |                     2 |
 |               1.4 |                     3 |
 |               1.5 |                     4 |
-|               1.6 |                     5 |
+|         1.6 - 1.7 |                     5 |
 
 ## Changelog
+
+**Version 1.7 (2015-12-08)**
+
+- Improve tick size again.
 
 **Version 1.6 (2015-12-08)**
 

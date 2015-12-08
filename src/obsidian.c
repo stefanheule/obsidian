@@ -616,10 +616,10 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
             if (config_hour_ticks == 2 && (i % 3) != 0) continue;
 
             int32_t angle = i * TRIG_MAX_ANGLE / 12;
-            int tick_length = PBL_IF_ROUND_ELSE(9, 6);
+            int tick_length = PBL_IF_ROUND_ELSE(8, 6);
 #ifdef OBSIDIAN_LONG_TICKS
             if (i % 3 == 0) {
-                tick_length = PBL_IF_ROUND_ELSE(13, 10);
+                tick_length = PBL_IF_ROUND_ELSE(12, 10);
 #ifdef OBSIDIAN_FAT_TICKS
                 tick_width = 4;
             } else {
@@ -640,14 +640,14 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
         for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
             graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                          get_radial_point(radius - PBL_IF_ROUND_ELSE(6, 3), angle), 1);
+                                          get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
         }
     } else if (config_minute_ticks == 1) {
         // all minute ticks
         for (int i = 0; i < 60; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
             graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                          get_radial_point(radius - PBL_IF_ROUND_ELSE(6, 3), angle), 1);
+                                          get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
         }
     }
 
@@ -788,7 +788,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_color(ctx, COLOR(config_color_minute_hand));
     graphics_draw_line_with_width(ctx, minute_hand, center, 4);
     graphics_context_set_stroke_color(ctx, COLOR(config_color_inner_minute_hand));
-    graphics_draw_line_with_width(ctx, get_radial_point(radius - PBL_IF_ROUND_ELSE(21, 12), minute_angle), center, 1);
+    graphics_draw_line_with_width(ctx, get_radial_point(radius - PBL_IF_ROUND_ELSE(20, 12), minute_angle), center, 1);
 
     // hour hand
     graphics_context_set_stroke_color(ctx, COLOR(config_color_hour_hand));
