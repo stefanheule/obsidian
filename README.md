@@ -85,8 +85,14 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |               1.3 |                     2 |
 |               1.4 |                     3 |
 |               1.5 |                     4 |
+|               1.6 |                     5 |
 
 ## Changelog
+
+**Version 1.6 (2015-12-08)**
+
+- Fix a bug where the background color setting for 30% battery level was ignored.
+- Increase the size of the minute ticks on the PTR (they were mostly covered by the bezel).
 
 **Version 1.5 (2015-12-01)**
 
