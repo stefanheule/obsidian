@@ -86,8 +86,14 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |               1.4 |                     3 |
 |               1.5 |                     4 |
 |         1.6 - 1.7 |                     5 |
+|               1.8 |                     6 |
 
 ## Changelog
+
+**Version 1.8 (2015-12-17)**
+
+- Update to latest SDK, allowing aplite to make use of new APIs.  The watchface now looks much better on aplite.
+- Aplite can now use the color gray (dithered black/white).
 
 **Version 1.7 (2015-12-08)**
 

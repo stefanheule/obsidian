@@ -22,11 +22,11 @@ Pebble.addEventListener('ready', function() {
 });
 
 Pebble.addEventListener('showConfiguration', function() {
-  var url = 'https://rawgit.com/stefanheule/obsidian/config-5/config/index.html';
+  var url = 'https://rawgit.com/stefanheule/obsidian/config-6/config/index.html';
   //url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
   url += '?platform=' + encodeURIComponent(getPlatform());
   url += '&watch=' + encodeURIComponent(getDetails());
-  url += '&version=1.7';
+  url += '&version=1.8';
   console.log('[ info/app ] Showing configuration page: ' + url);
   Pebble.openURL(url);
 });
