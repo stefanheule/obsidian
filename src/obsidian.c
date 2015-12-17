@@ -42,33 +42,33 @@
 //// Default values for the configuration
 ////////////////////////////////////////////
 
-static uint8_t config_color_outer_background = COLOR_FALLBACK(GColorDarkGrayARGB8, GColorBlack);
-static uint8_t config_color_inner_background = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhite);
-static uint8_t config_color_minute_hand = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
-static uint8_t config_color_inner_minute_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlack);
-static uint8_t config_color_hour_hand = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
-static uint8_t config_color_inner_hour_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlack);
-static uint8_t config_color_circle = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
-static uint8_t config_color_ticks = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
-static uint8_t config_color_day_of_week = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
-static uint8_t config_color_date = COLOR_FALLBACK(GColorBlackARGB8, GColorBlack);
+static uint8_t config_color_outer_background = COLOR_FALLBACK(GColorDarkGrayARGB8, GColorBlackARGB8);
+static uint8_t config_color_inner_background = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhiteARGB8);
+static uint8_t config_color_minute_hand = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+static uint8_t config_color_inner_minute_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlackARGB8);
+static uint8_t config_color_hour_hand = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
+static uint8_t config_color_inner_hour_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlackARGB8);
+static uint8_t config_color_circle = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+static uint8_t config_color_ticks = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+static uint8_t config_color_day_of_week = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
+static uint8_t config_color_date = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
 static uint8_t config_battery_logo = 1;
 static uint8_t config_color_battery_logo = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorDarkGrayARGB8, GColorBlackARGB8),
-                                                          GColorWhite);
+                                                          GColorWhiteARGB8);
 static uint8_t config_color_battery_30 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorYellowARGB8, GColorBlackARGB8),
-                                                        GColorWhite);
+                                                        GColorWhiteARGB8);
 static uint8_t config_color_battery_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorOrangeARGB8, GColorBlackARGB8),
-                                                        GColorWhite);
+                                                        GColorWhiteARGB8);
 static uint8_t config_color_battery_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorRedARGB8, GColorBlackARGB8),
-                                                        GColorWhite);
+                                                        GColorWhiteARGB8);
 static uint8_t config_color_battery_bg_30 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorYellowARGB8),
-                                                           GColorBlack);
+                                                           GColorBlackARGB8);
 static uint8_t config_color_battery_bg_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorOrangeARGB8),
-                                                           GColorBlack);
+                                                           GColorBlackARGB8);
 static uint8_t config_color_battery_bg_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorRedARGB8),
-                                                           GColorBlack);
-static uint8_t config_color_bluetooth_logo = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlack);
-static uint8_t config_color_bluetooth_logo_2 = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhite);
+                                                           GColorBlackARGB8);
+static uint8_t config_color_bluetooth_logo = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
+static uint8_t config_color_bluetooth_logo_2 = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhiteARGB8);
 static uint8_t config_bluetooth_logo = true;
 static uint8_t config_vibrate_disconnect = true;
 static uint8_t config_vibrate_reconnect = true;
@@ -82,7 +82,7 @@ static uint8_t config_hour_ticks = 1;
 //// Static configuration and useful macros
 ////////////////////////////////////////////
 
-#define COLOR(c) COLOR_FALLBACK((GColor8) { .argb = (c) }, c)
+#define COLOR(c) ((GColor8) { .argb = (c) })
 
 //#define OBSIDIAN_SHOW_NUMBERS
 #define OBSIDIAN_LONG_TICKS
@@ -233,76 +233,6 @@ AppTimer *timer_bluetooth_popup;
 
 
 ////////////////////////////////////////////
-//// Shim implementation for black/white pebble
-////////////////////////////////////////////
-
-#ifndef PBL_COLOR
-
-void graphics_context_set_stroke_width(GContext *ctx, uint8_t stroke_width) { }
-
-// implementation by MathewReiss (http://forums.getpebble.com/discussion/21208/building-for-aplite-and-basalt)
-void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, int8_t width) {
-    // (Based on code found here http://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm#C)
-    // Order points so that lower x is first
-    int16_t x0, x1, y0, y1;
-    if (p0.x <= p1.x) {
-        x0 = p0.x;
-        x1 = p1.x;
-        y0 = p0.y;
-        y1 = p1.y;
-    } else {
-        x0 = p1.x;
-        x1 = p0.x;
-        y0 = p1.y;
-        y1 = p0.y;
-    }
-
-    // Init loop variables
-    int16_t dx = x1 - x0;
-    int16_t dy = abs(y1 - y0);
-    int16_t sy = y0 < y1 ? 1 : -1;
-    int16_t err = (dx > dy ? dx : -dy) / 2;
-    int16_t e2;
-
-    // Calculate whether line thickness will be added vertically or horizontally based on line angle
-    int8_t xdiff, ydiff;
-
-    if (dx > dy) {
-        xdiff = 0;
-        ydiff = width / 2;
-    } else {
-        xdiff = width / 2;
-        ydiff = 0;
-    }
-
-    // Use Bresenham's integer algorithm, with slight modification for line width, to draw line at any angle
-    while (true) {
-        // Draw line thickness at each point by drawing another line
-        // (horizontally when > +/-45 degrees, vertically when <= +/-45 degrees)
-        graphics_draw_line(ctx, GPoint(x0 - xdiff, y0 - ydiff), GPoint(x0 + xdiff, y0 + ydiff));
-
-        if (x0 == x1 && y0 == y1) break;
-        e2 = err;
-        if (e2 > -dx) {
-            err -= dy;
-            x0++;
-        }
-        if (e2 < dy) {
-            err += dx;
-            y0 += sy;
-        }
-    }
-}
-
-#else
-void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, int8_t width) {
-    graphics_context_set_stroke_width(ctx, width);
-    graphics_draw_line(ctx, p0, p1);
-}
-#endif
-
-
-////////////////////////////////////////////
 //// Implementation
 ////////////////////////////////////////////
 
@@ -329,6 +259,12 @@ void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, int8_t w
     graphics_context_set_text_color(ctx, COLOR_ACCENT); \
     graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21+21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
   } while (0)
+
+
+void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, int8_t width) {
+    graphics_context_set_stroke_width(ctx, width);
+    graphics_draw_line(ctx, p0, p1);
+}
 
 /**
  * Returns a point on the line from the center away at an angle specified by tick/maxtick, at a specified distance
