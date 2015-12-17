@@ -7,7 +7,7 @@ P="chalk"
 
 VERSION=$(shell cat appinfo.json | grep version | grep -o "[0-9]*\.[0-9]*")
 
-all: install_emulator
+all: build install_emulator
 
 deploy: install_deploy
 
