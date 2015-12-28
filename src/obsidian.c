@@ -600,6 +600,7 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_angle);
 
     // format date strings
+    setlocale(LC_ALL, "");
     strftime(buffer_1, sizeof(buffer_1), "%b %d", t);
     // remove leading zeros
     if (buffer_1[4] == '0') {
