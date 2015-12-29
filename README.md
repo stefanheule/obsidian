@@ -86,9 +86,13 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |               1.4 |                     3 |
 |               1.5 |                     4 |
 |         1.6 - 1.7 |                     5 |
-|               1.8 |                     6 |
+|         1.8 - 1.9 |                     6 |
 
 ## Changelog
+
+**Version 1.9 (2015-12-29)**
+
+- Localize date display.
 
 **Version 1.8 (2015-12-17)**
 
@@ -125,7 +129,7 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 
 ## Contributing
 
-Pull requests are welcome.
+Pull requests are welcome.  Also see `DEVELOPER.md` for information on various development matters.
 
 ## License
 
