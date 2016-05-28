@@ -18,4 +18,9 @@
 
 #include "obsidian.h"
 
+GPoint get_radial_point(const int16_t distance_from_center, const int32_t angle);
+bool intersect(const GPoint a0, const GPoint a1, const GPoint b0, const GPoint b1);
+bool line_rect_intersect(GPoint line0, GPoint line1, GPoint rect0, GPoint rect1);
+bool line2_rect_intersect(GPoint lineA0, GPoint lineA1, GPoint lineB0, GPoint lineB1, GPoint rect0, GPoint rect1);
+
 #endif //OBSIDIAN_GEOMETRY_H

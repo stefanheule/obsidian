@@ -111,4 +111,20 @@ extern bool show_bluetooth_popup;
 extern AppTimer *timer_bluetooth_popup;
 
 
+
+////////////////////////////////////////////
+//// Static configuration and useful macros
+////////////////////////////////////////////
+
+#define COLOR(c) ((GColor8) { .argb = (c) })
+
+//#define OBSIDIAN_SHOW_NUMBERS
+#define OBSIDIAN_LONG_TICKS
+#define OBSIDIAN_FAT_TICKS
+//#define OBSIDIAN_ONLY_RELEVANT_NUMBER
+//#define OBSIDIAN_BATTERY_USE_TEXT
+
+#define OBSIDIAN_BLUETOOTH_POPUP_MS 5000
+
+
 #endif //OBSIDIAN_OBSIDIAN_H
