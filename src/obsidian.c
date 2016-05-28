@@ -236,32 +236,32 @@ AppTimer *timer_bluetooth_popup;
 //// Implementation
 ////////////////////////////////////////////
 
-#define LOG(fmt, args...) \
-  do { \
-    char buffer[80]; \
-    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
-    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
-    graphics_context_set_fill_color(ctx, GColorWhite); \
-    graphics_fill_rect(ctx, GRect(0, 0, 144, 60), 0, GCornerNone); \
-    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 0, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
-  } while (0)
-#define LOG2(fmt, args...) \
-  do { \
-    char buffer[80]; \
-    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
-    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
-    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
-  } while (0)
-#define LOG3(fmt, args...) \
-  do { \
-    char buffer[80]; \
-    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
-    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
-    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21+21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
-  } while (0)
+//#define LOG(fmt, args...) \
+//  do { \
+//    char buffer[80]; \
+//    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+//    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+//    graphics_context_set_fill_color(ctx, GColorWhite); \
+//    graphics_fill_rect(ctx, GRect(0, 0, 144, 60), 0, GCornerNone); \
+//    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 0, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+//  } while (0)
+//#define LOG2(fmt, args...) \
+//  do { \
+//    char buffer[80]; \
+//    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+//    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+//    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+//  } while (0)
+//#define LOG3(fmt, args...) \
+//  do { \
+//    char buffer[80]; \
+//    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+//    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+//    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21+21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+//  } while (0)
 
 
-void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, int8_t width) {
+void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, uint8_t width) {
     graphics_context_set_stroke_width(ctx, width);
     graphics_draw_line(ctx, p0, p1);
 }
@@ -483,9 +483,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // background
 #if !defined(PBL_ROUND)
     graphics_context_set_fill_color(ctx, COLOR(config_color_circle));
-    graphics_fill_circle(ctx, center, radius + 3 + 2);
+    graphics_fill_circle(ctx, center, (uint16_t)(radius + 3 + 2));
     graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
-    graphics_fill_circle(ctx, center, radius);
+    graphics_fill_circle(ctx, center, (uint16_t)radius);
 #else
     uint8_t inner_color = config_color_inner_background;
     if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
