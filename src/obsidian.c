@@ -13,8 +13,6 @@
 // limitations under the License.
 
 
-#include <pebble.h>
-
 #include "obsidian.h"
 
 // I don't know how to pass parameters to the compiler, so I'm using this file
@@ -83,35 +81,35 @@ uint8_t config_hour_ticks = 1;
 ////////////////////////////////////////////
 
 /** A pointer to our window, for later deallocation. */
-static Window *window;
+Window *window;
 
 /** All layers */
-static Layer *layer_background;
+Layer *layer_background;
 
 /** Buffers for strings */
-static char buffer_1[30];
-static char buffer_2[30];
+char buffer_1[30];
+char buffer_2[30];
 
 /** The center of the watch */
-static GPoint center;
+GPoint center;
 
 /** The height and width of the watch */
-static int16_t height;
-static int16_t width;
+int16_t height;
+int16_t width;
 
 #ifdef OBSIDIAN_SHOW_NUMBERS
 /** Open Sans font. */
-static GFont font_open_sans;
+GFont font_open_sans;
 #endif
 
 /** System font. */
-static GFont font_system_18px_bold;
+GFont font_system_18px_bold;
 #ifdef PBL_ROUND
-static GFont font_system_24px_bold;
+GFont font_system_24px_bold;
 #endif
 
 /** Is the bluetooth popup current supposed to be shown? */
-static bool show_bluetooth_popup;
+bool show_bluetooth_popup;
 
 /** The timer for the bluetooth popup */
 AppTimer *timer_bluetooth_popup;
@@ -254,7 +252,7 @@ void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, uint8_t 
 /**
  * Returns a point on the line from the center away at an angle specified by tick/maxtick, at a specified distance
  */
-static GPoint get_radial_point(const int16_t distance_from_center, const int32_t angle) {
+GPoint get_radial_point(const int16_t distance_from_center, const int32_t angle) {
     GPoint result = {
             .x = (int16_t) (sin_lookup(angle) * (int32_t) distance_from_center / TRIG_MAX_RATIO) + center.x,
             .y = (int16_t) (-cos_lookup(angle) * (int32_t) distance_from_center / TRIG_MAX_RATIO) + center.y,
@@ -266,7 +264,7 @@ static GPoint get_radial_point(const int16_t distance_from_center, const int32_t
  * Do the line segments a0->a1 and b0->b1 intersect?
  * Loosely based on http://stackoverflow.com/questions/4977491/determining-if-two-line-segments-intersect/4977569#4977569
  */
-static bool intersect(const GPoint a0, const GPoint a1, const GPoint b0, const GPoint b1) {
+bool intersect(const GPoint a0, const GPoint a1, const GPoint b0, const GPoint b1) {
     GPoint va = GPoint(a1.x - a0.x, a1.y - a0.y);
     GPoint vb = GPoint(b1.x - b0.x, b1.y - b0.y);
 
@@ -296,7 +294,7 @@ static bool intersect(const GPoint a0, const GPoint a1, const GPoint b0, const G
 /**
  * Draws a bluetooth logo at a given position (top-left).
  */
-static void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
+void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 #define BLUETOOTH_LOGO_STEP 3
 
     if (!config_bluetooth_logo) return;
@@ -349,7 +347,7 @@ bool line2_rect_intersect(GPoint lineA0, GPoint lineA1, GPoint lineB0, GPoint li
 /**
  * Draws a popup about the bluetooth connection
  */
-static void bluetooth_popup(GContext *ctx, bool connected) {
+void bluetooth_popup(GContext *ctx, bool connected) {
 #ifndef DEBUG_BLUETOOTH_POPUP
     if (!show_bluetooth_popup) return;
 #endif
@@ -395,13 +393,13 @@ static void bluetooth_popup(GContext *ctx, bool connected) {
 
 //#define DEBUG_DATE_POSITION
 #ifdef DEBUG_DATE_POSITION
-static int debug_iter = 0;
+int debug_iter = 0;
 #endif
 
 /**
  * Update procedure for the background
  */
-static void background_update_proc(Layer *layer, GContext *ctx) {
+void background_update_proc(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
     int16_t radius = bounds.size.w / 2;
     bool bluetooth = bluetooth_connection_service_peek();
@@ -771,27 +769,27 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     bluetooth_popup(ctx, bluetooth);
 }
 
-static void handle_battery(BatteryChargeState new_state) {
+void handle_battery(BatteryChargeState new_state) {
     layer_mark_dirty(layer_background);
 }
 
 /**
  * Handler for time ticks.
  */
-static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
+void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
     layer_mark_dirty(layer_background);
 #ifdef DEBUG_DATE_POSITION
     debug_iter += 1;
 #endif
 }
 
-static void timer_callback_bluetooth_popup(void *data) {
+void timer_callback_bluetooth_popup(void *data) {
     show_bluetooth_popup = false;
     timer_bluetooth_popup = NULL;
     layer_mark_dirty(layer_background);
 }
 
-static void handle_bluetooth(bool connected) {
+void handle_bluetooth(bool connected) {
     // redraw background (to turn on/off the logo)
     layer_mark_dirty(layer_background);
 
@@ -829,7 +827,7 @@ static void handle_bluetooth(bool connected) {
 /**
  * Window load callback.
  */
-static void window_load(Window *window) {
+void window_load(Window *window) {
     Layer *window_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(window_layer);
 
@@ -854,7 +852,7 @@ static void window_load(Window *window) {
 /**
  * Window unload callback.
  */
-static void window_unload(Window *window) {
+void window_unload(Window *window) {
     layer_destroy(layer_background);
 #ifdef OBSIDIAN_SHOW_NUMBERS
     fonts_unload_custom_font(font_open_sans);
@@ -862,96 +860,10 @@ static void window_unload(Window *window) {
 }
 
 /**
- * Helper to process new configuration.
- */
-static bool sync_helper(const uint32_t key, DictionaryIterator *iter, uint8_t *value) {
-    Tuple *new_tuple = dict_find(iter, key);
-    if (new_tuple == NULL) return false;
-    if ((*value) != new_tuple->value->uint8) {
-        (*value) = new_tuple->value->uint8;
-        persist_write_int(key, *value);
-        return true;
-    }
-
-    return false;
-}
-
-static void inbox_received_handler(DictionaryIterator *iter, void *context) {
-    bool dirty = false;
-    dirty |= sync_helper(CONFIG_COLOR_OUTER_BACKGROUND, iter, &config_color_outer_background);
-    dirty |= sync_helper(CONFIG_COLOR_INNER_BACKGROUND, iter, &config_color_inner_background);
-    dirty |= sync_helper(CONFIG_COLOR_MINUTE_HAND, iter, &config_color_minute_hand);
-    dirty |= sync_helper(CONFIG_COLOR_INNER_MINUTE_HAND, iter, &config_color_inner_minute_hand);
-    dirty |= sync_helper(CONFIG_COLOR_HOUR_HAND, iter, &config_color_hour_hand);
-    dirty |= sync_helper(CONFIG_COLOR_INNER_HOUR_HAND, iter, &config_color_inner_hour_hand);
-    dirty |= sync_helper(CONFIG_COLOR_CIRCLE, iter, &config_color_circle);
-    dirty |= sync_helper(CONFIG_COLOR_TICKS, iter, &config_color_ticks);
-    dirty |= sync_helper(CONFIG_COLOR_DAY_OF_WEEK, iter, &config_color_day_of_week);
-    dirty |= sync_helper(CONFIG_COLOR_DATE, iter, &config_color_date);
-    dirty |= sync_helper(CONFIG_BATTERY_LOGO, iter, &config_battery_logo);
-    dirty |= sync_helper(CONFIG_COLOR_BATTERY_LOGO, iter, &config_color_battery_logo);
-    dirty |= sync_helper(CONFIG_COLOR_BATTERY_30, iter, &config_color_battery_30);
-    dirty |= sync_helper(CONFIG_COLOR_BATTERY_20, iter, &config_color_battery_20);
-    dirty |= sync_helper(CONFIG_COLOR_BATTERY_10, iter, &config_color_battery_10);
-    dirty |= sync_helper(CONFIG_COLOR_BATTERY_BG_30, iter, &config_color_battery_bg_30);
-    dirty |= sync_helper(CONFIG_COLOR_BATTERY_BG_20, iter, &config_color_battery_bg_20);
-    dirty |= sync_helper(CONFIG_COLOR_BATTERY_BG_10, iter, &config_color_battery_bg_10);
-    dirty |= sync_helper(CONFIG_COLOR_BLUETOOTH_LOGO, iter, &config_color_bluetooth_logo);
-    dirty |= sync_helper(CONFIG_COLOR_BLUETOOTH_LOGO_2, iter, &config_color_bluetooth_logo_2);
-    dirty |= sync_helper(CONFIG_BLUETOOTH_LOGO, iter, &config_bluetooth_logo);
-    dirty |= sync_helper(CONFIG_VIBRATE_DISCONNECT, iter, &config_vibrate_disconnect);
-    dirty |= sync_helper(CONFIG_VIBRATE_RECONNECT, iter, &config_vibrate_reconnect);
-    dirty |= sync_helper(CONFIG_MESSAGE_DISCONNECT, iter, &config_message_disconnect);
-    dirty |= sync_helper(CONFIG_MESSAGE_RECONNECT, iter, &config_message_reconnect);
-    dirty |= sync_helper(CONFIG_MINUTE_TICKS, iter, &config_minute_ticks);
-    dirty |= sync_helper(CONFIG_HOUR_TICKS, iter, &config_hour_ticks);
-    if (dirty) {
-        layer_mark_dirty(layer_background);
-    }
-}
-
-/**
- * Read a value from the persistent storage (or load the default value).
- */
-static void read_config(const uint32_t key, uint8_t *value) {
-    if (persist_exists(key)) {
-        *value = persist_read_int(key);
-    } else {
-        persist_write_int(key, *value);
-    }
-}
-
-/**
  * Initialization.
  */
-static void init() {
-    read_config(CONFIG_COLOR_OUTER_BACKGROUND, &config_color_outer_background);
-    read_config(CONFIG_COLOR_INNER_BACKGROUND, &config_color_inner_background);
-    read_config(CONFIG_COLOR_MINUTE_HAND, &config_color_minute_hand);
-    read_config(CONFIG_COLOR_INNER_MINUTE_HAND, &config_color_inner_minute_hand);
-    read_config(CONFIG_COLOR_HOUR_HAND, &config_color_hour_hand);
-    read_config(CONFIG_COLOR_INNER_HOUR_HAND, &config_color_inner_hour_hand);
-    read_config(CONFIG_COLOR_CIRCLE, &config_color_circle);
-    read_config(CONFIG_COLOR_TICKS, &config_color_ticks);
-    read_config(CONFIG_COLOR_DAY_OF_WEEK, &config_color_day_of_week);
-    read_config(CONFIG_COLOR_DATE, &config_color_date);
-    read_config(CONFIG_BATTERY_LOGO, &config_battery_logo);
-    read_config(CONFIG_COLOR_BATTERY_LOGO, &config_color_battery_logo);
-    read_config(CONFIG_COLOR_BATTERY_30, &config_color_battery_30);
-    read_config(CONFIG_COLOR_BATTERY_20, &config_color_battery_20);
-    read_config(CONFIG_COLOR_BATTERY_10, &config_color_battery_10);
-    read_config(CONFIG_COLOR_BATTERY_BG_30, &config_color_battery_bg_30);
-    read_config(CONFIG_COLOR_BATTERY_BG_20, &config_color_battery_bg_20);
-    read_config(CONFIG_COLOR_BATTERY_BG_10, &config_color_battery_bg_10);
-    read_config(CONFIG_COLOR_BLUETOOTH_LOGO, &config_color_bluetooth_logo);
-    read_config(CONFIG_COLOR_BLUETOOTH_LOGO_2, &config_color_bluetooth_logo_2);
-    read_config(CONFIG_BLUETOOTH_LOGO, &config_bluetooth_logo);
-    read_config(CONFIG_VIBRATE_DISCONNECT, &config_vibrate_disconnect);
-    read_config(CONFIG_VIBRATE_RECONNECT, &config_vibrate_reconnect);
-    read_config(CONFIG_MESSAGE_DISCONNECT, &config_message_disconnect);
-    read_config(CONFIG_MESSAGE_RECONNECT, &config_message_reconnect);
-    read_config(CONFIG_MINUTE_TICKS, &config_minute_ticks);
-    read_config(CONFIG_HOUR_TICKS, &config_hour_ticks);
+void init() {
+    read_config_all();
 
 // some alternative themes (for screenshots)
 #if defined(SCREENSHOT_ALT_THEME_1) && defined(PBL_COLOR)
@@ -1085,7 +997,7 @@ static void init() {
 /**
  * De-initialisation.
  */
-static void deinit() {
+void deinit() {
     tick_timer_service_unsubscribe();
     battery_state_service_unsubscribe();
     bluetooth_connection_service_unsubscribe();

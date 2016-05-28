@@ -12,8 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef OBSIDIAN_H
-#define OBSIDIAN_H
+#ifndef OBSIDIAN_OBSIDIAN_H
+#define OBSIDIAN_OBSIDIAN_H
+
+#include <pebble.h>
+
+#include "settings.h"
+#include "drawing.h"
+#include "geometry.h"
 
 ////////////////////////////////////////////
 //// Configuration constants
@@ -81,4 +87,28 @@ extern uint8_t config_message_reconnect;
 extern uint8_t config_minute_ticks;
 extern uint8_t config_hour_ticks;
 
-#endif //OBSIDIAN_H
+
+////////////////////////////////////////////
+//// Global variables
+////////////////////////////////////////////
+
+extern Window *window;
+extern Layer *layer_background;
+extern char buffer_1[30];
+extern char buffer_2[30];
+extern GPoint center;
+extern int16_t height;
+extern int16_t width;
+#ifdef OBSIDIAN_SHOW_NUMBERS
+/** Open Sans font. */
+extern GFont font_open_sans;
+#endif
+extern GFont font_system_18px_bold;
+#ifdef PBL_ROUND
+extern GFont font_system_24px_bold;
+#endif
+extern bool show_bluetooth_popup;
+extern AppTimer *timer_bluetooth_popup;
+
+
+#endif //OBSIDIAN_OBSIDIAN_H
