@@ -1,4 +1,21 @@
+// Copyright 2015-16 Stefan Heule
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//        http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+
 #include <pebble.h>
+
+#include "obsidian.h"
 
 // I don't know how to pass parameters to the compiler, so I'm using this file
 // for various configurations
@@ -6,76 +23,43 @@
 
 
 ////////////////////////////////////////////
-//// Configuration constants
-////////////////////////////////////////////
-
-// config keys are also duplicated in src/obsidian.c, appinfo.json, src/js/pebble-js-app.js and config/index.html
-#define CONFIG_COLOR_OUTER_BACKGROUND 1
-#define CONFIG_COLOR_INNER_BACKGROUND 2
-#define CONFIG_COLOR_MINUTE_HAND 3
-#define CONFIG_COLOR_INNER_MINUTE_HAND 4
-#define CONFIG_COLOR_HOUR_HAND 5
-#define CONFIG_COLOR_INNER_HOUR_HAND 6
-#define CONFIG_COLOR_CIRCLE 7
-#define CONFIG_COLOR_TICKS 8
-#define CONFIG_COLOR_DAY_OF_WEEK 9
-#define CONFIG_COLOR_DATE 10
-#define CONFIG_BATTERY_LOGO 11
-#define CONFIG_COLOR_BATTERY_LOGO 12
-#define CONFIG_COLOR_BATTERY_BG_30 13
-#define CONFIG_COLOR_BATTERY_BG_20 14
-#define CONFIG_COLOR_BATTERY_BG_10 15
-#define CONFIG_COLOR_BLUETOOTH_LOGO 16
-#define CONFIG_COLOR_BLUETOOTH_LOGO_2 17
-#define CONFIG_BLUETOOTH_LOGO 18
-#define CONFIG_VIBRATE_DISCONNECT 19
-#define CONFIG_VIBRATE_RECONNECT 20
-#define CONFIG_MESSAGE_DISCONNECT 21
-#define CONFIG_MESSAGE_RECONNECT 22
-#define CONFIG_MINUTE_TICKS 23
-#define CONFIG_HOUR_TICKS 24
-#define CONFIG_COLOR_BATTERY_30 25
-#define CONFIG_COLOR_BATTERY_20 26
-#define CONFIG_COLOR_BATTERY_10 27
-
-////////////////////////////////////////////
 //// Default values for the configuration
 ////////////////////////////////////////////
 
-static uint8_t config_color_outer_background = COLOR_FALLBACK(GColorDarkGrayARGB8, GColorBlackARGB8);
-static uint8_t config_color_inner_background = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhiteARGB8);
-static uint8_t config_color_minute_hand = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
-static uint8_t config_color_inner_minute_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlackARGB8);
-static uint8_t config_color_hour_hand = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
-static uint8_t config_color_inner_hour_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlackARGB8);
-static uint8_t config_color_circle = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
-static uint8_t config_color_ticks = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
-static uint8_t config_color_day_of_week = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
-static uint8_t config_color_date = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
-static uint8_t config_battery_logo = 1;
-static uint8_t config_color_battery_logo = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorDarkGrayARGB8, GColorBlackARGB8),
-                                                          GColorWhiteARGB8);
-static uint8_t config_color_battery_30 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorYellowARGB8, GColorBlackARGB8),
-                                                        GColorWhiteARGB8);
-static uint8_t config_color_battery_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorOrangeARGB8, GColorBlackARGB8),
-                                                        GColorWhiteARGB8);
-static uint8_t config_color_battery_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorRedARGB8, GColorBlackARGB8),
-                                                        GColorWhiteARGB8);
-static uint8_t config_color_battery_bg_30 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorYellowARGB8),
-                                                           GColorBlackARGB8);
-static uint8_t config_color_battery_bg_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorOrangeARGB8),
-                                                           GColorBlackARGB8);
-static uint8_t config_color_battery_bg_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorRedARGB8),
-                                                           GColorBlackARGB8);
-static uint8_t config_color_bluetooth_logo = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
-static uint8_t config_color_bluetooth_logo_2 = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhiteARGB8);
-static uint8_t config_bluetooth_logo = true;
-static uint8_t config_vibrate_disconnect = true;
-static uint8_t config_vibrate_reconnect = true;
-static uint8_t config_message_disconnect = true;
-static uint8_t config_message_reconnect = true;
-static uint8_t config_minute_ticks = 1;
-static uint8_t config_hour_ticks = 1;
+uint8_t config_color_outer_background = COLOR_FALLBACK(GColorDarkGrayARGB8, GColorBlackARGB8);
+uint8_t config_color_inner_background = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhiteARGB8);
+uint8_t config_color_minute_hand = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+uint8_t config_color_inner_minute_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlackARGB8);
+uint8_t config_color_hour_hand = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
+uint8_t config_color_inner_hour_hand = COLOR_FALLBACK(GColorLightGrayARGB8, GColorBlackARGB8);
+uint8_t config_color_circle = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+uint8_t config_color_ticks = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+uint8_t config_color_day_of_week = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
+uint8_t config_color_date = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+uint8_t config_battery_logo = 1;
+uint8_t config_color_battery_logo = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorDarkGrayARGB8, GColorBlackARGB8),
+                                                   GColorWhiteARGB8);
+uint8_t config_color_battery_30 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorYellowARGB8, GColorBlackARGB8),
+                                                 GColorWhiteARGB8);
+uint8_t config_color_battery_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorOrangeARGB8, GColorBlackARGB8),
+                                                 GColorWhiteARGB8);
+uint8_t config_color_battery_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorRedARGB8, GColorBlackARGB8),
+                                                 GColorWhiteARGB8);
+uint8_t config_color_battery_bg_30 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorYellowARGB8),
+                                                    GColorBlackARGB8);
+uint8_t config_color_battery_bg_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorOrangeARGB8),
+                                                    GColorBlackARGB8);
+uint8_t config_color_battery_bg_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorRedARGB8),
+                                                    GColorBlackARGB8);
+uint8_t config_color_bluetooth_logo = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
+uint8_t config_color_bluetooth_logo_2 = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhiteARGB8);
+uint8_t config_bluetooth_logo = true;
+uint8_t config_vibrate_disconnect = true;
+uint8_t config_vibrate_reconnect = true;
+uint8_t config_message_disconnect = true;
+uint8_t config_message_reconnect = true;
+uint8_t config_minute_ticks = 1;
+uint8_t config_hour_ticks = 1;
 
 
 ////////////////////////////////////////////
@@ -236,30 +220,31 @@ AppTimer *timer_bluetooth_popup;
 //// Implementation
 ////////////////////////////////////////////
 
-//#define LOG(fmt, args...) \
-//  do { \
-//    char buffer[80]; \
-//    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
-//    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
-//    graphics_context_set_fill_color(ctx, GColorWhite); \
-//    graphics_fill_rect(ctx, GRect(0, 0, 144, 60), 0, GCornerNone); \
-//    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 0, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
-//  } while (0)
-//#define LOG2(fmt, args...) \
-//  do { \
-//    char buffer[80]; \
-//    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
-//    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
-//    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
-//  } while (0)
-//#define LOG3(fmt, args...) \
-//  do { \
-//    char buffer[80]; \
-//    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
-//    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
-//    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21+21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
-//  } while (0)
-
+/*
+#define LOG(fmt, args...) \
+  do { \
+    char buffer[80]; \
+    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+    graphics_context_set_fill_color(ctx, GColorWhite); \
+    graphics_fill_rect(ctx, GRect(0, 0, 144, 60), 0, GCornerNone); \
+    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 0, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+  } while (0)
+#define LOG2(fmt, args...) \
+  do { \
+    char buffer[80]; \
+    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+  } while (0)
+#define LOG3(fmt, args...) \
+  do { \
+    char buffer[80]; \
+    snprintf(buffer, ARRAY_LENGTH(buffer), fmt, ## args); \
+    graphics_context_set_text_color(ctx, COLOR_ACCENT); \
+    graphics_draw_text(ctx, buffer, font_system_18px_bold, GRect(5, 21+21, 144-2*5, 50), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL); \
+  } while (0)
+*/
 
 void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, uint8_t width) {
     graphics_context_set_stroke_width(ctx, width);
@@ -483,9 +468,9 @@ static void background_update_proc(Layer *layer, GContext *ctx) {
     // background
 #if !defined(PBL_ROUND)
     graphics_context_set_fill_color(ctx, COLOR(config_color_circle));
-    graphics_fill_circle(ctx, center, (uint16_t)(radius + 3 + 2));
+    graphics_fill_circle(ctx, center, (uint16_t) (radius + 3 + 2));
     graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
-    graphics_fill_circle(ctx, center, (uint16_t)radius);
+    graphics_fill_circle(ctx, center, (uint16_t) radius);
 #else
     uint8_t inner_color = config_color_inner_background;
     if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
