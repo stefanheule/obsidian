@@ -90,6 +90,10 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 
 ## Changelog
 
+**Version 1.10 ()**
+
+-
+
 **Version 1.9 (2015-12-29)**
 
 - Localize date display.
@@ -133,7 +137,7 @@ Pull requests are welcome.  Also see `DEVELOPER.md` for information on various d
 
 ## License
 
-Copyright 2015 Stefan Heule
+Copyright 2015-16 Stefan Heule
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
