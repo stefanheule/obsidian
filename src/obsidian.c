@@ -87,8 +87,9 @@ int16_t width;
 GFont font_open_sans;
 #endif
 
-/** System font. */
+/** Fonts. */
 GFont font_system_18px_bold;
+GFont font_nupe;
 #ifdef PBL_ROUND
 GFont font_system_24px_bold;
 #endif
@@ -304,6 +305,7 @@ void window_load(Window *window) {
 #ifdef PBL_ROUND
     font_system_24px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
 #endif
+    font_nupe = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_NUPE_23));
 
     // initialize
     show_bluetooth_popup = false;
@@ -317,6 +319,7 @@ void window_unload(Window *window) {
 #ifdef OBSIDIAN_SHOW_NUMBERS
     fonts_unload_custom_font(font_open_sans);
 #endif
+    fonts_unload_custom_font(font_nupe);
 }
 
 /**

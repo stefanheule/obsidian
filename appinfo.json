@@ -3,7 +3,7 @@
   "shortName": "Obsidian",
   "longName": "Obsidian",
   "companyName": "Stefan Heule",
-  "versionLabel": "1.9",
+  "versionLabel": "1.10",
   "sdkVersion": "3",
   "targetPlatforms": [
     "aplite",
@@ -52,6 +52,12 @@
         "type": "png",
         "name": "IMAGE_MENU_ICON",
         "file": "images/menu_icon.png"
+      },
+      {
+        "characterRegex": "[0-9:°a-izA-IZ\u2212]",
+        "file": "fonts/nupe.ttf",
+        "name": "NUPE_23",
+        "type": "font"
       }
     ]
   }

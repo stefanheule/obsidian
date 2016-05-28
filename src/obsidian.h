@@ -104,6 +104,7 @@ extern int16_t width;
 extern GFont font_open_sans;
 #endif
 extern GFont font_system_18px_bold;
+extern GFont font_nupe;
 #ifdef PBL_ROUND
 extern GFont font_system_24px_bold;
 #endif
