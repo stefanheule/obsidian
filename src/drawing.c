@@ -109,6 +109,41 @@ void bluetooth_popup(GContext *ctx, bool connected) {
 int debug_iter = 0;
 #endif
 
+/** Array of candidate points to draw the weather string at */
+static GPoint w_points[] = {
+        {0, 0},
+        {10 + PBL_IF_ROUND_ELSE(2, 0), 3},
+        {17 + PBL_IF_ROUND_ELSE(3, 0), 7},
+        {26 + PBL_IF_ROUND_ELSE(4, 0), 13},
+        {29 + PBL_IF_ROUND_ELSE(5, 0), 19},
+        {33 + PBL_IF_ROUND_ELSE(6, 0), 25},
+        {33 + PBL_IF_ROUND_ELSE(6, 0), 32},
+        {33 + PBL_IF_ROUND_ELSE(6, 0), 39},
+};
+/** Array of candidate points to draw the date string at */
+static GPoint d_points[] = {
+        {0, 16},
+        {10, 16 - 3},
+        {17, 16 - 7},
+        {26, 16 - 13},
+        {29, 16 - 19},
+        {33, 16 - 25},
+        {33, 16 - 32},
+        {33, 16 - 39},
+};
+#ifdef PBL_ROUND
+/** Array of candidate points to draw the battery information */
+static GPoint b_points[] = {
+        {0, 0},
+        {4, 1},
+        {8, 2},
+        {12, 4},
+        {16, 6},
+        {20, 9},
+        {24, 12},
+};
+#endif
+
 /**
  * Update procedure for the background
  */
@@ -305,17 +340,6 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     strftime(buffer_2, sizeof(buffer_2), "%a", t);
 
     // determine where we can draw the date without overlap
-    const GPoint d_points[] = {
-            // array of candidate points to draw the date strings at
-            GPoint(0, 16),
-            GPoint(10, 16 - 3),
-            GPoint(17, 16 - 7),
-            GPoint(26, 16 - 13),
-            GPoint(29, 16 - 19),
-            GPoint(33, 16 - 25),
-            GPoint(33, 16 - 32),
-            GPoint(33, 16 - 39),
-    };
     const int d_offset = PBL_IF_ROUND_ELSE(20, 15);
     const int d_height = 21;
     const int d_y_start = height / 2;
@@ -376,17 +400,6 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                        NULL);
 
     // weather information
-    const GPoint w_points[] = {
-            // array of candidate points to draw the weather string at
-            GPoint(0, 0),
-            GPoint(10+PBL_IF_ROUND_ELSE(2,0), 3),
-            GPoint(17+PBL_IF_ROUND_ELSE(3,0), 7),
-            GPoint(26+PBL_IF_ROUND_ELSE(4,0), 13),
-            GPoint(29+PBL_IF_ROUND_ELSE(5,0), 19),
-            GPoint(33+PBL_IF_ROUND_ELSE(6,0), 25),
-            GPoint(33+PBL_IF_ROUND_ELSE(6,0), 32),
-            GPoint(33+PBL_IF_ROUND_ELSE(6,0), 39),
-    };
     if (true) {
         // determine where we can draw the bluetooth logo without overlap
         GPoint w_center;
@@ -408,10 +421,10 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             }
 //            break;
             if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                       GPoint(w_x + w_center.x - weather_size.w / 2 - w_border,
-                                              w_y + w_center.y - w_border),
-                                       GPoint(w_x + w_center.x + weather_size.w / 2 + w_border,
-                                              w_y + w_center.y + w_height + w_border))) {
+                                      GPoint(w_x + w_center.x - weather_size.w / 2 - w_border,
+                                             w_y + w_center.y - w_border),
+                                      GPoint(w_x + w_center.x + weather_size.w / 2 + w_border,
+                                             w_y + w_center.y + w_height + w_border))) {
                 // show bounding box
 //                graphics_draw_rect(ctx, GRect(w_x + w_center.x - weather_size.w / 2 - w_border,
 //                                              w_y + w_center.y - w_border + w_top_empty_space,
@@ -472,24 +485,24 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         GRect battery = PBL_IF_ROUND_ELSE(GRect((width
                                                   -14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
 #ifdef PBL_ROUND
-//        // determine where we can draw the bluetooth logo without overlap
-//        GPoint b_center;
-//        const int b_x = width / 2;
-//        const int b_y = 25;
-//        const int b_border = 3;
-//        // loop through all points and use the first one that doesn't overlap with the watch hands
-//        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
-//            b_center = b_points[(i + 1) / 2];
-//            if (i % 2 == 0) {
-//                b_center.x = -b_center.x;
-//            }
-//            if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
-//                                      GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
-//                                      GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
-//                break;
-//            }
-//        }
-//        battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
+        // determine where we can draw the bluetooth logo without overlap
+        GPoint b_center;
+        const int b_x = width / 2;
+        const int b_y = 25;
+        const int b_border = 3;
+        // loop through all points and use the first one that doesn't overlap with the watch hands
+        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
+            b_center = b_points[(i + 1) / 2];
+            if (i % 2 == 0) {
+                b_center.x = -b_center.x;
+            }
+            if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
+                                      GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
+                                      GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
+                break;
+            }
+        }
+        battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
 #endif
         uint8_t battery_color = config_color_battery_logo;
         if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
