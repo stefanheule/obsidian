@@ -18,6 +18,10 @@ function getDetails() {
 
 Pebble.addEventListener('ready', function () {
     console.log('[ info/app ] PebbleKit JS ready!');
+    var data = {
+        "MSG_KEY_JS_READY": 1
+    };
+    Pebble.sendAppMessage(data);
 });
 
 Pebble.addEventListener('showConfiguration', function () {
@@ -80,15 +84,17 @@ Pebble.addEventListener('webviewclosed', function (e) {
 
 
 var ICONS = {
-    "01d": "a",
-    "02d": "b",
-    "03d": "c",
-    "04d": "d",
-    "09d": "e",
-    "10d": "f",
-    "11d": "g",
-    "13d": "h",
-    "50d": "i",
+    // day icons
+    "01d": "a", // sun
+    "02d": "b", // cloud and sun
+    "03d": "c", // cloud
+    "04d": "d", // clouds
+    "09d": "e", // rain drops
+    "10d": "f", // rain drops
+    "11d": "g", // lightning
+    "13d": "h", // snow flake
+    "50d": "i", // mist
+    // night icons
     "01n": "A",
     "02n": "B",
     "03n": "C",
@@ -115,6 +121,7 @@ function fetchWeatherForCoordinates(latitude, longitude){
 }
 
 function fetchWeather(query) {
+    console.log('[ info/app ] requesting weather information...');
     var req = new XMLHttpRequest();
     query += "&cnt=1&appid=fa5280deac4b98572739388b55cd7591";
     req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + query, true);
@@ -124,11 +131,12 @@ function fetchWeather(query) {
                 var response = JSON.parse(req.responseText);
                 var temperature = Math.round(response.main.temp - 273.15);
                 var icon = parseIcon(response.weather[0].icon);
+                console.log('[ info/app ] weather information: ' + JSON.stringify(response));
                 var data = {
                     "MSG_KEY_WEATHER_ICON": icon,
                     "MSG_KEY_WEATHER_TEMP": temperature
                 };
-                console.log('[ info/app ] weather send: temp=' + temperature + ", icon=" + icon + ".");
+                console.log('[ info/app ] weather send: temp=' + temperature + ", icon=" + String.fromCharCode(icon) + ".");
                 Pebble.sendAppMessage(data);
             } else {
                 console.log('[ info/app ] weather request failed');
@@ -140,7 +148,7 @@ function fetchWeather(query) {
 
 Pebble.addEventListener('appmessage',
     function (e) {
-        console.log('[ info/app ] app message received!');
+        console.log('[ info/app ] app message received: ' + JSON.stringify(e));
         var dict = e.payload;
         if (dict["MSG_KEY_FETCH_WEATHER"]) {
             var location = localStorage.getItem("CONFIG_WEATHER_LOCATION");

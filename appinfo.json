@@ -46,7 +46,8 @@
     "CONFIG_COLOR_BATTERY_10": 27,
     "MSG_KEY_WEATHER_TEMP": 100,
     "MSG_KEY_WEATHER_ICON": 101,
-    "MSG_KEY_FETCH_WEATHER": 102
+    "MSG_KEY_FETCH_WEATHER": 102,
+    "MSG_KEY_JS_READY": 103
   },
   "resources": {
     "media": [

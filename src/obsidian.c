@@ -100,6 +100,15 @@ bool show_bluetooth_popup;
 /** The timer for the bluetooth popup */
 AppTimer *timer_bluetooth_popup;
 
+/** The current weather information. */
+Weather weather;
+
+/** Is the JS runtime ready? */
+bool js_ready;
+
+/** A timer used to schedule weather updates. */
+AppTimer * weather_request_timer;
+
 
 ////////////////////////////////////////////
 //// screenshot configurations

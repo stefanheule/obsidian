@@ -61,6 +61,10 @@
 #define MSG_KEY_WEATHER_TEMP 100
 #define MSG_KEY_WEATHER_ICON 101
 #define MSG_KEY_FETCH_WEATHER 102
+#define MSG_KEY_JS_READY 103
+
+// persitant storage keys (in additiona to config keys above)
+#define PERSIST_KEY_WEATHER 201
 
 
 ////////////////////////////////////////////
@@ -126,7 +130,15 @@ extern AppTimer *timer_bluetooth_popup;
 extern int debug_iter;
 #endif
 
+typedef struct {
+    time_t timestamp;
+    int8_t icon;
+    int8_t temperature;
+} __attribute__((__packed__)) Weather;
 
+extern Weather weather;
+extern bool js_ready;
+extern AppTimer * weather_request_timer;
 
 ////////////////////////////////////////////
 //// Static configuration and useful macros

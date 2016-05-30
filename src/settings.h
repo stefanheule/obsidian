@@ -17,6 +17,7 @@
 
 #include "obsidian.h"
 
+void update_weather();
 void inbox_received_handler(DictionaryIterator *iter, void *context);
 void read_config_all();
 

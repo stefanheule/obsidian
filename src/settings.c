@@ -15,6 +15,36 @@
 #include "settings.h"
 
 
+static void update_weather_helper(void* unused);
+
+/**
+ * Update the weather information (and schedule a periodic timer to update again)
+ */
+void update_weather() {
+    if (false) return; // TODO
+    const uint32_t timeout_min = 30;
+    const uint32_t timeout_ms = timeout_min * 1000 * 60;
+    if (weather_request_timer) {
+        app_timer_reschedule(weather_request_timer, timeout_ms);
+    } else {
+        weather_request_timer = app_timer_register(timeout_ms, update_weather_helper, NULL);
+    }
+
+    // actually update the weather by sending a request
+    DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+    dict_write_uint8(iter, MSG_KEY_FETCH_WEATHER, 1);
+    app_message_outbox_send();
+    APP_LOG(APP_LOG_LEVEL_INFO, "requesting weather update");
+}
+
+/**
+ * Utility function.
+ */
+static void update_weather_helper(void* unused) {
+    update_weather();
+}
+
 /**
  * Helper to process new configuration.
  */
@@ -59,6 +89,26 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
     dirty |= sync_helper(CONFIG_MESSAGE_RECONNECT, iter, &config_message_reconnect);
     dirty |= sync_helper(CONFIG_MINUTE_TICKS, iter, &config_minute_ticks);
     dirty |= sync_helper(CONFIG_HOUR_TICKS, iter, &config_hour_ticks);
+
+    if (false) { // TODO
+        update_weather();
+    }
+
+    Tuple *icon_tuple = dict_find(iter, MSG_KEY_WEATHER_ICON);
+    Tuple *temp_tuple = dict_find(iter, MSG_KEY_WEATHER_TEMP);
+    if (icon_tuple && temp_tuple) {
+        weather.timestamp = time(NULL);
+        weather.icon = icon_tuple->value->int8;
+        weather.temperature = temp_tuple->value->int8;
+        persist_write_data(PERSIST_KEY_WEATHER, &weather, sizeof(Weather));
+        dirty = true;
+    }
+
+    if (dict_find(iter, MSG_KEY_JS_READY)) {
+        js_ready = true;
+        update_weather();
+    }
+
     if (dirty) {
         layer_mark_dirty(layer_background);
     }
@@ -107,4 +157,12 @@ void read_config_all() {
     read_config(CONFIG_MESSAGE_RECONNECT, &config_message_reconnect);
     read_config(CONFIG_MINUTE_TICKS, &config_minute_ticks);
     read_config(CONFIG_HOUR_TICKS, &config_hour_ticks);
+
+    if (persist_exists(PERSIST_KEY_WEATHER)) {
+        persist_read_data(PERSIST_KEY_WEATHER, &weather, sizeof(Weather));
+    } else {
+        weather.timestamp = 0;
+    }
+
+    js_ready = false;
 }

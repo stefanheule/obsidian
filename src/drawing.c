@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "drawing.h"
+#include "obsidian.h"
 
 /**
  * Draw a line with a given width.
@@ -400,16 +401,23 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                        NULL);
 
     // weather information
-    if (true) {
-        // determine where we can draw the bluetooth logo without overlap
+    if (weather.timestamp > 0) {
+        int temp = weather.temperature;
+        if (false){
+            temp = temp * 9 / 5 + 32;
+        }
+        if (temp > 100) {
+            snprintf(buffer_1, 6, "%c%d", weather.icon, temp);
+        } else {
+            snprintf(buffer_1, 6, "%c%d°", weather.icon, temp);
+        }
         GPoint w_center;
         GRect w_pos;
         const int w_border = 2;
         const int w_height = 23;
-        const int w_top_empty_space = PBL_IF_ROUND_ELSE(4, 6);
         const int w_x = width / 2;
         const int w_y = PBL_IF_ROUND_ELSE(36, 36);
-        GSize weather_size = graphics_text_layout_get_content_size("b29°", font_nupe, GRect(0, 0, 300, 300),
+        GSize weather_size = graphics_text_layout_get_content_size(buffer_1, font_nupe, GRect(0, 0, 300, 300),
                                                                    GTextOverflowModeWordWrap, GTextAlignmentCenter);
         // loop through all points and use the first one that doesn't overlap with the watch hands
         for (i = 0; i < 1 + (ARRAY_LENGTH(w_points) - 1) * 2; i++) {
@@ -427,9 +435,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                                              w_y + w_center.y + w_height + w_border))) {
                 // show bounding box
 //                graphics_draw_rect(ctx, GRect(w_x + w_center.x - weather_size.w / 2 - w_border,
-//                                              w_y + w_center.y - w_border + w_top_empty_space,
+//                                              w_y + w_center.y - w_border,
 //                                              weather_size.w+2*w_border,
-//                                              weather_size.h+2*w_border - w_top_empty_space));
+//                                              weather_size.h+2*w_border));
                 found = true;
                 break;
             }
@@ -441,7 +449,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         }
 
         w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
-        graphics_draw_text(ctx, "b29°", font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+        graphics_draw_text(ctx, buffer_1, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
 
     // bluetooth status
