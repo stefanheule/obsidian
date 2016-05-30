@@ -49,8 +49,8 @@ uint8_t config_color_battery_bg_20 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhit
                                                     GColorBlackARGB8);
 uint8_t config_color_battery_bg_10 = COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColorWhiteARGB8, GColorRedARGB8),
                                                     GColorBlackARGB8);
-uint8_t config_color_bluetooth_logo = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
-uint8_t config_color_bluetooth_logo_2 = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhiteARGB8);
+uint8_t config_color_bluetooth_logo = COLOR_FALLBACK(GColorWhiteARGB8, GColorBlackARGB8);
+uint8_t config_color_bluetooth_logo_2 = COLOR_FALLBACK(GColorBlackARGB8, GColorWhiteARGB8);
 uint8_t config_bluetooth_logo = true;
 uint8_t config_vibrate_disconnect = true;
 uint8_t config_vibrate_reconnect = true;
@@ -239,7 +239,7 @@ void handle_battery(BatteryChargeState new_state) {
  */
 void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
     layer_mark_dirty(layer_background);
-#ifdef DEBUG_DATE_POSITION
+#ifdef DEBUG_ITER_COUNTER
     debug_iter += 1;
 #endif
 }
@@ -446,7 +446,7 @@ void init() {
     width = bounds.size.w;
 
     TimeUnits unit = MINUTE_UNIT;
-#ifdef DEBUG_DATE_POSITION
+#ifdef DEBUG_ITER_COUNTER
     unit = SECOND_UNIT;
 #endif
     tick_timer_service_subscribe(unit, handle_second_tick);

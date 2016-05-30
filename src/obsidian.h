@@ -21,6 +21,9 @@
 #include "drawing.h"
 #include "geometry.h"
 
+//#define DEBUG_DATE_POSITION
+//#define DEBUG_WEATHER_POSITION
+
 ////////////////////////////////////////////
 //// Configuration constants
 ////////////////////////////////////////////
@@ -110,6 +113,13 @@ extern GFont font_system_24px_bold;
 #endif
 extern bool show_bluetooth_popup;
 extern AppTimer *timer_bluetooth_popup;
+
+#if defined(DEBUG_WEATHER_POSITION) || defined(DEBUG_DATE_POSITION)
+#define DEBUG_ITER_COUNTER
+#endif
+#ifdef DEBUG_ITER_COUNTER
+extern int debug_iter;
+#endif
 
 
 

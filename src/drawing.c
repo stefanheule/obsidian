@@ -105,8 +105,7 @@ void bluetooth_popup(GContext *ctx, bool connected) {
     }
 }
 
-//#define DEBUG_DATE_POSITION
-#ifdef DEBUG_DATE_POSITION
+#ifdef DEBUG_ITER_COUNTER
 int debug_iter = 0;
 #endif
 
@@ -371,42 +370,72 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                        GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     graphics_context_set_text_color(ctx, COLOR(config_color_date));
+#endif
     graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos,
                        GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
-#endif
 
-    // bluetooth status
-    const GPoint b_points[] = {
-            // array of candidate points to draw the bluetooth logo at
+    // weather information
+    const GPoint w_points[] = {
+            // array of candidate points to draw the weather string at
             GPoint(0, 0),
-            GPoint(4, 1),
-            GPoint(8, 2),
-            GPoint(12, 4),
-            GPoint(16, 6),
-            GPoint(20, 9),
-            GPoint(24, 12),
+            GPoint(10+PBL_IF_ROUND_ELSE(2,0), 3),
+            GPoint(17+PBL_IF_ROUND_ELSE(3,0), 7),
+            GPoint(26+PBL_IF_ROUND_ELSE(4,0), 13),
+            GPoint(29+PBL_IF_ROUND_ELSE(5,0), 19),
+            GPoint(33+PBL_IF_ROUND_ELSE(6,0), 25),
+            GPoint(33+PBL_IF_ROUND_ELSE(6,0), 32),
+            GPoint(33+PBL_IF_ROUND_ELSE(6,0), 39),
     };
-    if (!bluetooth) {
+    if (true) {
         // determine where we can draw the bluetooth logo without overlap
-        GPoint b_center;
-        const int b_border = 3;
-        const int b_x = width / 2;
-        const int b_y = PBL_IF_ROUND_ELSE(40, 38);
+        GPoint w_center;
+        GRect w_pos;
+        const int w_border = 2;
+        const int w_height = 23;
+        const int w_top_empty_space = PBL_IF_ROUND_ELSE(4, 6);
+        const int w_x = width / 2;
+        const int w_y = PBL_IF_ROUND_ELSE(36, 36);
+        GSize weather_size = graphics_text_layout_get_content_size("b29°", font_nupe, GRect(0, 0, 300, 300),
+                                                                   GTextOverflowModeWordWrap, GTextAlignmentCenter);
         // loop through all points and use the first one that doesn't overlap with the watch hands
-        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
-            b_center = b_points[(i + 1) / 2];
+        for (i = 0; i < 1 + (ARRAY_LENGTH(w_points) - 1) * 2; i++) {
+//            i = debug_iter % ARRAY_LENGTH(w_points);
+//            i = i*2+1;
+            w_center = w_points[(i + 1) / 2];
             if (i % 2 == 0) {
-                b_center.x = -b_center.x;
+                w_center.x = -w_center.x;
             }
+//            break;
             if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                      GPoint(b_x + b_center.x - 5 - b_border, b_y + b_center.y - b_border),
-                                      GPoint(b_x + b_center.x + 5 + b_border, b_y + b_center.y + 17 + b_border))) {
+                                       GPoint(w_x + w_center.x - weather_size.w / 2 - w_border,
+                                              w_y + w_center.y - w_border),
+                                       GPoint(w_x + w_center.x + weather_size.w / 2 + w_border,
+                                              w_y + w_center.y + w_height + w_border))) {
+                // show bounding box
+//                graphics_draw_rect(ctx, GRect(w_x + w_center.x - weather_size.w / 2 - w_border,
+//                                              w_y + w_center.y - w_border + w_top_empty_space,
+//                                              weather_size.w+2*w_border,
+//                                              weather_size.h+2*w_border - w_top_empty_space));
+                found = true;
                 break;
             }
         }
 
-        draw_bluetooth_logo(ctx, GPoint(b_x + b_center.x - 3, b_y + 2 + b_center.y));
+        // this should not happen, but if it does, then use the default position
+        if (!found) {
+            w_center = w_points[0];
+        }
+
+        w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
+        graphics_draw_text(ctx, "b29°", font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+    }
+
+    // bluetooth status
+    if (!bluetooth && config_bluetooth_logo) {
+#ifndef PBL_ROUND
+        draw_bluetooth_logo(ctx, GPoint(9, 9));
+#endif
     }
 
     // second hand
@@ -443,24 +472,24 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         GRect battery = PBL_IF_ROUND_ELSE(GRect((width
                                                   -14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
 #ifdef PBL_ROUND
-        // determine where we can draw the bluetooth logo without overlap
-        GPoint b_center;
-        const int b_x = width / 2;
-        const int b_y = 25;
-        const int b_border = 3;
-        // loop through all points and use the first one that doesn't overlap with the watch hands
-        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
-            b_center = b_points[(i + 1) / 2];
-            if (i % 2 == 0) {
-                b_center.x = -b_center.x;
-            }
-            if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                      GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
-                                      GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
-                break;
-            }
-        }
-        battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
+//        // determine where we can draw the bluetooth logo without overlap
+//        GPoint b_center;
+//        const int b_x = width / 2;
+//        const int b_y = 25;
+//        const int b_border = 3;
+//        // loop through all points and use the first one that doesn't overlap with the watch hands
+//        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
+//            b_center = b_points[(i + 1) / 2];
+//            if (i % 2 == 0) {
+//                b_center.x = -b_center.x;
+//            }
+//            if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
+//                                      GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
+//                                      GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
+//                break;
+//            }
+//        }
+//        battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
 #endif
         uint8_t battery_color = config_color_battery_logo;
         if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {

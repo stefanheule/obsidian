@@ -3,7 +3,7 @@ OBSIDIAN_CONFIG=""
 OBSIDIAN_FILE="out"
 
 # platform
-P="chalk"
+P="basalt"
 
 VERSION=$(shell cat appinfo.json | grep version | grep -o "[0-9]*\.[0-9]*")
 
@@ -30,7 +30,7 @@ install_emulator:
 	pebble install --emulator $(P)
 
 install_deploy: build
-	pebble install --phone 10.0.0.5
+	pebble install --phone 192.168.1.6
 
 menu_icon:
 	$(MAKE) write_header OBSIDIAN_CONFIG="SCREENSHOT_MENU_ICON"
