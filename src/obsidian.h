@@ -57,6 +57,11 @@
 #define CONFIG_COLOR_BATTERY_20 26
 #define CONFIG_COLOR_BATTERY_10 27
 
+// message keys (also duplicated in appinfo.json)
+#define MSG_KEY_WEATHER_TEMP 100
+#define MSG_KEY_WEATHER_ICON 101
+#define MSG_KEY_FETCH_WEATHER 102
+
 
 ////////////////////////////////////////////
 //// Configuration values
