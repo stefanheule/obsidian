@@ -59,7 +59,7 @@
       },
       {
         "characterRegex": "[0-9:°a-jzA-IZ\u2212]",
-        "file": "fonts/nupe2.ttf",
+        "file": "fonts/nupe2-small.ttf",
         "name": "NUPE_23",
         "type": "font",
         "targetPlatforms": [
@@ -68,7 +68,7 @@
       },
       {
         "characterRegex": "[0-9:°a-jzA-IZ\u2212]",
-        "file": "fonts/nupe3.ttf",
+        "file": "fonts/nupe2.ttf",
         "name": "NUPE_23",
         "type": "font",
         "targetPlatforms": [
