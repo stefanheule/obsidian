@@ -409,7 +409,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         if (temp > 100) {
             snprintf(buffer_1, 6, "%c%d", weather.icon, temp);
         } else {
-            snprintf(buffer_1, 6, "j%c%d°", weather.icon, temp);
+            snprintf(buffer_1, 6, "%c%d°", weather.icon, temp);
         }
         GPoint w_center;
         GRect w_pos;
