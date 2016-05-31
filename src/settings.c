@@ -25,7 +25,9 @@ void update_weather() {
     const uint32_t timeout_min = 30;
     const uint32_t timeout_ms = timeout_min * 1000 * 60;
     if (weather_request_timer) {
-        app_timer_reschedule(weather_request_timer, timeout_ms);
+        if (!app_timer_reschedule(weather_request_timer, timeout_ms)) {
+            weather_request_timer = app_timer_register(timeout_ms, update_weather_helper, NULL);
+        }
     } else {
         weather_request_timer = app_timer_register(timeout_ms, update_weather_helper, NULL);
     }

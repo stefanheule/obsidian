@@ -84,6 +84,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
 
 
 var ICONS = {
+    // see http://openweathermap.org/weather-conditions for details
     // day icons
     "01d": "a", // sun
     "02d": "b", // cloud and sun

@@ -157,7 +157,9 @@ There are a few watch faces that have influenced the design of Obsidian:
 
 - [Minimalin](https://github.com/groyoh/minimalin).  Great watchface under the [MIT Licence](licences/mit.txt), from
 which I borrow some code related to getting weather information.  I also use their NUPE font, which they provide
-under the [Open Font Licence](licences/ofl.txt).  For the aplite and basalt platforms, I modified the NUPE font,
-and call it NUPE2 (smaller numbers).
+under the [Open Font Licence](licences/ofl.txt).  I modified the font to include more weather icons, as well as
+making some of the existing icons more accurate, and I call the resulting font NUPE2.  For the aplite and basalt
+platforms, I modified NUPE2 slightly further to include a smaller font for numbers, and call the font NUPE2_small.
+Both modifications are again licenced under the [Open Font Licence](licences/ofl.txt).
 - [Simple.Watch](http://apps.getpebble.com/en_US/application/5551c537c60fc8732d000006)
 - [TH3](http://apps.getpebble.com/en_US/application/5551c4a91113bc93a00000de)
