@@ -4,13 +4,13 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/obsidian.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/drawing.c" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/settings.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/drawing.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/config.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/settings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/geometry.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/geometry.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/settings.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/obsidian.c" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/settings.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/config.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
