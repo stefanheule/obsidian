@@ -29,7 +29,7 @@ Pebble.addEventListener('showConfiguration', function () {
     //url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
-    url += '&version=1.9';
+    url += '&version=1.10';
     console.log('[ info/app ] Showing configuration page: ' + url);
     Pebble.openURL(url);
 });
@@ -194,7 +194,7 @@ function fetchWeather(latitude, longitude) {
     var mode = "mixed"; // TODO
     if (mode == "mixed") {
         // use current weather information after 2pm, until 4am
-        daily = !(now.getHours() >= 14 || now.getHours() <= 4);
+        daily = !(now.getHours() >= 14 || now.getHours() <= 3);
     } else {
         daily = mode == "daily";
     }

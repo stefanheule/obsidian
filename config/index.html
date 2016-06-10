@@ -17,6 +17,114 @@
     <h1 class='title'>Obsidian Configuration</h1>
 
     <div class='item-container'>
+      <div class='item-container-header'>Weather</div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+          Show Weather
+          <input id='CONFIG_WEATHER_LOCAL' type='checkbox' class='item-toggle'>
+        </label>
+        <div class="item-container-footer">
+          Connects to the internet via your phone.  Requires an internet connection.
+        </div>
+      </div>
+
+      <div class="item-container-content">
+        <label class='item'>
+          Weather Color
+          <input id='CONFIG_COLOR_WEATHER' type='text' class='item-color item-color-normal'>
+        </label>
+      </div>
+
+      <div class="item-container-content">
+        <label class="item">
+          Weather Information Mode
+          <select id='CONFIG_WEATHER_MODE_LOCAL' dir='rtl' class="item-select">
+            <option class="item-select-option" value="1">Current</option>
+            <option class="item-select-option" value="2">Daily</option>
+            <option class="item-select-option" value="3">Mixed</option>
+          </select>
+        </label>
+        <div class="item-container-footer">
+          Determines for what time the weather is displayed.  In mixed mode, the watch will show
+          daily weather info until 2pm, and then switch to current conditions.
+        </div>
+      </div>
+
+      <div class="item-container-content">
+        <label class="item">
+          Units
+          <select id='CONFIG_WEATHER_UNIT_LOCAL' dir='rtl' class="item-select">
+            <option class="item-select-option" value="1">Celcius</option>
+            <option class="item-select-option" value="2">Fahrenheit</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="item-container-content">
+        <label class="item">
+          Source
+          <select id='CONFIG_WEATHER_SOURCE_LOCAL' dir='rtl' class="item-select">
+            <option class="item-select-option" value="1">OpenWeatherMap</option>
+            <option class="item-select-option" value="2">Forecast.io</option>
+          </select>
+        </label>
+        <div class="item-container-footer">
+          Forecast.io requires a custom API key.
+        </div>
+      </div>
+
+      <div class="item-container-content">
+        <label class="item">
+          API Key
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" id='CONFIG_WEATHER_APIKEY_LOCAL'>
+          </div>
+        </label>
+        <div class="item-container-footer">
+          Only required for forecast.io weather source.  Register for free at
+          <a href="https://developer.forecast.io/register">developer.forecast.io</a>.
+        </div>
+      </div>
+
+      <div class="item-container-content">
+        <label class="item">
+          Custom Location
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" id='CONFIG_WEATHER_LOCATION_LOCAL'>
+          </div>
+        </label>
+        <div class="item-container-footer">
+          Format: <i>latitude,longitude</i>. Leave empty for current location.
+          Find latitude and longitude at
+          <a href="http://www.latlong.net/">latlong.net</a>.
+        </div>
+      </div>
+
+      <div class="item-container-content">
+        <label class="item">
+          Refresh Rate (Minutes)
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" id='CONFIG_WEATHER_REFRESH'>
+          </div>
+        </label>
+      </div>
+
+      <div class="item-container-content">
+        <label class="item">
+          Expiration (Minutes)
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" id='CONFIG_WEATHER_EXPIRATION'>
+          </div>
+        </label>
+        <div class="item-container-footer">
+          If after this many minutes no new weather information is available, stop showing weather information.
+        </div>
+      </div>
+
+    </div>
+
+    <div class='item-container'>
       <div class='item-container-header'>Appearance</div>
 
       <div class="item-container-content">
@@ -379,7 +487,18 @@
       CONFIG_MESSAGE_RECONNECT: +true,
       CONFIG_MINUTE_TICKS: 1,
       CONFIG_HOUR_TICKS: 1,
+      CONFIG_WEATHER_LOCAL: +true,
+      CONFIG_COLOR_WEATHER: COLOR_FALLBACK(GColor.Black, GColor.Black),
+      CONFIG_WEATHER_MODE_LOCAL: 1,
+      CONFIG_WEATHER_UNIT_LOCAL: 2,
+      CONFIG_WEATHER_SOURCE_LOCAL: 1,
+      CONFIG_WEATHER_APIKEY_LOCAL: "",
+      CONFIG_WEATHER_LOCATION_LOCAL: "",
+      CONFIG_WEATHER_REFRESH: 30,
+      CONFIG_WEATHER_EXPIRATION: 3*60
     };
+
+    var stringTypes = ["CONFIG_WEATHER_APIKEY_LOCAL", "CONFIG_WEATHER_LOCATION_LOCAL"];
 
     // use defaults
     if (use_defaults || localStorage.getItem(getStorageKey("CONFIG_COLOR_OUTER_BACKGROUND")) === null) {
@@ -391,10 +510,14 @@
 
     var options = {};
     for (k in defaults) {
-      if (localStorage.getItem(getStorageKey(k)) === null) {
+      var key = getStorageKey(k);
+      if (localStorage.getItem(key) === null) {
         options[k] = defaults[k];
       } else {
-        options[k] = +localStorage.getItem(getStorageKey(k));
+        options[k] = localStorage.getItem(key);
+        if (stringTypes.indexOf(k) == -1) {
+          options[k] = +options[k];
+        }
       }
     }
 
@@ -410,6 +533,8 @@
       } else if (el.hasClass('item-toggle')) {
         el.prop('checked', val);
       } else if (el.hasClass('item-select')) {
+        el.val(val);
+      } else if (el.hasClass('item-input')) {
         el.val(val);
       } else {
         console.log("[ error ] Unexpected element:");
@@ -452,14 +577,26 @@
       "CONFIG_HOUR_TICKS": 24,
       "CONFIG_COLOR_BATTERY_30": 25,
       "CONFIG_COLOR_BATTERY_20": 26,
-      "CONFIG_COLOR_BATTERY_10": 27
+      "CONFIG_COLOR_BATTERY_10": 27,
+      "CONFIG_WEATHER_LOCAL": 28,
+      "CONFIG_COLOR_WEATHER": 29,
+      "CONFIG_WEATHER_MODE_LOCAL": 30,
+      "CONFIG_WEATHER_UNIT_LOCAL": 31,
+      "CONFIG_WEATHER_SOURCE_LOCAL": 32,
+      "CONFIG_WEATHER_APIKEY_LOCAL": 33,
+      "CONFIG_WEATHER_LOCATION_LOCAL": 34,
+      "CONFIG_WEATHER_REFRESH": 35,
+      "CONFIG_WEATHER_EXPIRATION": 36
     };
     var urlconfig = {};
     for (var k in keys) {
-      urlconfig[keys[k]] = config[k];
+      if (!(k.indexOf("_LOCAL") > -1)) {
+        urlconfig[keys[k]] = config[k];
+      }
     }
 
     var url = return_to + encodeURIComponent(JSON.stringify(urlconfig));
+    console.log('[ info ] return url: ' + url);
 
     // store settings
     writeToStorage(config);
