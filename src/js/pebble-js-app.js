@@ -107,44 +107,90 @@ var ICONS = {
     "50n": "I"
 };
 
+var FORECAST_ICONS = {
+    "clear-day": "a",
+    "clear-night": "A",
+    "rain": "f",
+    "snow": "h",
+    "sleet": "h",
+    "wind": "j",
+    "fog": "i",
+    "cloudy": "d",
+    "partly-cloudy-day": "b",
+    "partly-cloudy-night": "B",
+    "hail": "h",
+    "thunderstorm": "g",
+    "tornado": "j"
+};
+
 function parseIcon(icon) {
     return ICONS[icon].charCodeAt(0);
 }
 
-function fetchWeatherForLocation(location){
-    var query = "q=" + location;
-    fetchWeather(query);
+function parseIconForecastIO(icon) {
+    if (icon in FORECAST_ICONS) {
+        return FORECAST_ICONS[icon].charCodeAt(0);
+    }
+    return "a".charCodeAt(0);
 }
 
-function fetchWeatherForCoordinates(latitude, longitude){
-    var query = "lat=" + latitude + "&lon=" + longitude;
-    fetchWeather(query);
-}
-
-function fetchWeather(query) {
+function fetchWeather(latitude, longitude) {
+    var daily = true // TODO
     console.log('[ info/app ] requesting weather information...');
-    var req = new XMLHttpRequest();
-    query += "&cnt=1&appid=fa5280deac4b98572739388b55cd7591";
-    req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + query, true);
-    req.onload = function () {
-        if (req.readyState === 4) {
-            if (req.status === 200) {
-                var response = JSON.parse(req.responseText);
-                var temperature = Math.round(response.main.temp - 273.15);
-                var icon = parseIcon(response.weather[0].icon);
-                console.log('[ info/app ] weather information: ' + JSON.stringify(response));
-                var data = {
-                    "MSG_KEY_WEATHER_ICON": icon,
-                    "MSG_KEY_WEATHER_TEMP": temperature
-                };
-                console.log('[ info/app ] weather send: temp=' + temperature + ", icon=" + String.fromCharCode(icon) + ".");
-                Pebble.sendAppMessage(data);
-            } else {
-                console.log('[ info/app ] weather request failed');
+    if (false) { // TODO
+        var query = "lat=" + latitude + "&lon=" + longitude;
+        var req = new XMLHttpRequest();
+        query += "&cnt=1&appid=fa5280deac4b98572739388b55cd7591";
+        req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + query, true);
+        req.onload = function () {
+            if (req.readyState === 4) {
+                if (req.status === 200) {
+                    var response = JSON.parse(req.responseText);
+                    var temperature = Math.round(response.main.temp - 273.15);
+                    var icon = parseIcon(response.weather[0].icon);
+                    console.log('[ info/app ] weather information: ' + JSON.stringify(response));
+                    var data = {
+                        "MSG_KEY_WEATHER_ICON": icon,
+                        "MSG_KEY_WEATHER_TEMP": temperature
+                    };
+                    console.log('[ info/app ] weather send: temp=' + temperature + ", icon=" + String.fromCharCode(icon) + ".");
+                    Pebble.sendAppMessage(data);
+                } else {
+                    console.log('[ info/app ] weather request failed');
+                }
             }
+        };
+        req.send(null);
+    } else {
+        var req = new XMLHttpRequest();
+        var baseurl = "https://api.forecast.io/forecast/4b98aa266403560e3082149a247072fb/" + latitude + "," + longitude + "?units=si&";
+        var exclude = "exclude=minutely,hourly,alerts,flags,";
+        if (daily) {
+            exclude += "currently"
+        } else {
+            exclude += "daily"
         }
-    };
-    req.send(null);
+        req.open("GET", baseurl + exclude, true);
+        req.onload = function () {
+            if (req.readyState === 4) {
+                if (req.status === 200) {
+                    var response = JSON.parse(req.responseText);
+                    var temperature = Math.round(response.currently.apparentTemperature);
+                    var icon = parseIconForecastIO(response.currently.icon);
+                    console.log('[ info/app ] weather information: ' + JSON.stringify(response));
+                    var data = {
+                        "MSG_KEY_WEATHER_ICON": icon,
+                        "MSG_KEY_WEATHER_TEMP": temperature
+                    };
+                    console.log('[ info/app ] weather send: temp=' + temperature + ", icon=" + String.fromCharCode(icon) + ".");
+                    Pebble.sendAppMessage(data);
+                } else {
+                    console.log('[ info/app ] weather request failed');
+                }
+            }
+        };
+        req.send(null);
+    }
 }
 
 Pebble.addEventListener('appmessage',
@@ -154,12 +200,12 @@ Pebble.addEventListener('appmessage',
         if (dict["MSG_KEY_FETCH_WEATHER"]) {
             var location = localStorage.getItem("CONFIG_WEATHER_LOCATION");
             if (location) {
-                fetchWeatherForLocation(location);
+                fetchWeather(location); // TODO
             } else {
                 navigator.geolocation.getCurrentPosition(
                     function (pos) {
                         var coordinates = pos.coords;
-                        fetchWeatherForCoordinates(coordinates.latitude, coordinates.longitude);
+                        fetchWeather(coordinates.latitude, coordinates.longitude);
                     },
                     function (err) {
                         console.log('[ info/app ] error requesting location: ' + err + '!');
