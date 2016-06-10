@@ -194,7 +194,7 @@ function fetchWeather(latitude, longitude) {
     var mode = "mixed"; // TODO
     if (mode == "mixed") {
         // use current weather information after 2pm, until 4am
-        daily = !(now.getHours() >= 14 && now.getHours() <= 4);
+        daily = !(now.getHours() >= 14 || now.getHours() <= 4);
     } else {
         daily = mode == "daily";
     }
