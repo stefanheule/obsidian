@@ -123,6 +123,36 @@ var FORECAST_ICONS = {
     "tornado": "j"
 };
 
+/**
+ *https://www.wunderground.com/weather/api/d/docs?d=resources/icon-sets
+ <img src="http://icons.wxug.com/i/c/i/chanceflurries.gif" alt="http://icons.wxug.com/i/c/i/chanceflurries.gif">
+ <img src="http://icons.wxug.com/i/c/i/chancerain.gif" alt="http://icons.wxug.com/i/c/i/chancerain.gif">
+ <img src="http://icons.wxug.com/i/c/i/chancesleet.gif" alt="http://icons.wxug.com/i/c/i/chancesleet.gif">
+ <img src="http://icons.wxug.com/i/c/i/chancesleet.gif" alt="http://icons.wxug.com/i/c/i/chancesleet.gif">
+ <img src="http://icons.wxug.com/i/c/i/chancesnow.gif" alt="http://icons.wxug.com/i/c/i/chancesnow.gif">
+ <img src="http://icons.wxug.com/i/c/i/chancetstorms.gif" alt="http://icons.wxug.com/i/c/i/chancetstorms.gif">
+ <img src="http://icons.wxug.com/i/c/i/chancetstorms.gif" alt="http://icons.wxug.com/i/c/i/chancetstorms.gif">
+ <img src="http://icons.wxug.com/i/c/i/clear.gif" alt="http://icons.wxug.com/i/c/i/clear.gif">
+ <img src="http://icons.wxug.com/i/c/i/cloudy.gif" alt="http://icons.wxug.com/i/c/i/clear.gif">
+ <img src="http://icons.wxug.com/i/c/i/flurries.gif" alt="http://icons.wxug.com/i/c/i/flurries.gif">
+ <img src="http://icons.wxug.com/i/c/i/fog.gif" alt="http://icons.wxug.com/i/c/i/fog.gif">
+ <img src="http://icons.wxug.com/i/c/i/hazy.gif" alt="http://icons.wxug.com/i/c/i/hazy.gif">
+ <img src="http://icons.wxug.com/i/c/i/mostlycloudy.gif" alt="http://icons.wxug.com/i/c/i/mostlycloudy.gif">
+ <img src="http://icons.wxug.com/i/c/i/mostlysunny.gif" alt="http://icons.wxug.com/i/c/i/mostlysunny.gif">
+ <img src="http://icons.wxug.com/i/c/i/partlycloudy.gif" alt="http://icons.wxug.com/i/c/i/partlycloudy.gif">
+ <img src="http://icons.wxug.com/i/c/i/partlysunny.gif" alt="http://icons.wxug.com/i/c/i/partlysunny.gif">
+ <img src="http://icons.wxug.com/i/c/i/sleet.gif" alt="http://icons.wxug.com/i/c/i/sleet.gif">
+ <img src="http://icons.wxug.com/i/c/i/rain.gif" alt="http://icons.wxug.com/i/c/i/rain.gif">
+ <img src="http://icons.wxug.com/i/c/i/sleet.gif" alt="http://icons.wxug.com/i/c/i/sleet.gif">
+ <img src="http://icons.wxug.com/i/c/i/snow.gif" alt="http://icons.wxug.com/i/c/i/snow.gif">
+ <img src="http://icons.wxug.com/i/c/i/sunny.gif" alt="http://icons.wxug.com/i/c/i/sunny.gif">
+ <img src="http://icons.wxug.com/i/c/i/tstorms.gif" alt="http://icons.wxug.com/i/c/i/tstorms.gif">
+ <img src="http://icons.wxug.com/i/c/i/tstorms.gif" alt="http://icons.wxug.com/i/c/i/tstorms.gif">
+ <img src="http://icons.wxug.com/i/c/i/tstorms.gif" alt="http://icons.wxug.com/i/c/i/tstorms.gif">
+ <img src="http://icons.wxug.com/i/c/i/cloudy.gif" alt="http://icons.wxug.com/i/c/i/cloudy.gif">
+ <img src="http://icons.wxug.com/i/c/i/partlycloudy.gif" alt="http://icons.wxug.com/i/c/i/partlycloudy.gif">
+ */
+
 function parseIcon(icon) {
     return ICONS[icon].charCodeAt(0);
 }
@@ -134,9 +164,42 @@ function parseIconForecastIO(icon) {
     return "a".charCodeAt(0);
 }
 
+
+/** Returns true iff a and b represent the same day (ignoring time). */
+function sameDate(a, b) {
+    return a.getDay() == b.getDay() && a.getFullYear() == b.getFullYear() && a.getMonth() && b.getMonth();
+}
+
 function fetchWeather(latitude, longitude) {
-    var daily = true // TODO
-    console.log('[ info/app ] requesting weather information...');
+
+    /** Callback on successful determination of weather conditions. */
+    var success = function(temp, icon) {
+        var data = {
+            "MSG_KEY_WEATHER_ICON": icon,
+            "MSG_KEY_WEATHER_TEMP": temp
+        };
+        console.log('[ info/app ] weather send: temp=' + temp + ", icon=" + String.fromCharCode(icon) + ".");
+        Pebble.sendAppMessage(data);
+    };
+
+    /** Callback if determining weather conditions failed. */
+    var failure = function() {
+        console.log('[ info/app ] weather request failed');
+    };
+
+    var now = new Date();
+    console.log(now);
+
+    var daily;
+    var mode = "mixed"; // TODO
+    if (mode == "mixed") {
+        // use current weather information after 2pm, until 4am
+        daily = !(now.getHours() >= 14 && now.getHours() <= 4);
+    } else {
+        daily = mode == "daily";
+    }
+
+    console.log('[ info/app ] requesting weather information (' + (daily ? "daily" : "currently") + ')...');
     if (false) { // TODO
         var query = "lat=" + latitude + "&lon=" + longitude;
         var req = new XMLHttpRequest();
@@ -146,17 +209,12 @@ function fetchWeather(latitude, longitude) {
             if (req.readyState === 4) {
                 if (req.status === 200) {
                     var response = JSON.parse(req.responseText);
-                    var temperature = Math.round(response.main.temp - 273.15);
+                    var temp = Math.round(response.main.temp - 273.15);
                     var icon = parseIcon(response.weather[0].icon);
                     console.log('[ info/app ] weather information: ' + JSON.stringify(response));
-                    var data = {
-                        "MSG_KEY_WEATHER_ICON": icon,
-                        "MSG_KEY_WEATHER_TEMP": temperature
-                    };
-                    console.log('[ info/app ] weather send: temp=' + temperature + ", icon=" + String.fromCharCode(icon) + ".");
-                    Pebble.sendAppMessage(data);
+                    success(temp, icon);
                 } else {
-                    console.log('[ info/app ] weather request failed');
+                    failure()
                 }
             }
         };
@@ -175,15 +233,25 @@ function fetchWeather(latitude, longitude) {
             if (req.readyState === 4) {
                 if (req.status === 200) {
                     var response = JSON.parse(req.responseText);
-                    var temperature = Math.round(response.currently.apparentTemperature);
-                    var icon = parseIconForecastIO(response.currently.icon);
+                    var temp;
+                    var icon;
+                    if (daily) {
+                        for (var i in response.daily.data) {
+                            var data = response.daily.data[i];
+                            var date = new Date(data.time*1000);
+                            if (sameDate(now, date)) {
+                                temp = data.apparentTemperatureMax;
+                                icon = data.icon;
+                            }
+                        }
+                    } else {
+                        temp = response.currently.apparentTemperature;
+                        icon = response.currently.icon;
+                    }
+                    temp = Math.round(temp);
+                    icon = parseIconForecastIO(icon);
                     console.log('[ info/app ] weather information: ' + JSON.stringify(response));
-                    var data = {
-                        "MSG_KEY_WEATHER_ICON": icon,
-                        "MSG_KEY_WEATHER_TEMP": temperature
-                    };
-                    console.log('[ info/app ] weather send: temp=' + temperature + ", icon=" + String.fromCharCode(icon) + ".");
-                    Pebble.sendAppMessage(data);
+                    success(temp, icon);
                 } else {
                     console.log('[ info/app ] weather request failed');
                 }
