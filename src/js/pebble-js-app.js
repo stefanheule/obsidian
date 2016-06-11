@@ -96,6 +96,22 @@ Pebble.addEventListener('webviewclosed', function (e) {
     });
 });
 
+/** Read a configuration element (handles defaults) */
+function readConfig(key) {
+    var res = localStorage.getItem(key);
+    // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/index.html
+    if (res === null) {
+        if (key == "CONFIG_WEATHER_UNIT_LOCAL") {
+            return 2;
+        } else if (key == "CONFIG_WEATHER_MODE_LOCAL") {
+            return 1;
+        } else if (key == "CONFIG_WEATHER_LOCATION_LOCAL") {
+            return "";
+        }
+    }
+    return res;
+}
+
 
 var ICONS = {
     // see http://openweathermap.org/weather-conditions for details
@@ -167,7 +183,7 @@ var FORECAST_ICONS = {
  <img src="http://icons.wxug.com/i/c/i/partlycloudy.gif" alt="http://icons.wxug.com/i/c/i/partlycloudy.gif">
  */
 
-function parseIcon(icon) {
+function parseIconOpenWeatherMap(icon) {
     return ICONS[icon].charCodeAt(0);
 }
 
@@ -178,7 +194,6 @@ function parseIconForecastIO(icon) {
     return "a".charCodeAt(0);
 }
 
-
 /** Returns true iff a and b represent the same day (ignoring time). */
 function sameDate(a, b) {
     return a.getDay() == b.getDay() && a.getFullYear() == b.getFullYear() && a.getMonth() && b.getMonth();
@@ -188,7 +203,7 @@ function fetchWeather(latitude, longitude) {
 
     /** Callback on successful determination of weather conditions. */
     var success = function(temp, icon) {
-        if (+localStorage.getItem("CONFIG_WEATHER_UNIT_LOCAL") == 2) {
+        if (+readConfig("CONFIG_WEATHER_UNIT_LOCAL") == 2) {
             temp = temp * 9.0/5.0 + 32.0;
         }
         temp = Math.round(temp);
@@ -208,7 +223,7 @@ function fetchWeather(latitude, longitude) {
     var now = new Date();
 
     var daily;
-    var mode = +localStorage.getItem("CONFIG_WEATHER_MODE_LOCAL");
+    var mode = +readConfig("CONFIG_WEATHER_MODE_LOCAL");
     if (mode == 3) {
         // use current weather information after 2pm, until 4am
         daily = !(now.getHours() >= 14 || now.getHours() <= 3);
@@ -227,7 +242,7 @@ function fetchWeather(latitude, longitude) {
                 if (req.status === 200) {
                     var response = JSON.parse(req.responseText);
                     var temp = response.main.temp - 273.15;
-                    var icon = parseIcon(response.weather[0].icon);
+                    var icon = parseIconOpenWeatherMap(response.weather[0].icon);
                     console.log('[ info/app ] weather information: ' + JSON.stringify(response));
                     success(temp, icon);
                 } else {
@@ -259,6 +274,7 @@ function fetchWeather(latitude, longitude) {
                             if (sameDate(now, date)) {
                                 temp = data.apparentTemperatureMax;
                                 icon = data.icon;
+                                break;
                             }
                         }
                     } else {
@@ -283,7 +299,7 @@ Pebble.addEventListener('appmessage',
         console.log('[ info/app ] app message received: ' + JSON.stringify(e));
         var dict = e.payload;
         if (dict["MSG_KEY_FETCH_WEATHER"]) {
-            var location = localStorage.getItem("CONFIG_WEATHER_LOCATION");
+            var location = readConfig("CONFIG_WEATHER_LOCATION_LOCAL");
             if (location) {
                 fetchWeather(location); // TODO
             } else {

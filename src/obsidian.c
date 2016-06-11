@@ -24,6 +24,7 @@
 //// Default values for the configuration
 ////////////////////////////////////////////
 
+// defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/index.html
 uint8_t config_color_outer_background = COLOR_FALLBACK(GColorDarkGrayARGB8, GColorBlackARGB8);
 uint8_t config_color_inner_background = COLOR_FALLBACK(GColorWhiteARGB8, GColorWhiteARGB8);
 uint8_t config_color_minute_hand = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
