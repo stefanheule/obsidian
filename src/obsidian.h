@@ -28,7 +28,7 @@
 //// Configuration constants
 ////////////////////////////////////////////
 
-// config keys are also duplicated in src/obsidian.c, appinfo.json, src/js/pebble-js-app.js and config/index.html
+// config keys are also duplicated in src/obsidian.h, appinfo.json, src/js/pebble-js-app.js and config/index.html
 #define CONFIG_COLOR_OUTER_BACKGROUND 1
 #define CONFIG_COLOR_INNER_BACKGROUND 2
 #define CONFIG_COLOR_MINUTE_HAND 3
@@ -56,6 +56,10 @@
 #define CONFIG_COLOR_BATTERY_30 25
 #define CONFIG_COLOR_BATTERY_20 26
 #define CONFIG_COLOR_BATTERY_10 27
+// not defining local keys here (so some IDs are missing)
+#define CONFIG_COLOR_WEATHER 29
+#define CONFIG_WEATHER_REFRESH 35
+#define CONFIG_WEATHER_EXPIRATION 36
 
 // message keys (also duplicated in appinfo.json)
 #define MSG_KEY_WEATHER_TEMP 100

@@ -26,7 +26,7 @@ Pebble.addEventListener('ready', function () {
 
 Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://rawgit.com/stefanheule/obsidian/config-6/config/index.html';
-    //url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
+    url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&version=1.10';
@@ -38,7 +38,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
     var urlconfig = JSON.parse(decodeURIComponent(e.response));
 
     // decode config
-    // config keys are also duplicated in src/obsidian.c, appinfo.json, src/js/pebble-js-app.js and config/index.html
+    // config keys are also duplicated in src/obsidian.h, appinfo.json, src/js/pebble-js-app.js and config/index.html
     var keys = {
         "CONFIG_COLOR_OUTER_BACKGROUND": 1,
         "CONFIG_COLOR_INNER_BACKGROUND": 2,
@@ -66,17 +66,31 @@ Pebble.addEventListener('webviewclosed', function (e) {
         "CONFIG_HOUR_TICKS": 24,
         "CONFIG_COLOR_BATTERY_30": 25,
         "CONFIG_COLOR_BATTERY_20": 26,
-        "CONFIG_COLOR_BATTERY_10": 27
+        "CONFIG_COLOR_BATTERY_10": 27,
+        "CONFIG_WEATHER_LOCAL": 28,
+        "CONFIG_COLOR_WEATHER": 29,
+        "CONFIG_WEATHER_MODE_LOCAL": 30,
+        "CONFIG_WEATHER_UNIT_LOCAL": 31,
+        "CONFIG_WEATHER_SOURCE_LOCAL": 32,
+        "CONFIG_WEATHER_APIKEY_LOCAL": 33,
+        "CONFIG_WEATHER_LOCATION_LOCAL": 34,
+        "CONFIG_WEATHER_REFRESH": 35,
+        "CONFIG_WEATHER_EXPIRATION": 36
     };
     var config = {};
+    var fullconfig = {};
     for (var k in keys) {
-        config[k] = urlconfig[keys[k]];
+        fullconfig[k] = urlconfig[keys[k]];
+        if (!(k.indexOf("_LOCAL") > -1)) {
+            config[k] = urlconfig[keys[k]];
+        }
+        localStorage.setItem(k, urlconfig[keys[k]]);
     }
 
-    console.log('[ info/app ] Configuration page returned: ' + JSON.stringify(config));
+    console.log('[ info/app ] Configuration page returned: ' + JSON.stringify(fullconfig));
 
     Pebble.sendAppMessage(config, function () {
-        console.log('[ info/app ] Send successful: ' + JSON.stringify(config));
+        console.log('[ info/app ] Send successful: ' + JSON.stringify(fullconfig));
     }, function () {
         console.log('[ info/app ] Send failed!');
     });
@@ -174,6 +188,10 @@ function fetchWeather(latitude, longitude) {
 
     /** Callback on successful determination of weather conditions. */
     var success = function(temp, icon) {
+        if (+localStorage.getItem("CONFIG_WEATHER_UNIT_LOCAL") == 2) {
+            temp = temp * 9.0/5.0 + 32.0;
+        }
+        temp = Math.round(temp);
         var data = {
             "MSG_KEY_WEATHER_ICON": icon,
             "MSG_KEY_WEATHER_TEMP": temp
@@ -188,15 +206,14 @@ function fetchWeather(latitude, longitude) {
     };
 
     var now = new Date();
-    console.log(now);
 
     var daily;
-    var mode = "mixed"; // TODO
-    if (mode == "mixed") {
+    var mode = +localStorage.getItem("CONFIG_WEATHER_MODE_LOCAL");
+    if (mode == 3) {
         // use current weather information after 2pm, until 4am
         daily = !(now.getHours() >= 14 || now.getHours() <= 3);
     } else {
-        daily = mode == "daily";
+        daily = mode == 2; // daily mode
     }
 
     console.log('[ info/app ] requesting weather information (' + (daily ? "daily" : "currently") + ')...');
@@ -209,7 +226,7 @@ function fetchWeather(latitude, longitude) {
             if (req.readyState === 4) {
                 if (req.status === 200) {
                     var response = JSON.parse(req.responseText);
-                    var temp = Math.round(response.main.temp - 273.15);
+                    var temp = response.main.temp - 273.15;
                     var icon = parseIcon(response.weather[0].icon);
                     console.log('[ info/app ] weather information: ' + JSON.stringify(response));
                     success(temp, icon);

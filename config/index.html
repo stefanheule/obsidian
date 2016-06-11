@@ -549,7 +549,7 @@
     var return_to = getQueryParam('return_to', 'pebblejs://close#');
 
     // encode config for url
-    // config keys are also duplicated in src/obsidian.c, appinfo.json, src/js/pebble-js-app.js and config/index.html
+    // config keys are also duplicated in src/obsidian.h, appinfo.json, src/js/pebble-js-app.js and config/index.html
     var keys = {
       "CONFIG_COLOR_OUTER_BACKGROUND": 1,
       "CONFIG_COLOR_INNER_BACKGROUND": 2,
@@ -590,9 +590,7 @@
     };
     var urlconfig = {};
     for (var k in keys) {
-      if (!(k.indexOf("_LOCAL") > -1)) {
-        urlconfig[keys[k]] = config[k];
-      }
+      urlconfig[keys[k]] = config[k];
     }
 
     var url = return_to + encodeURIComponent(JSON.stringify(urlconfig));
