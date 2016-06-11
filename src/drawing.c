@@ -149,6 +149,8 @@ static GPoint b_points[] = {
  * Update procedure for the background
  */
 void background_update_proc(Layer *layer, GContext *ctx) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "drawing...");
+
     GRect bounds = layer_get_bounds(layer);
     int16_t radius = bounds.size.w / 2;
     bool bluetooth = bluetooth_connection_service_peek();
@@ -403,7 +405,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // weather information
     bool weather_is_on = config_weather_refresh > 0;
     bool weather_is_available = weather.timestamp > 0;
-    bool weather_is_outdated = (time(NULL) - weather.timestamp) > config_weather_expiration;
+    bool weather_is_outdated = (time(NULL) - weather.timestamp) > (config_weather_expiration * 60);
     if (weather_is_on && weather_is_available && !weather_is_outdated) {
         int temp = weather.temperature;
         if (temp > 100) {

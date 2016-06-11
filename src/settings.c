@@ -79,6 +79,7 @@ bool sync_helper_2(const uint32_t key, DictionaryIterator *iter, uint16_t *value
 }
 
 void inbox_received_handler(DictionaryIterator *iter, void *context) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "received message");
     bool dirty = false;
     dirty |= sync_helper(CONFIG_COLOR_OUTER_BACKGROUND, iter, &config_color_outer_background);
     dirty |= sync_helper(CONFIG_COLOR_INNER_BACKGROUND, iter, &config_color_inner_background);
@@ -129,7 +130,6 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
         js_ready = true;
         update_weather();
     }
-
     if (dirty) {
         layer_mark_dirty(layer_background);
     }

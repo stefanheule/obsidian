@@ -243,10 +243,6 @@ AppTimer * weather_request_timer;
   } while (0)
 */
 
-void handle_battery(BatteryChargeState new_state) {
-    layer_mark_dirty(layer_background);
-}
-
 /**
  * Handler for time ticks.
  */
@@ -261,11 +257,13 @@ void timer_callback_bluetooth_popup(void *data) {
     show_bluetooth_popup = false;
     timer_bluetooth_popup = NULL;
     layer_mark_dirty(layer_background);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "bluetooth change callback");
 }
 
 void handle_bluetooth(bool connected) {
     // redraw background (to turn on/off the logo)
     layer_mark_dirty(layer_background);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "bluetooth change");
 
     bool show_popup = false;
     bool vibrate = false;
@@ -463,7 +461,8 @@ void init() {
     unit = SECOND_UNIT;
 #endif
     tick_timer_service_subscribe(unit, handle_second_tick);
-    battery_state_service_subscribe(handle_battery);
+    // we can actually just ignore this to not waste battery.  it's fine if battery updates are 1 minute delayed
+//    battery_state_service_subscribe(handle_battery);
     bluetooth_connection_service_subscribe(handle_bluetooth);
 
     app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
