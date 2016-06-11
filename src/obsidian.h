@@ -102,6 +102,9 @@ extern uint8_t config_message_disconnect;
 extern uint8_t config_message_reconnect;
 extern uint8_t config_minute_ticks;
 extern uint8_t config_hour_ticks;
+extern uint8_t config_color_weather;
+extern uint16_t config_weather_refresh;
+extern uint16_t config_weather_expiration;
 
 
 ////////////////////////////////////////////

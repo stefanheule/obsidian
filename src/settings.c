@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <pebble.h>
 #include "settings.h"
 
 
@@ -21,8 +22,10 @@ static void update_weather_helper(void* unused);
  * Update the weather information (and schedule a periodic timer to update again)
  */
 void update_weather() {
-    if (false) return; // TODO
-    const uint32_t timeout_min = 30;
+    // return if we don't want weather information
+    if (config_weather_refresh == 0) return;
+
+    const uint32_t timeout_min = config_weather_refresh;
     const uint32_t timeout_ms = timeout_min * 1000 * 60;
     if (weather_request_timer) {
         if (!app_timer_reschedule(weather_request_timer, timeout_ms)) {
@@ -58,7 +61,20 @@ bool sync_helper(const uint32_t key, DictionaryIterator *iter, uint8_t *value) {
         persist_write_int(key, *value);
         return true;
     }
+    return false;
+}
 
+/**
+ * Helper to process new configuration.
+ */
+bool sync_helper_2(const uint32_t key, DictionaryIterator *iter, uint16_t *value) {
+    Tuple *new_tuple = dict_find(iter, key);
+    if (new_tuple == NULL) return false;
+    if ((*value) != new_tuple->value->uint16) {
+        (*value) = new_tuple->value->uint16;
+        persist_write_int(key, *value);
+        return true;
+    }
     return false;
 }
 
@@ -91,8 +107,11 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
     dirty |= sync_helper(CONFIG_MESSAGE_RECONNECT, iter, &config_message_reconnect);
     dirty |= sync_helper(CONFIG_MINUTE_TICKS, iter, &config_minute_ticks);
     dirty |= sync_helper(CONFIG_HOUR_TICKS, iter, &config_hour_ticks);
+    dirty |= sync_helper(CONFIG_COLOR_WEATHER, iter, &config_color_weather);
+    dirty |= sync_helper_2(CONFIG_WEATHER_REFRESH, iter, &config_weather_refresh);
+    dirty |= sync_helper_2(CONFIG_WEATHER_EXPIRATION, iter, &config_weather_expiration);
 
-    if (false) { // TODO
+    if (dirty) {
         update_weather();
     }
 
@@ -120,6 +139,17 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
  * Read a value from the persistent storage (or load the default value).
  */
 void read_config(const uint32_t key, uint8_t *value) {
+    if (persist_exists(key)) {
+        *value = persist_read_int(key);
+    } else {
+        persist_write_int(key, *value);
+    }
+}
+
+/**
+ * Read a value from the persistent storage (or load the default value).
+ */
+void read_config_2(const uint32_t key, uint16_t *value) {
     if (persist_exists(key)) {
         *value = persist_read_int(key);
     } else {
@@ -159,6 +189,9 @@ void read_config_all() {
     read_config(CONFIG_MESSAGE_RECONNECT, &config_message_reconnect);
     read_config(CONFIG_MINUTE_TICKS, &config_minute_ticks);
     read_config(CONFIG_HOUR_TICKS, &config_hour_ticks);
+    read_config(CONFIG_COLOR_WEATHER, &config_color_weather);
+    read_config_2(CONFIG_WEATHER_REFRESH, &config_weather_refresh);
+    read_config_2(CONFIG_WEATHER_EXPIRATION, &config_weather_expiration);
 
     if (persist_exists(PERSIST_KEY_WEATHER)) {
         persist_read_data(PERSIST_KEY_WEATHER, &weather, sizeof(Weather));

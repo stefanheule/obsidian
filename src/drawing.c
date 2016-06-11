@@ -401,11 +401,11 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                        NULL);
 
     // weather information
-    if (weather.timestamp > 0) {
+    bool weather_is_on = config_weather_refresh > 0;
+    bool weather_is_available = weather.timestamp > 0;
+    bool weather_is_outdated = (time(NULL) - weather.timestamp) > config_weather_expiration;
+    if (weather_is_on && weather_is_available && !weather_is_outdated) {
         int temp = weather.temperature;
-        if (false){ // TODO
-            temp = temp * 9 / 5 + 32;
-        }
         if (temp > 100) {
             snprintf(buffer_1, 6, "%c%d", weather.icon, temp);
         } else {
