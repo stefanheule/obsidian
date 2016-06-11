@@ -449,6 +449,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         }
 
         w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
+        graphics_context_set_text_color(ctx, COLOR(config_color_weather));
         graphics_draw_text(ctx, buffer_1, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
 
