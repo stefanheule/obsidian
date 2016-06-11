@@ -422,6 +422,8 @@
         val = +el.is(':checked');
       } else if (el.hasClass('item-select')) {
         val = +el.val();
+      } else if (el.hasClass('item-input')) {
+        val = el.val();
       } else {
         console.log("[ error ] Unexpected element:");
         console.log(this);
@@ -594,6 +596,8 @@
     }
 
     var url = return_to + encodeURIComponent(JSON.stringify(urlconfig));
+    console.log('[ info ] config: ');
+    console.log(config);
     console.log('[ info ] return url: ' + url);
 
     // store settings

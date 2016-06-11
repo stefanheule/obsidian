@@ -26,7 +26,7 @@ Pebble.addEventListener('ready', function () {
 
 Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://rawgit.com/stefanheule/obsidian/config-6/config/index.html';
-    url = 'file:///home/stefan/dev/projects/obsidian/config/index.html';
+    url = 'http://obsidian.local.com/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&version=1.10';
@@ -81,7 +81,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
     var fullconfig = {};
     for (var k in keys) {
         fullconfig[k] = urlconfig[keys[k]];
-        if (!(k.indexOf("_LOCAL") > -1)) {
+        if (k.indexOf("_LOCAL") == -1) {
             config[k] = urlconfig[keys[k]];
         }
         localStorage.setItem(k, urlconfig[keys[k]]);
@@ -90,7 +90,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
     console.log('[ info/app ] Configuration page returned: ' + JSON.stringify(fullconfig));
 
     Pebble.sendAppMessage(config, function () {
-        console.log('[ info/app ] Send successful: ' + JSON.stringify(fullconfig));
+        console.log('[ info/app ] Send successful: ' + JSON.stringify(config));
     }, function () {
         console.log('[ info/app ] Send failed!');
     });
