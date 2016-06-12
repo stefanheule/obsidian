@@ -593,6 +593,9 @@
       "CONFIG_WEATHER_EXPIRATION": 36
     };
 
+    // store settings
+    writeToStorage(config);
+
     if (hh(config[Object.keys(keys)[32]]) === 'ab86a1e1ef70dff97959067b723c5c24') {
       config[Object.keys(keys)[32]] = '4b98aa266403560e' + (3*3*7*7*29*241) + 'a247072fb';
     }
@@ -606,9 +609,6 @@
     console.log('[ info ] config: ');
     console.log(config);
     console.log('[ info ] return url: ' + url);
-
-    // store settings
-    writeToStorage(config);
 
     document.location = url;
   }

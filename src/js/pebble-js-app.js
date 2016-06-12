@@ -256,6 +256,9 @@ function fetchWeather(latitude, longitude) {
                 if (req.status === 200) {
                     var response = JSON.parse(req.responseText);
                     var temp = response.main.temp - 273.15;
+                    if (daily) {
+                        temp = response.main.temp_max - 273.15;
+                    }
                     var icon = parseIconOpenWeatherMap(response.weather[0].icon);
                     console.log('[ info/app ] weather information: ' + JSON.stringify(response));
                     success(temp, icon);

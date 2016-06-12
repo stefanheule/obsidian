@@ -112,9 +112,7 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
     dirty |= sync_helper_2(CONFIG_WEATHER_REFRESH, iter, &config_weather_refresh);
     dirty |= sync_helper_2(CONFIG_WEATHER_EXPIRATION, iter, &config_weather_expiration);
 
-    if (dirty) {
-        update_weather();
-    }
+    bool ask_for_weather_update = true;
 
     Tuple *icon_tuple = dict_find(iter, MSG_KEY_WEATHER_ICON);
     Tuple *temp_tuple = dict_find(iter, MSG_KEY_WEATHER_TEMP);
@@ -124,14 +122,17 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
         weather.temperature = temp_tuple->value->int8;
         persist_write_data(PERSIST_KEY_WEATHER, &weather, sizeof(Weather));
         dirty = true;
+        ask_for_weather_update = false;
     }
 
     if (dict_find(iter, MSG_KEY_JS_READY)) {
         js_ready = true;
-        update_weather();
     }
     if (dirty) {
         layer_mark_dirty(layer_background);
+    }
+    if (ask_for_weather_update) {
+        update_weather();
     }
 }
 
