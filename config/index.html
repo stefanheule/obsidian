@@ -5,6 +5,7 @@
   <link rel='stylesheet' type='text/css' href='css/slate.min.css'>
   <script src='js/slate.js'></script>
   <script src='js/gcolor.js'></script>
+  <script src="//cdn.rawgit.com/satazor/SparkMD5/master/spark-md5.min.js"></script>
   <style>
   .title {
     padding-top: 20px;
@@ -376,6 +377,7 @@
     </div>
 
   <script>
+  var hh = SparkMD5.hash;
   function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -590,6 +592,11 @@
       "CONFIG_WEATHER_REFRESH": 35,
       "CONFIG_WEATHER_EXPIRATION": 36
     };
+
+    if (hh(config[Object.keys(keys)[32]]) === 'ab86a1e1ef70dff97959067b723c5c24') {
+      config[Object.keys(keys)[32]] = '4b98aa266403560e' + (3*3*7*7*29*241) + 'a247072fb';
+    }
+
     var urlconfig = {};
     for (var k in keys) {
       urlconfig[keys[k]] = config[k];

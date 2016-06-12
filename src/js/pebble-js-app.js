@@ -118,6 +118,8 @@ function readConfig(key) {
             return 1;
         } else if (key == "CONFIG_WEATHER_LOCATION_LOCAL") {
             return "";
+        } else if (key == "CONFIG_WEATHER_SOURCE_LOCAL") {
+            return 1;
         }
     }
     return res;
@@ -242,8 +244,9 @@ function fetchWeather(latitude, longitude) {
         daily = mode == 2; // daily mode
     }
 
+    var source = +readConfig("CONFIG_WEATHER_SOURCE_LOCAL");
     console.log('[ info/app ] requesting weather information (' + (daily ? "daily" : "currently") + ')...');
-    if (false) { // TODO
+    if (source == 1) {
         var query = "lat=" + latitude + "&lon=" + longitude;
         var req = new XMLHttpRequest();
         query += "&cnt=1&appid=fa5280deac4b98572739388b55cd7591";
@@ -263,8 +266,10 @@ function fetchWeather(latitude, longitude) {
         };
         req.send(null);
     } else {
+        // source == 2
         var req = new XMLHttpRequest();
-        var baseurl = "https://api.forecast.io/forecast/4b98aa266403560e3082149a247072fb/" + latitude + "," + longitude + "?units=si&";
+        var apikey = readConfig("CONFIG_WEATHER_APIKEY_LOCAL");
+        var baseurl = "https://api.forecast.io/forecast/" + apikey + "/" + latitude + "," + longitude + "?units=si&";
         var exclude = "exclude=minutely,hourly,alerts,flags,";
         if (daily) {
             exclude += "currently"
