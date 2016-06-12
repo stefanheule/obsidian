@@ -88,10 +88,15 @@ Pebble.addEventListener('webviewclosed', function (e) {
         }
         localStorage.setItem(k, urlconfig[keys[k]]);
     }
+    // don't allow really small values for refresh rate
+    if (config["CONFIG_WEATHER_REFRESH"] < 10) {
+        config["CONFIG_WEATHER_REFRESH"] = 10;
+    }
     // set refresh to 0 to indicate that weather information is off
-    if (config["CONFIG_WEATHER_LOCAL"] == false) {
+    if (fullconfig["CONFIG_WEATHER_LOCAL"] == false) {
         config["CONFIG_WEATHER_REFRESH"] = 0;
     }
+
 
     console.log('[ info/app ] Configuration page returned: ' + JSON.stringify(fullconfig));
 
