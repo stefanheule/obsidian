@@ -149,7 +149,7 @@ static GPoint b_points[] = {
  * Update procedure for the background
  */
 void background_update_proc(Layer *layer, GContext *ctx) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "drawing...");
+//    APP_LOG(APP_LOG_LEVEL_DEBUG, "drawing...");
 
     GRect bounds = layer_get_bounds(layer);
     int16_t radius = bounds.size.w / 2;
