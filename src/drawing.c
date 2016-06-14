@@ -193,6 +193,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     t->tm_min = 31;
     t->tm_hour = 0;
 #endif
+#ifdef SCREENSHOT_WEATHER_1
+    weather.icon = (uint8_t)'B';
+    weather.temperature = 59;
+#endif
+#ifdef SCREENSHOT_WEATHER_2
+    weather.icon = (uint8_t)'h';
+    weather.temperature = -12;
+#endif
 
     // background
 #ifndef PBL_ROUND
@@ -418,7 +426,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     bool weather_is_outdated = (time(NULL) - weather.timestamp) > (config_weather_expiration * 60);
     if (weather_is_on && weather_is_available && !weather_is_outdated) {
         int temp = weather.temperature;
-        if (temp > 100) {
+        if (temp > 100 || temp <= -10) {
 #ifdef PBL_ROUND
             if (!bluetooth && config_bluetooth_logo) {
                 snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);

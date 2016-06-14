@@ -204,6 +204,16 @@ extern AppTimer * weather_request_timer;
 #define DEBUG_NICE_DATE
 #endif
 
+#ifdef SCREENSHOT_WEATHER_1
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_WEATHER_2
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
 #ifdef SCREENSHOT_BLUETOOTH_ICON
 #define DEBUG_NICE_TIME
 #define DEBUG_NICE_DATE

@@ -338,6 +338,16 @@ void init() {
     config_color_inner_minute_hand = GColorBlueARGB8;
     config_color_inner_hour_hand = GColorBlackARGB8;
 #endif
+#if (defined(SCREENSHOT_ALT_THEME_1) || \
+    defined(SCREENSHOT_ALT_THEME_2) || \
+    defined(SCREENSHOT_ALT_THEME_3) || \
+    defined(SCREENSHOT_ALT_THEME_4) || \
+    defined(SCREENSHOT_ALT_THEME_5) || \
+    defined(SCREENSHOT_ALT_THEME_6) || \
+    defined(SCREENSHOT_ALT_THEME_7) || \
+    defined(SCREENSHOT_ALT_THEME_8)) && defined(PBL_COLOR)
+    config_color_weather = config_color_date;
+#endif
 #ifdef DEBUG_NO_BATTERY_ICON
     config_battery_logo = 3;
 #endif
