@@ -27,7 +27,7 @@ Pebble.addEventListener('ready', function () {
 Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://rawgit.com/stefanheule/obsidian/config-6/config/index.html';
     url = 'http://obsidian.local.com/index.html';
-    url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html'
+    url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&version=1.10';
@@ -293,6 +293,7 @@ function fetchWeather(latitude, longitude) {
                             if (sameDate(now, date)) {
                                 temp = data.apparentTemperatureMax;
                                 icon = data.icon;
+                                console.log('[ info/app ] using this information: ' + JSON.stringify(data));
                                 break;
                             }
                         }
