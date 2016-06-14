@@ -325,6 +325,10 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     t->tm_hour = 12;
     t->tm_min = (debug_iter + 55) % 60;
 #endif
+#ifdef DEBUG_WEATHER_POSITION
+    t->tm_hour = 6;
+    t->tm_min = (debug_iter + 55) % 60;
+#endif
 
     // compute angles
     int32_t minute_angle = t->tm_min * TRIG_MAX_ANGLE / 60;
@@ -409,9 +413,25 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     if (weather_is_on && weather_is_available && !weather_is_outdated) {
         int temp = weather.temperature;
         if (temp > 100) {
-            snprintf(buffer_1, 6, "%c%d", weather.icon, temp);
+#ifdef PBL_ROUND
+            if (!bluetooth && config_bluetooth_logo) {
+                snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);
+            } else {
+#endif
+                snprintf(buffer_1, 10, "%c%d", weather.icon, temp);
+#ifdef PBL_ROUND
+            }
+#endif
         } else {
-            snprintf(buffer_1, 6, "%c%d°", weather.icon, temp);
+#ifdef PBL_ROUND
+            if (!bluetooth && config_bluetooth_logo) {
+                snprintf(buffer_1, 10, "z%c%d°", weather.icon, temp);
+            } else {
+#endif
+            snprintf(buffer_1, 10, "%c%d°", weather.icon, temp);
+#ifdef PBL_ROUND
+            }
+#endif
         }
         GPoint w_center;
         GRect w_pos;
