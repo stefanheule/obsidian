@@ -67,7 +67,7 @@
         "file": "images/menu_icon.png"
       },
       {
-        "characterRegex": "[0-9:°a-jzA-IZ\u2212]",
+        "characterRegex": "[0-9:°a-jzA-IZ\\-]",
         "file": "fonts/nupe2-small.ttf",
         "name": "NUPE_23",
         "type": "font",
@@ -76,7 +76,7 @@
         ]
       },
       {
-        "characterRegex": "[0-9:°a-jzA-IZ\u2212]",
+        "characterRegex": "[0-9:°a-jzA-IZ\\-]",
         "file": "fonts/nupe2.ttf",
         "name": "NUPE_23",
         "type": "font",

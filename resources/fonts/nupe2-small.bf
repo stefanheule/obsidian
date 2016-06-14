@@ -155,6 +155,21 @@ OTHER DEALINGS IN THE FONT SOFTWARE.</license>
 <grid width="1.0000"/>
 <grid width="2.0000"/>
 <grid width="4.0000"/>
+<grid width="1.0000"/>
+<grid width="2.0000"/>
+<grid width="4.0000"/>
+<grid width="1.0000"/>
+<grid width="1.0000"/>
+<grid width="2.0000"/>
+<grid width="4.0000"/>
+<grid width="1.0000"/>
+<grid width="2.0000"/>
+<grid width="1.0000"/>
+<grid width="2.0000"/>
+<grid width="4.0000"/>
+<grid width="1.0000"/>
+<grid width="2.0000"/>
+<grid width="4.0000"/>
 <grid width="1"/>
 <grid width="2"/>
 <grid width="4"/>
@@ -182,9 +197,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.</license>
 </collection>
 <collection unicode="U+2d">
 	<selected id="1"/>
-	<glyph id="1" left="0" right="36.816406000000001">
+	<glyph id="1" left="0" right="32">
 		<layer name= "Layer" visible="true">
-			<path data="S 4.0039060000,41.2109380000 L 32.8125000000,41.2109380000 L 32.8125000000,32.9589840000 L 4.0039060000,32.9589840000 L 4.0039060000,41.2109380000" />
+			<path data="S 6.0000000000,40.0000000000 L 26.0000000000,40.0000000000 L 26.0000000000,32.0000000000 L 6.0000000000,32.0000000000 L 6.0000000000,40.0000000000" />
 		</layer>
 	</glyph>
 </collection>
