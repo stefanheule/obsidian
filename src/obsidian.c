@@ -15,10 +15,6 @@
 
 #include "obsidian.h"
 
-// I don't know how to pass parameters to the compiler, so I'm using this file
-// for various configurations
-#include "config.h"
-
 
 ////////////////////////////////////////////
 //// Default values for the configuration
@@ -112,104 +108,6 @@ bool js_ready;
 
 /** A timer used to schedule weather updates. */
 AppTimer * weather_request_timer;
-
-
-////////////////////////////////////////////
-//// screenshot configurations
-////////////////////////////////////////////
-
-#ifdef SCREENSHOT_MENU_ICON
-#define DEBUG_NICE_TIME
-#define DEBUG_NO_DATE
-#define DEBUG_NO_BATTERY_ICON
-#endif
-
-#ifdef SCREENSHOT_MAIN
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_BATTERY_LOW_1
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_BATTERY_LOW_2
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_BATTERY_LOW_3
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_DATE_1
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_DATE_2
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_BLUETOOTH_ICON
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#define DEBUG_NO_BLUETOOTH
-#endif
-
-#ifdef SCREENSHOT_BLUETOOTH_POPUP_1
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#define DEBUG_BLUETOOTH_POPUP
-#endif
-
-#ifdef SCREENSHOT_BLUETOOTH_POPUP_2
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#define DEBUG_NO_BLUETOOTH
-#define DEBUG_BLUETOOTH_POPUP
-#endif
-
-#ifdef SCREENSHOT_ALT_THEME_1
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_ALT_THEME_2
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_ALT_THEME_3
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_ALT_THEME_4
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_ALT_THEME_5
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_ALT_THEME_6
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_ALT_THEME_7
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
-
-#ifdef SCREENSHOT_ALT_THEME_8
-#define DEBUG_NICE_TIME
-#define DEBUG_NICE_DATE
-#endif
 
 
 

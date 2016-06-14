@@ -17,6 +17,10 @@
 
 #include <pebble.h>
 
+// I don't know how to pass parameters to the compiler, so I'm using this file
+// for various configurations
+#include "config.h"
+
 #include "settings.h"
 #include "drawing.h"
 #include "geometry.h"
@@ -160,6 +164,104 @@ extern AppTimer * weather_request_timer;
 //#define OBSIDIAN_BATTERY_USE_TEXT
 
 #define OBSIDIAN_BLUETOOTH_POPUP_MS 5000
+
+
+////////////////////////////////////////////
+//// screenshot configurations
+////////////////////////////////////////////
+
+#ifdef SCREENSHOT_MENU_ICON
+#define DEBUG_NICE_TIME
+#define DEBUG_NO_DATE
+#define DEBUG_NO_BATTERY_ICON
+#endif
+
+#ifdef SCREENSHOT_MAIN
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_BATTERY_LOW_1
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_BATTERY_LOW_2
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_BATTERY_LOW_3
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_DATE_1
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_DATE_2
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_BLUETOOTH_ICON
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#define DEBUG_NO_BLUETOOTH
+#endif
+
+#ifdef SCREENSHOT_BLUETOOTH_POPUP_1
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#define DEBUG_BLUETOOTH_POPUP
+#endif
+
+#ifdef SCREENSHOT_BLUETOOTH_POPUP_2
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#define DEBUG_NO_BLUETOOTH
+#define DEBUG_BLUETOOTH_POPUP
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_1
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_2
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_3
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_4
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_5
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_6
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_7
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
+
+#ifdef SCREENSHOT_ALT_THEME_8
+#define DEBUG_NICE_TIME
+#define DEBUG_NICE_DATE
+#endif
 
 
 #endif //OBSIDIAN_OBSIDIAN_H

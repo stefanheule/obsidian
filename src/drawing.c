@@ -174,10 +174,16 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     t->tm_hour = 10;
 #endif
 #ifdef DEBUG_NICE_DATE
+#define DEBUG_NICE_WEATHER
     t->tm_mday = 8;
     t->tm_mon = 4;
     t->tm_year = 2015;
     t->tm_wday = 6;
+#endif
+#ifdef DEBUG_NICE_WEATHER
+    weather.timestamp = now;
+    weather.icon = (uint8_t)'a';
+    weather.temperature = 74;
 #endif
 #ifdef SCREENSHOT_DATE_1
     t->tm_min = 26;
@@ -185,7 +191,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 #ifdef SCREENSHOT_DATE_2
     t->tm_min = 31;
-    t->tm_hour = 2;
+    t->tm_hour = 0;
 #endif
 
     // background
