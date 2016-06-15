@@ -87,6 +87,13 @@ for platform in "aplite" "basalt" "chalk"; do
   composite -compose atop -geometry +$x2+$border screenshots/$platform/theme-7.png tmp.png tmp.png
   composite -compose atop -geometry +$x3+$border screenshots/$platform/theme-8.png tmp.png tmp.png
   mv tmp.png screenshots/$platform/theme-overview-2.png
+
+  # weather
+  convert data/white.png -background white -resize ${width}x${normalheight}! tmp.png
+  composite -compose atop -geometry +$x1+$border screenshots/$platform/main.png tmp.png tmp.png
+  composite -compose atop -geometry +$x2+$border screenshots/$platform/weather-1.png tmp.png tmp.png
+  composite -compose atop -geometry +$x3+$border screenshots/$platform/weather-2.png tmp.png tmp.png
+  mv tmp.png screenshots/$platform/weather.png
 done
 
 for platform in "aplite" "basalt" "chalk"; do
