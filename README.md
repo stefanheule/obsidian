@@ -16,6 +16,8 @@ It's main features are:
 - High contrast colors, clearly visible in most light conditions.
 - Display of the current date (day and month) as well as day of the week.
 - The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
+- Display the current weather information (icon and temperature).  Just like the date, this information is never obstructed.
+- Weather information in Celcius or Fahrentheit.  Weather information source is configurable to use either [openweathermap.org](http://openweathermap.org/) or [forecast.io][http://forecast.io/).
 - Display of the battery level.
 - Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
@@ -26,6 +28,10 @@ It's main features are:
 The main goal when building this watchface was for it to be practical.  For instance, the date display should never be obstructed by the watch hands:
 
 ![Screenshot of the date display moving](screenshots/basalt/date.png)
+
+The same goes for weather information:
+
+![Screenshot of the weather information on basalt platform](screenshots/basalt/weather.png)
 
 The watchface also alerts the user when the bluetooth connection is lost or regained, by vibrating and showing an information overlay.  After a few seconds, the overlay goes away, and a small bluetooth icon stays if no connection is available:
 
@@ -53,6 +59,8 @@ The watchface also supports the Pebble Time Round:
 
 ![Screenshot of the date display moving on chalk platform](screenshots/chalk/date.png)
 
+![Screenshot of the weather information on chalk platform](screenshots/chalk/weather.png)
+
 ![Screenshot of the bluetooth alerts on chalk platform](screenshots/chalk/bluetooth.png)
 
 ![Alternative color theme](screenshots/chalk/overview.png)
@@ -66,6 +74,8 @@ The watchface also supports the Pebble Time Round:
 On the original Pebble and Pebble Steel, the colors are limited to black and white, but all other features are still available.  Some screenshots:
 
 ![Screenshot of the date display moving on aplite platform](screenshots/aplite/date.png)
+
+![Screenshot of the weather information on aplite platform](screenshots/aplite/weather.png)
 
 ![Screenshot of the bluetooth alerts on aplite platform](screenshots/aplite/bluetooth.png)
 
@@ -87,12 +97,13 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |               1.5 |                     4 |
 |         1.6 - 1.7 |                     5 |
 |         1.8 - 1.9 |                     6 |
+|               2.0 |                     7 |
 
 ## Changelog
 
-**Version 1.10 ()**
+**Version 2.0 ()**
 
--
+- Added optional weather information.
 
 **Version 1.9 (2015-12-29)**
 

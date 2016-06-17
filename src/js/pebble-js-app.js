@@ -30,7 +30,7 @@ Pebble.addEventListener('showConfiguration', function () {
     //url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
-    url += '&version=1.10';
+    url += '&version=2.0';
     console.log('[ info/app ] Showing configuration page: ' + url);
     Pebble.openURL(url);
 });
