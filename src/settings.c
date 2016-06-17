@@ -18,14 +18,7 @@
 
 static void update_weather_helper(void* unused);
 
-/**
- * Update the weather information (and schedule a periodic timer to update again)
- */
-void update_weather() {
-    // return if we don't want weather information
-    if (config_weather_refresh == 0) return;
-
-    const uint32_t timeout_min = config_weather_refresh;
+void set_weather_timer(int timeout_min) {
     const uint32_t timeout_ms = timeout_min * 1000 * 60;
     if (weather_request_timer) {
         if (!app_timer_reschedule(weather_request_timer, timeout_ms)) {
@@ -34,6 +27,17 @@ void update_weather() {
     } else {
         weather_request_timer = app_timer_register(timeout_ms, update_weather_helper, NULL);
     }
+}
+
+/**
+ * Update the weather information (and schedule a periodic timer to update again)
+ */
+void update_weather() {
+    // return if we don't want weather information
+    if (config_weather_refresh == 0) return;
+
+    const uint32_t timeout_min = config_weather_refresh;
+    set_weather_timer(timeout_min);
 
     // actually update the weather by sending a request
     DictionaryIterator *iter;
@@ -122,6 +126,11 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
         weather.temperature = temp_tuple->value->int8;
         persist_write_data(PERSIST_KEY_WEATHER, &weather, sizeof(Weather));
         dirty = true;
+        ask_for_weather_update = false;
+    }
+    if (dict_find(iter, MSG_KEY_WEATHER_FAILED)) {
+        // retry early when weather update failed
+        set_weather_timer(10);
         ask_for_weather_update = false;
     }
 

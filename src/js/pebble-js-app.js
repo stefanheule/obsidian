@@ -27,7 +27,7 @@ Pebble.addEventListener('ready', function () {
 Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://rawgit.com/stefanheule/obsidian/config-6/config/index.html';
     url = 'http://obsidian.local.com/index.html';
-    url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
+    //url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&version=1.10';
@@ -212,6 +212,15 @@ function sameDate(a, b) {
     return a.getDay() == b.getDay() && a.getFullYear() == b.getFullYear() && a.getMonth() && b.getMonth();
 }
 
+/** Callback if determining weather conditions failed. */
+function failedWeatherCheck(err) {
+    console.log('[ info/app ] weather request failed: ' + err);
+    var data = {
+        "MSG_KEY_WEATHER_FAILED": 1
+    };
+    Pebble.sendAppMessage(data);
+};
+
 function fetchWeather(latitude, longitude) {
 
     /** Callback on successful determination of weather conditions. */
@@ -228,11 +237,6 @@ function fetchWeather(latitude, longitude) {
         Pebble.sendAppMessage(data);
     };
 
-    /** Callback if determining weather conditions failed. */
-    var failure = function() {
-        console.log('[ info/app ] weather request failed');
-    };
-
     var now = new Date();
 
     var daily;
@@ -244,33 +248,44 @@ function fetchWeather(latitude, longitude) {
         daily = mode == 2; // daily mode
     }
 
+    var runRequest = function (url, parse) {
+        var req = new XMLHttpRequest();
+        // try for 30 seconds to get weather, then time out
+        var myTimeout = setTimeout(function(){
+            failedWeatherCheck("timeout");
+            req.abort();
+        }, 30000);
+        req.open("GET", url, true);
+        req.onload = function () {
+            if (req.readyState === 4) {
+                clearTimeout(myTimeout);
+                if (req.status === 200) {
+                    var response = JSON.parse(req.responseText);
+                    parse(response);
+                } else {
+                    failedWeatherCheck("non-200 status: " + req.status)
+                }
+            }
+        };
+        req.send(null);
+    };
+
     var source = +readConfig("CONFIG_WEATHER_SOURCE_LOCAL");
     console.log('[ info/app ] requesting weather information (' + (daily ? "daily" : "currently") + ')...');
     if (source == 1) {
         var query = "lat=" + latitude + "&lon=" + longitude;
         var req = new XMLHttpRequest();
         query += "&cnt=1&appid=fa5280deac4b98572739388b55cd7591";
-        req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + query, true);
-        req.onload = function () {
-            if (req.readyState === 4) {
-                if (req.status === 200) {
-                    var response = JSON.parse(req.responseText);
-                    var temp = response.main.temp - 273.15;
-                    if (daily) {
-                        temp = response.main.temp_max - 273.15;
-                    }
-                    var icon = parseIconOpenWeatherMap(response.weather[0].icon);
-                    console.log('[ info/app ] weather information: ' + JSON.stringify(response));
-                    success(temp, icon);
-                } else {
-                    failure()
-                }
-            }
-        };
-        req.send(null);
+        query = "http://api.openweathermap.org/data/2.5/weather?" + query;
+        runRequest(query, function(response) {
+            var temp = response.main.temp - 273.15;
+            if (daily) temp = response.main.temp_max - 273.15;
+            var icon = parseIconOpenWeatherMap(response.weather[0].icon);
+            console.log('[ info/app ] weather information: ' + JSON.stringify(response));
+            success(temp, icon);
+        });
     } else {
         // source == 2
-        var req = new XMLHttpRequest();
         var apikey = readConfig("CONFIG_WEATHER_APIKEY_LOCAL");
         var baseurl = "https://api.forecast.io/forecast/" + apikey + "/" + latitude + "," + longitude + "?units=si&";
         var exclude = "exclude=minutely,hourly,alerts,flags,";
@@ -279,38 +294,29 @@ function fetchWeather(latitude, longitude) {
         } else {
             exclude += "daily"
         }
-        req.open("GET", baseurl + exclude, true);
-        req.onload = function () {
-            if (req.readyState === 4) {
-                if (req.status === 200) {
-                    var response = JSON.parse(req.responseText);
-                    var temp;
-                    var icon;
-                    if (daily) {
-                        for (var i in response.daily.data) {
-                            var data = response.daily.data[i];
-                            var date = new Date(data.time*1000);
-                            if (sameDate(now, date)) {
-                                temp = data.apparentTemperatureMax;
-                                icon = data.icon;
-                                console.log('[ info/app ] using this information: ' + JSON.stringify(data));
-                                break;
-                            }
-                        }
-                    } else {
-                        temp = response.currently.apparentTemperature;
-                        icon = response.currently.icon;
+        runRequest(baseurl + exclude, function(response) {
+            var temp;
+            var icon;
+            if (daily) {
+                for (var i in response.daily.data) {
+                    var data = response.daily.data[i];
+                    var date = new Date(data.time*1000);
+                    if (sameDate(now, date)) {
+                        temp = data.apparentTemperatureMax;
+                        icon = data.icon;
+                        console.log('[ info/app ] using this information: ' + JSON.stringify(data));
+                        break;
                     }
-                    temp = Math.round(temp);
-                    icon = parseIconForecastIO(icon);
-                    console.log('[ info/app ] weather information: ' + JSON.stringify(response));
-                    success(temp, icon);
-                } else {
-                    console.log('[ info/app ] weather request failed');
                 }
+            } else {
+                temp = response.currently.apparentTemperature;
+                icon = response.currently.icon;
             }
-        };
-        req.send(null);
+            temp = Math.round(temp);
+            icon = parseIconForecastIO(icon);
+            console.log('[ info/app ] weather information: ' + JSON.stringify(response));
+            success(temp, icon);
+        });
     }
 }
 
@@ -321,7 +327,8 @@ Pebble.addEventListener('appmessage',
         if (dict["MSG_KEY_FETCH_WEATHER"]) {
             var location = readConfig("CONFIG_WEATHER_LOCATION_LOCAL");
             if (location) {
-                fetchWeather(location); // TODO
+                var loc = location.split(",");
+                fetchWeather(loc[0], loc[1]);
             } else {
                 navigator.geolocation.getCurrentPosition(
                     function (pos) {
@@ -329,7 +336,7 @@ Pebble.addEventListener('appmessage',
                         fetchWeather(coordinates.latitude, coordinates.longitude);
                     },
                     function (err) {
-                        console.log('[ info/app ] error requesting location: ' + err + '!');
+                        failedWeatherCheck("location not found");
                     },
                     {timeout: 15000, maximumAge: 60000}
                 );

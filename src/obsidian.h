@@ -70,6 +70,7 @@
 #define MSG_KEY_WEATHER_ICON 101
 #define MSG_KEY_FETCH_WEATHER 102
 #define MSG_KEY_JS_READY 103
+#define MSG_KEY_WEATHER_FAILED 104
 
 // persitant storage keys (in additiona to config keys above)
 #define PERSIST_KEY_WEATHER 201
