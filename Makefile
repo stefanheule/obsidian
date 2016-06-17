@@ -63,6 +63,7 @@ screenshots: screenshot_config
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_ALT_THEME_7" OBSIDIAN_FILE="theme-7"
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_ALT_THEME_8" OBSIDIAN_FILE="theme-8"
 	scripts/assemble_screenshots.sh
+	scripts/assemble_resources.sh
 	pebble kill
 
 screenshot_config:

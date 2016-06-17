@@ -29,7 +29,7 @@ The main goal when building this watchface was for it to be practical.  For inst
 
 ![Screenshot of the date display moving](screenshots/basalt/date.png)
 
-The same goes for weather information:
+The watchface also features weather information:
 
 ![Screenshot of the weather information on basalt platform](screenshots/basalt/weather.png)
 
