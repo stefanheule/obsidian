@@ -27,7 +27,7 @@ Pebble.addEventListener('ready', function () {
 Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://rawgit.com/stefanheule/obsidian/config-6/config/index.html';
     url = 'http://obsidian.local.com/index.html';
-    //url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
+    url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&version=2.0';
@@ -126,7 +126,7 @@ function readConfig(key) {
 }
 
 
-var ICONS = {
+var OWM_ICONS = {
     // see http://openweathermap.org/weather-conditions for details
     // day icons
     "01d": "a", // sun
@@ -166,38 +166,41 @@ var FORECAST_ICONS = {
     "tornado": "j"
 };
 
-/**
- *https://www.wunderground.com/weather/api/d/docs?d=resources/icon-sets
- <img src="http://icons.wxug.com/i/c/i/chanceflurries.gif" alt="http://icons.wxug.com/i/c/i/chanceflurries.gif">
- <img src="http://icons.wxug.com/i/c/i/chancerain.gif" alt="http://icons.wxug.com/i/c/i/chancerain.gif">
- <img src="http://icons.wxug.com/i/c/i/chancesleet.gif" alt="http://icons.wxug.com/i/c/i/chancesleet.gif">
- <img src="http://icons.wxug.com/i/c/i/chancesleet.gif" alt="http://icons.wxug.com/i/c/i/chancesleet.gif">
- <img src="http://icons.wxug.com/i/c/i/chancesnow.gif" alt="http://icons.wxug.com/i/c/i/chancesnow.gif">
- <img src="http://icons.wxug.com/i/c/i/chancetstorms.gif" alt="http://icons.wxug.com/i/c/i/chancetstorms.gif">
- <img src="http://icons.wxug.com/i/c/i/chancetstorms.gif" alt="http://icons.wxug.com/i/c/i/chancetstorms.gif">
- <img src="http://icons.wxug.com/i/c/i/clear.gif" alt="http://icons.wxug.com/i/c/i/clear.gif">
- <img src="http://icons.wxug.com/i/c/i/cloudy.gif" alt="http://icons.wxug.com/i/c/i/clear.gif">
- <img src="http://icons.wxug.com/i/c/i/flurries.gif" alt="http://icons.wxug.com/i/c/i/flurries.gif">
- <img src="http://icons.wxug.com/i/c/i/fog.gif" alt="http://icons.wxug.com/i/c/i/fog.gif">
- <img src="http://icons.wxug.com/i/c/i/hazy.gif" alt="http://icons.wxug.com/i/c/i/hazy.gif">
- <img src="http://icons.wxug.com/i/c/i/mostlycloudy.gif" alt="http://icons.wxug.com/i/c/i/mostlycloudy.gif">
- <img src="http://icons.wxug.com/i/c/i/mostlysunny.gif" alt="http://icons.wxug.com/i/c/i/mostlysunny.gif">
- <img src="http://icons.wxug.com/i/c/i/partlycloudy.gif" alt="http://icons.wxug.com/i/c/i/partlycloudy.gif">
- <img src="http://icons.wxug.com/i/c/i/partlysunny.gif" alt="http://icons.wxug.com/i/c/i/partlysunny.gif">
- <img src="http://icons.wxug.com/i/c/i/sleet.gif" alt="http://icons.wxug.com/i/c/i/sleet.gif">
- <img src="http://icons.wxug.com/i/c/i/rain.gif" alt="http://icons.wxug.com/i/c/i/rain.gif">
- <img src="http://icons.wxug.com/i/c/i/sleet.gif" alt="http://icons.wxug.com/i/c/i/sleet.gif">
- <img src="http://icons.wxug.com/i/c/i/snow.gif" alt="http://icons.wxug.com/i/c/i/snow.gif">
- <img src="http://icons.wxug.com/i/c/i/sunny.gif" alt="http://icons.wxug.com/i/c/i/sunny.gif">
- <img src="http://icons.wxug.com/i/c/i/tstorms.gif" alt="http://icons.wxug.com/i/c/i/tstorms.gif">
- <img src="http://icons.wxug.com/i/c/i/tstorms.gif" alt="http://icons.wxug.com/i/c/i/tstorms.gif">
- <img src="http://icons.wxug.com/i/c/i/tstorms.gif" alt="http://icons.wxug.com/i/c/i/tstorms.gif">
- <img src="http://icons.wxug.com/i/c/i/cloudy.gif" alt="http://icons.wxug.com/i/c/i/cloudy.gif">
- <img src="http://icons.wxug.com/i/c/i/partlycloudy.gif" alt="http://icons.wxug.com/i/c/i/partlycloudy.gif">
- */
+var WU_ICONS = {
+    // see https://www.wunderground.com/weather/api/d/docs?d=resources/icon-sets for details
+    "chanceflurries": "h",
+    "chancerain": "e",
+    "chancesleet": "h",
+    "chancesnow": "h",
+    "chancetstorms": "f",
+    "clear": "a",
+    "cloudy": "c",
+    "flurries": "h",
+    "fog": "i",
+    "hazy": "i",
+    "mostlycloudy": "c",
+    "mostlysunny": "b",
+    "partlycloudy": "d",
+    "partlysunny": "b",
+    "rain": "f",
+    "sleet": "h",
+    "snow": "h",
+    "sunny": "a",
+    "tstorms": "g"
+};
+
+function parseIconWU(icon) {
+    if (icon in WU_ICONS) {
+        return WU_ICONS[icon].charCodeAt(0);
+    }
+    return "a".charCodeAt(0);
+}
 
 function parseIconOpenWeatherMap(icon) {
-    return ICONS[icon].charCodeAt(0);
+    if (icon in OWM_ICONS) {
+        return OWM_ICONS[icon].charCodeAt(0);
+    }
+    return "a".charCodeAt(0);
 }
 
 function parseIconForecastIO(icon) {
@@ -263,7 +266,7 @@ function fetchWeather(latitude, longitude) {
                     var response = JSON.parse(req.responseText);
                     parse(response);
                 } else {
-                    failedWeatherCheck("non-200 status: " + req.status)
+                    failedWeatherCheck("non-200 status: " + req.status + " / " + req.statusText)
                 }
             }
         };
@@ -277,11 +280,38 @@ function fetchWeather(latitude, longitude) {
         var req = new XMLHttpRequest();
         query += "&cnt=1&appid=fa5280deac4b98572739388b55cd7591";
         query = "http://api.openweathermap.org/data/2.5/weather?" + query;
-        runRequest(query, function(response) {
+        runRequest(query, function (response) {
             var temp = response.main.temp - 273.15;
             if (daily) temp = response.main.temp_max - 273.15;
             var icon = parseIconOpenWeatherMap(response.weather[0].icon);
             console.log('[ info/app ] weather information: ' + JSON.stringify(response));
+            success(temp, icon);
+        });
+    } else if (source == 3) {
+        var apikey = readConfig("CONFIG_WEATHER_APIKEY_LOCAL");
+        apikey = "be842c2464f26f5e";
+        var q = "conditions";
+        if (daily) q = "forecast";
+        var url = "http://api.wunderground.com/api/" + apikey + "/" + q + "/q/" + latitude + "," + longitude + ".json";
+        console.log(url);
+        runRequest(url, function (response) {
+            var temp, icon;
+            console.log('[ info/app ] weather information: ' + JSON.stringify(response));
+            if (daily) {
+                for (var i in response.forecast.simpleforecast.forecastday) {
+                    var data = response.forecast.simpleforecast.forecastday[i];
+                    var date = new Date(data.date.epoch*1000);
+                    if (sameDate(now, date)) {
+                        console.log('[ info/app ] using this information: ' + JSON.stringify(data));
+                        temp = +data.high.celsius;
+                        icon = parseIconWU(data.icon);
+                        break;
+                    }
+                }
+            } else {
+                temp = response.current_observation.temp_c;
+                icon = parseIconWU(response.current_observation.icon);
+            }
             success(temp, icon);
         });
     } else {
@@ -297,6 +327,7 @@ function fetchWeather(latitude, longitude) {
         runRequest(baseurl + exclude, function(response) {
             var temp;
             var icon;
+            console.log('[ info/app ] weather information: ' + JSON.stringify(response));
             if (daily) {
                 for (var i in response.daily.data) {
                     var data = response.daily.data[i];
@@ -314,7 +345,6 @@ function fetchWeather(latitude, longitude) {
             }
             temp = Math.round(temp);
             icon = parseIconForecastIO(icon);
-            console.log('[ info/app ] weather information: ' + JSON.stringify(response));
             success(temp, icon);
         });
     }
