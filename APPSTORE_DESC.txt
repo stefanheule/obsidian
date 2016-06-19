@@ -1,0 +1,51 @@
+App Store Descriptions
+======================
+
+
+aplite
+------
+
+This is a usable and elegant analog watchface for the Pebble.  It's main features are:
+
+- High contrast, clearly visible in most light conditions.
+- Display of the current date (day and month) as well as day of the week.
+- The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
+- Display the current weather information (icon and temperature). Just like the date, this information is never obstructed.
+- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, forecast.io, or wunderground.com.
+- Weather is displayed for the current location by default, but it is possible to set a fixed location.
+- Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
+- Fully configurable, both in terms of appearance (black/white, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
+
+
+basalt
+------
+
+This is a usable and elegant analog watchface for the Pebble Time.  It's main features are:
+
+- High contrast colors, clearly visible in most light conditions.
+- Display of the current date (day and month) as well as day of the week.
+- The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
+- Display the current weather information (icon and temperature). Just like the date, this information is never obstructed.
+- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, forecast.io, or wunderground.com.
+- Weather is displayed for the current location by default, but it is possible to set a fixed location.
+- Display of the battery level.
+- Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
+- Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
+- Fully configurable, both in terms of appearance (colors, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
+
+
+chalk
+-----
+
+This is a usable and elegant analog watchface for the Pebble Time Round.  It's main features are:
+
+- High contrast colors, clearly visible in most light conditions.
+- Display of the current date (day and month) as well as day of the week.
+- The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
+- Display the current weather information (icon and temperature). Just like the date, this information is never obstructed.
+- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, forecast.io, or wunderground.com.
+- Weather is displayed for the current location by default, but it is possible to set a fixed location.
+- Display of the battery level.
+- Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
+- Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
+- Fully configurable, both in terms of appearance (colors, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
