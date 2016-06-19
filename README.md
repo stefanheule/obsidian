@@ -17,7 +17,7 @@ It's main features are:
 - Display of the current date (day and month) as well as day of the week.
 - The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
 - Display the current weather information (icon and temperature).  Just like the date, this information is never obstructed.
-- Weather information in Celcius or Fahrentheit.  Weather information source is configurable to use either [openweathermap.org](http://openweathermap.org/), [forecast.io](http://forecast.io/), [wunderground.com](https://www.wunderground.com/).  Note that forecast.io and wunderground.com require a (free) API key.
+- Weather information in Celcius or Fahrentheit.  Weather information source is configurable to use [openweathermap.org](http://openweathermap.org/), [forecast.io](http://forecast.io/), or [wunderground.com](https://www.wunderground.com/).  Note that forecast.io and wunderground.com require a (free) API key.
 - Weather is displayed for the current location by default, but it is possible to set a fixed location.
 - Display of the battery level.
 - Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
@@ -80,29 +80,26 @@ On the original Pebble and Pebble Steel, the colors are limited to black and whi
 
 ![Screenshot of the bluetooth alerts on aplite platform](screenshots/aplite/bluetooth.png)
 
-![Configuration on aplite platform](screenshots/aplite/config.png)
+## Screenshot of Configuration
 
-## Building from Source
+![Configuration on basalt platform](screenshots/basalt/config.png)
 
-The project can be build using the command `make build`.  The `Makefile` also includes various other targets, such as ones to install the watchface in an emulator or on the Pebble watch.  There are also targets to automatically take the screenshots that are part of this distribution.
+## FAQ
 
-### Versioning
+### No weather information is displayed
 
-The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  In addition to that, the configuration format (the JavaScript config object) is versioned, too, using a single integer.  Different version of the watchface may share the same configuration format.
+There are many possible causes:
 
-| Watchface version | Configuration version |
-|------------------:|----------------------:|
-|         up to 1.2 |                     1 |
-|               1.3 |                     2 |
-|               1.4 |                     3 |
-|               1.5 |                     4 |
-|         1.6 - 1.7 |                     5 |
-|         1.8 - 1.9 |                     6 |
-|               2.0 |                     7 |
+- Make sure weather is turned on in the settings.
+- Make sure the color for the weather information is different from the background color.
+- If you use forecast.io or wunderground.com as a weather source, make sure the API key is correct.
+- If you use a custom location, make sure it is a valid location.
+
+### What does it mean when the degree sign is missing for the weather?
 
 ## Changelog
 
-**Version 2.0 ()**
+**Version 2.0 (2016-06-18)**
 
 - Added optional weather information.
 
@@ -142,6 +139,24 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 **Version 1.0, 1.1, 1.2**
 
 - Initial version
+
+## Building from Source
+
+The project can be build using the command `make build`.  The `Makefile` also includes various other targets, such as ones to install the watchface in an emulator or on the Pebble watch.  There are also targets to automatically take the screenshots that are part of this distribution.
+
+### Versioning
+
+The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  In addition to that, the configuration format (the JavaScript config object) is versioned, too, using a single integer.  Different version of the watchface may share the same configuration format.
+
+| Watchface version | Configuration version |
+|------------------:|----------------------:|
+|         up to 1.2 |                     1 |
+|               1.3 |                     2 |
+|               1.4 |                     3 |
+|               1.5 |                     4 |
+|         1.6 - 1.7 |                     5 |
+|         1.8 - 1.9 |                     6 |
+|               2.0 |                     7 |
 
 ## Contributing
 
