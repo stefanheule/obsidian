@@ -264,7 +264,11 @@ function fetchWeather(latitude, longitude) {
                 clearTimeout(myTimeout);
                 if (req.status === 200) {
                     var response = JSON.parse(req.responseText);
-                    parse(response);
+                    try {
+                        parse(response);
+                    } catch (e) {
+                        failedWeatherCheck("exception: " + e)
+                    }
                 } else {
                     failedWeatherCheck("non-200 status: " + req.status + " / " + req.statusText)
                 }
