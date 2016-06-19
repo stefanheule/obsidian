@@ -26,8 +26,8 @@ Pebble.addEventListener('ready', function () {
 
 Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://rawgit.com/stefanheule/obsidian/config-7/config/index.html';
-    url = 'http://obsidian.local.com/index.html';
-    url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
+    // url = 'http://obsidian.local.com/index.html';
+    // url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&version=2.0';
