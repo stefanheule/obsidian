@@ -124,6 +124,7 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
         weather.timestamp = time(NULL);
         weather.icon = icon_tuple->value->int8;
         weather.temperature = temp_tuple->value->int8;
+        weather.failed = false;
         persist_write_data(PERSIST_KEY_WEATHER, &weather, sizeof(Weather));
         dirty = true;
         ask_for_weather_update = false;
@@ -132,6 +133,7 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
         // retry early when weather update failed
         set_weather_timer(10);
         ask_for_weather_update = false;
+        weather.failed = true;
     }
 
     if (dict_find(iter, MSG_KEY_JS_READY)) {

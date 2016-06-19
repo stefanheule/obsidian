@@ -146,6 +146,7 @@ typedef struct {
     time_t timestamp;
     int8_t icon;
     int8_t temperature;
+    bool failed;
 } __attribute__((__packed__)) Weather;
 
 extern Weather weather;
