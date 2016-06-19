@@ -226,20 +226,6 @@ function failedWeatherCheck(err) {
 
 function fetchWeather(latitude, longitude) {
 
-    /** Callback on successful determination of weather conditions. */
-    var success = function(temp, icon) {
-        if (+readConfig("CONFIG_WEATHER_UNIT_LOCAL") == 2) {
-            temp = temp * 9.0/5.0 + 32.0;
-        }
-        temp = Math.round(temp);
-        var data = {
-            "MSG_KEY_WEATHER_ICON": icon,
-            "MSG_KEY_WEATHER_TEMP": temp
-        };
-        console.log('[ info/app ] weather send: temp=' + temp + ", icon=" + String.fromCharCode(icon) + ".");
-        Pebble.sendAppMessage(data);
-    };
-
     var now = new Date();
 
     var daily;
@@ -250,6 +236,25 @@ function fetchWeather(latitude, longitude) {
     } else {
         daily = mode == 2; // daily mode
     }
+
+    /** Callback on successful determination of weather conditions. */
+    var success = function(temp, icon) {
+        if (+readConfig("CONFIG_WEATHER_UNIT_LOCAL") == 2) {
+            temp = temp * 9.0/5.0 + 32.0;
+        }
+        temp = Math.round(temp);
+        if (daily) {
+            icon = icon.toLowerCase();
+        } else if (now.getHours() >= 20) {
+            icon = icon.toUpperCase();
+        }
+        var data = {
+            "MSG_KEY_WEATHER_ICON": icon,
+            "MSG_KEY_WEATHER_TEMP": temp
+        };
+        console.log('[ info/app ] weather send: temp=' + temp + ", icon=" + String.fromCharCode(icon) + ".");
+        Pebble.sendAppMessage(data);
+    };
 
     var runRequest = function (url, parse) {
         var req = new XMLHttpRequest();
