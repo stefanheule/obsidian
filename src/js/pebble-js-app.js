@@ -190,24 +190,15 @@ var WU_ICONS = {
 };
 
 function parseIconWU(icon) {
-    if (icon in WU_ICONS) {
-        return WU_ICONS[icon].charCodeAt(0);
-    }
-    return "a".charCodeAt(0);
+    return WU_ICONS[icon];
 }
 
 function parseIconOpenWeatherMap(icon) {
-    if (icon in OWM_ICONS) {
-        return OWM_ICONS[icon].charCodeAt(0);
-    }
-    return "a".charCodeAt(0);
+    return OWM_ICONS[icon];
 }
 
 function parseIconForecastIO(icon) {
-    if (icon in FORECAST_ICONS) {
-        return FORECAST_ICONS[icon].charCodeAt(0);
-    }
-    return "a".charCodeAt(0);
+    return FORECAST_ICONS[icon];
 }
 
 /** Returns true iff a and b represent the same day (ignoring time). */
@@ -222,7 +213,7 @@ function failedWeatherCheck(err) {
         "MSG_KEY_WEATHER_FAILED": 1
     };
     Pebble.sendAppMessage(data);
-};
+}
 
 function fetchWeather(latitude, longitude) {
 
@@ -243,11 +234,15 @@ function fetchWeather(latitude, longitude) {
             temp = temp * 9.0/5.0 + 32.0;
         }
         temp = Math.round(temp);
+        if (!icon) {
+            icon = "a";
+        }
         if (daily) {
             icon = icon.toLowerCase();
         } else if (now.getHours() >= 20) {
             icon = icon.toUpperCase();
         }
+        icon = icon.charCodeAt(0);
         var data = {
             "MSG_KEY_WEATHER_ICON": icon,
             "MSG_KEY_WEATHER_TEMP": temp
@@ -279,6 +274,7 @@ function fetchWeather(latitude, longitude) {
                 }
             }
         };
+        console.log("[ info/app ] loading from " + url);
         req.send(null);
     };
 
@@ -287,7 +283,6 @@ function fetchWeather(latitude, longitude) {
     console.log('[ info/app ] requesting weather information (' + (daily ? "daily" : "currently") + ')...');
     if (source == 1) {
         var query = "lat=" + latitude + "&lon=" + longitude;
-        var req = new XMLHttpRequest();
         query += "&cnt=1&appid=fa5280deac4b98572739388b55cd7591";
         query = "http://api.openweathermap.org/data/2.5/weather?" + query;
         runRequest(query, function (response) {
@@ -301,7 +296,6 @@ function fetchWeather(latitude, longitude) {
         var q = "conditions";
         if (daily) q = "forecast";
         var url = "http://api.wunderground.com/api/" + apikey + "/" + q + "/q/" + latitude + "," + longitude + ".json";
-        console.log(url);
         runRequest(url, function (response) {
             var temp, icon;
             console.log('[ info/app ] weather information: ' + JSON.stringify(response));
