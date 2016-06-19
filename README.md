@@ -86,16 +86,19 @@ On the original Pebble and Pebble Steel, the colors are limited to black and whi
 
 ## FAQ
 
-### No weather information is displayed
+**No weather information is displayed**
 
 There are many possible causes:
 
 - Make sure weather is turned on in the settings.
+- Ensure that your phone is connected to the internet.
 - Make sure the color for the weather information is different from the background color.
 - If you use forecast.io or wunderground.com as a weather source, make sure the API key is correct.
 - If you use a custom location, make sure it is a valid location.
 
-### What does it mean when the degree sign is missing for the weather?
+**What does it mean when the degree sign is missing for the weather?**
+
+In this case, the last attempt to update the weather failed.  This can be for any number of reasons (see above).  Obsidian will keep displaying the previous weather information until it expires.
 
 ## Changelog
 
