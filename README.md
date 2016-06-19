@@ -17,7 +17,8 @@ It's main features are:
 - Display of the current date (day and month) as well as day of the week.
 - The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
 - Display the current weather information (icon and temperature).  Just like the date, this information is never obstructed.
-- Weather information in Celcius or Fahrentheit.  Weather information source is configurable to use either [openweathermap.org](http://openweathermap.org/) or [forecast.io](http://forecast.io/).  Note that forecast.io requires a (free) API key.
+- Weather information in Celcius or Fahrentheit.  Weather information source is configurable to use either [openweathermap.org](http://openweathermap.org/), [forecast.io](http://forecast.io/), [wunderground.com](https://www.wunderground.com/).  Note that forecast.io and wunderground.com require a (free) API key.
+- Weather is displayed for the current location by default, but it is possible to set a fixed location.
 - Display of the battery level.
 - Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.

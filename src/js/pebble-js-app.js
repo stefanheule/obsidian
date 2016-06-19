@@ -25,7 +25,7 @@ Pebble.addEventListener('ready', function () {
 });
 
 Pebble.addEventListener('showConfiguration', function () {
-    var url = 'https://rawgit.com/stefanheule/obsidian/config-6/config/index.html';
+    var url = 'https://rawgit.com/stefanheule/obsidian/config-7/config/index.html';
     url = 'http://obsidian.local.com/index.html';
     url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
@@ -278,6 +278,7 @@ function fetchWeather(latitude, longitude) {
     };
 
     var source = +readConfig("CONFIG_WEATHER_SOURCE_LOCAL");
+    var apikey = readConfig("CONFIG_WEATHER_APIKEY_LOCAL");
     console.log('[ info/app ] requesting weather information (' + (daily ? "daily" : "currently") + ')...');
     if (source == 1) {
         var query = "lat=" + latitude + "&lon=" + longitude;
@@ -292,8 +293,6 @@ function fetchWeather(latitude, longitude) {
             success(temp, icon);
         });
     } else if (source == 3) {
-        var apikey = readConfig("CONFIG_WEATHER_APIKEY_LOCAL");
-        apikey = "be842c2464f26f5e";
         var q = "conditions";
         if (daily) q = "forecast";
         var url = "http://api.wunderground.com/api/" + apikey + "/" + q + "/q/" + latitude + "," + longitude + ".json";
@@ -320,7 +319,6 @@ function fetchWeather(latitude, longitude) {
         });
     } else {
         // source == 2
-        var apikey = readConfig("CONFIG_WEATHER_APIKEY_LOCAL");
         var baseurl = "https://api.forecast.io/forecast/" + apikey + "/" + latitude + "," + longitude + "?units=si&";
         var exclude = "exclude=minutely,hourly,alerts,flags,";
         if (daily) {
