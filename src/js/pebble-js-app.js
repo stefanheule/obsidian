@@ -102,8 +102,9 @@ Pebble.addEventListener('webviewclosed', function (e) {
 
     Pebble.sendAppMessage(config, function () {
         console.log('[ info/app ] Send successful: ' + JSON.stringify(config));
-    }, function () {
-        console.log('[ info/app ] Send failed!');
+    }, function(e) {
+        console.log(JSON.stringify(config));
+        console.log('Message failed: ' + JSON.stringify(e));
     });
 });
 

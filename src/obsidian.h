@@ -64,6 +64,7 @@
 #define CONFIG_COLOR_WEATHER 29
 #define CONFIG_WEATHER_REFRESH 35
 #define CONFIG_WEATHER_EXPIRATION 36
+#define CONFIG_END_MARKER CONFIG_WEATHER_EXPIRATION
 
 // message keys (also duplicated in appinfo.json)
 #define MSG_KEY_WEATHER_TEMP 100
@@ -166,6 +167,12 @@ extern AppTimer * weather_request_timer;
 //#define OBSIDIAN_BATTERY_USE_TEXT
 
 #define OBSIDIAN_BLUETOOTH_POPUP_MS 5000
+
+// 100 should be plenty
+#define OBSIDIAN_OUTBOX_SIZE 100
+#define OBSIDIAN_N_CONFIG CONFIG_END_MARKER
+// 100 + an upper bound for all the configuration items we have
+#define OBSIDIAN_INBOX_SIZE (100 + (1 + (OBSIDIAN_N_CONFIG) * (7+4)))
 
 
 ////////////////////////////////////////////
