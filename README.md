@@ -104,6 +104,10 @@ In this case, the last attempt to update the weather failed.  This can be for an
 
 ## Changelog
 
+**Version 2.1 (2016-06-20)**
+
+- Fix bug that causes the watch face to essentially not work on the aplite platform, due to an out-of-memory condition.
+
 **Version 2.0 (2016-06-18)**
 
 - Added optional weather information.
@@ -161,7 +165,7 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |               1.5 |                     4 |
 |         1.6 - 1.7 |                     5 |
 |         1.8 - 1.9 |                     6 |
-|               2.0 |                     7 |
+|         2.0 - 2.1 |                     7 |
 
 ## Contributing
 
