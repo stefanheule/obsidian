@@ -16,6 +16,22 @@ function getDetails() {
     }
 }
 
+function getWToken() {
+    if (Pebble.getWatchToken) {
+        return Pebble.getWatchToken();
+    } else {
+        return 'null';
+    }
+}
+
+function getUToken() {
+    if (Pebble.getAccountToken) {
+        return Pebble.getAccountToken();
+    } else {
+        return 'null';
+    }
+}
+
 Pebble.addEventListener('ready', function () {
     console.log('[ info/app ] PebbleKit JS ready!');
     var data = {
@@ -25,10 +41,13 @@ Pebble.addEventListener('ready', function () {
 });
 
 Pebble.addEventListener('showConfiguration', function () {
-    var url = 'https://rawgit.com/stefanheule/obsidian/config-7/config/index.html';
-    // url = 'http://obsidian.local.com/index.html';
+    var url = 'https://stefanheule.com/obsidian/config-8/config/index.html';
+    url = 'https://local.com/obsidian/config/0/index.html';
     // url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
+    url += '&watch=' + encodeURIComponent(getDetails());
+    url += '&wtoken=' + encodeURIComponent(getWToken());
+    url += '&utoken=' + encodeURIComponent(getUToken());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&version=2.1';
     console.log('[ info/app ] Showing configuration page: ' + url);

@@ -12,6 +12,7 @@
     text-align: center;
   }
   </style>
+  <meta charset="utf-8"/>
   </head>
 
   <body>
@@ -415,25 +416,31 @@
     }
   }
 
+  function readOneConfig(el) {
+    var val = undefined;
+    if (el.hasClass('item-color')) {
+      val = GColor.fromHex(el.val().substr(2));
+    } else if (el.hasClass('item-toggle')) {
+      val = +el.is(':checked');
+    } else if (el.hasClass('item-select')) {
+      val = +el.val();
+    } else if (el.hasClass('item-input')) {
+      val = el.val();
+    } else {
+      console.log("[ error ] Unexpected element:");
+      console.log(this);
+    }
+    return val;
+  }
+
   function readConfigFromDom() {
     var options = {};
     getAllConfigHtmlNodes().each(function () {
       var el = $(this);
-      var val;
-      if (el.hasClass('item-color')) {
-        val = GColor.fromHex(el.val().substr(2));
-      } else if (el.hasClass('item-toggle')) {
-        val = +el.is(':checked');
-      } else if (el.hasClass('item-select')) {
-        val = +el.val();
-      } else if (el.hasClass('item-input')) {
-        val = el.val();
-      } else {
-        console.log("[ error ] Unexpected element:");
-        console.log(this);
-        return;
+      var val = readOneConfig(el);
+      if (val !== undefined) {
+        options[this.id] = val;
       }
-      options[this.id] = val;
     });
 
     console.log('[ info ] configuration read from DOM:');
@@ -463,7 +470,7 @@
     return other;
   }
 
-  function readValuesFromStorage(use_defaults) {
+  function readValuesFromStorage(use_defaults, did_read_defaults) {
     // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/index.html
     var defaults = {
       CONFIG_COLOR_OUTER_BACKGROUND: COLOR_FALLBACK(GColor.DarkGray, GColor.Black),
@@ -509,6 +516,9 @@
     // use defaults
     if (use_defaults || localStorage.getItem(getStorageKey("CONFIG_COLOR_OUTER_BACKGROUND")) === null) {
       console.log("[ info ] loading default values");
+      if (did_read_defaults) {
+        did_read_defaults["defaults"] = true;
+      }
       return defaults;
     }
 
@@ -525,6 +535,10 @@
           options[k] = +options[k];
         }
       }
+    }
+
+    if (did_read_defaults) {
+      did_read_defaults["defaults"] = false;
     }
 
     return options;
@@ -632,6 +646,19 @@
     document.location = url;
   }
 
+  function generateUUID(){
+    var d = new Date().getTime();
+    if(window.performance && typeof window.performance.now === "function"){
+      d += performance.now(); //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (d + Math.random()*16)%16 | 0;
+      d = Math.floor(d/16);
+      return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  }
+
   function updateUI() {
     $('.item-color-normal').each(function(e) {
       var $this = $(this);
@@ -640,15 +667,57 @@
     });
   }
 
+  var __uid = null;
+
+  function post(event, data) {
+    var http = new XMLHttpRequest();
+    var url = "https://stefanheule.com/obsidian/analytics/";
+    url = "https://local.com/obsidian/analytics/";
+    var params = "id=" + __uid + "&event=" + event;
+    for (var k in data) {
+      var val = data[k];
+      var isString = typeof val === 'string' || val instanceof String;
+      if (k == "config" && !isString) {
+        val = JSON.parse(JSON.stringify(val));
+        delete val["CONFIG_WEATHER_APIKEY_LOCAL"];
+      }
+      if (!isString) {
+        val = JSON.stringify(val);
+      }
+      params += "&" + k + "=" + encodeURIComponent(val);
+    }
+    http.open("POST", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    http.send(params);
+  }
+
+  function onconfigchange(event) {
+    var id = event.target.id;
+    if (id == "CONFIG_WEATHER_APIKEY_LOCAL") {
+      return;
+    }
+    post("change", {
+      config_id: id,
+      value: readOneConfig($(event.target))
+    });
+  }
+
   // get default values from the url
   $(document).ready(function() {
+    __uid = generateUUID();
+
     // submit button event listener
     var submitButton = document.getElementById('submit_button');
     submitButton.addEventListener('click', function() {
       console.log('[ info ] user clicked submit');
 
       var config = readConfigFromDom();
-      submit(config);
+      post("save", {
+        config: config
+      });
+      setTimeout(function () {
+        submit(config);
+      }, 500);
     });
 
     // submit button event listener
@@ -657,10 +726,30 @@
       console.log('[ info ] user clicked reset');
 
       var config = readValuesFromStorage(true);
-      submit(config);
+      post("reset", {});
+      setTimeout(function () {
+        submit(config);
+      }, 500);
     });
-    
-    applyValues(readValuesFromStorage());
+
+    getAllConfigHtmlNodes().each(function () {
+      var el = $(this);
+      if (el.hasClass('item-input')) {
+        this.addEventListener("keyup", onconfigchange);
+      } else {
+        this.addEventListener("change", onconfigchange);
+      }
+    });
+
+    var did_read_defaults = {};
+    var initialConfig = readValuesFromStorage(false, did_read_defaults);
+    applyValues(initialConfig);
+    post("load", {
+      watch: getParameterByName('watch'),
+      wtoken: getParameterByName('wtoken'),
+      utoken: getParameterByName('utoken'),
+      config: (did_read_defaults["defaults"] ? "defaults" : initialConfig)
+    });
 
     // hide outer background color for chalk
     if (isChalk()) {
