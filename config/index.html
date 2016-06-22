@@ -37,6 +37,9 @@
           Weather Color
           <input id='CONFIG_COLOR_WEATHER' type='text' class='item-color item-color-normal'>
         </label>
+        <div id="weatherlabel" class="item-container-footer" style="display: none;">
+          Also controls the bluetooth icon color.
+        </div>
       </div>
 
       <div class="item-container-content">
@@ -762,6 +765,8 @@
       el.style.display = "none";
       el = document.getElementById("CONFIG_COLOR_BLUETOOTH_LOGO_2").parentElement.parentElement;
       el.style.display = "none";
+      el = document.getElementById("weatherlabel");
+      el.style.display = "block";
     }
 
     // update version information
