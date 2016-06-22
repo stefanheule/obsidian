@@ -111,6 +111,7 @@ extern uint8_t config_hour_ticks;
 extern uint8_t config_color_weather;
 extern uint16_t config_weather_refresh;
 extern uint16_t config_weather_expiration;
+extern uint8_t config_square;
 
 
 ////////////////////////////////////////////

@@ -204,16 +204,21 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // background
 #ifndef PBL_ROUND
-    uint8_t outer_color = config_color_outer_background;
-    if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
-        outer_color = config_color_battery_bg_10;
-    } else if (battery_state.charge_percent <= 20 && !battery_state.is_charging && !battery_state.is_plugged) {
-        outer_color = config_color_battery_bg_20;
-    } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
-        outer_color = config_color_battery_bg_30;
+    if (!config_square) {
+        uint8_t outer_color = config_color_outer_background;
+        if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
+            outer_color = config_color_battery_bg_10;
+        } else if (battery_state.charge_percent <= 20 && !battery_state.is_charging && !battery_state.is_plugged) {
+            outer_color = config_color_battery_bg_20;
+        } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
+            outer_color = config_color_battery_bg_30;
+        }
+        graphics_context_set_fill_color(ctx, COLOR(outer_color));
+        graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
+    } else {
+        graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
+        graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
     }
-    graphics_context_set_fill_color(ctx, COLOR(outer_color));
-    graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
 #endif
 
     // battery
@@ -230,10 +235,12 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // background
 #if !defined(PBL_ROUND)
-    graphics_context_set_fill_color(ctx, COLOR(config_color_circle));
-    graphics_fill_circle(ctx, center, (uint16_t) (radius + 3 + 2));
-    graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
-    graphics_fill_circle(ctx, center, (uint16_t) radius);
+    if (!config_square) {
+        graphics_context_set_fill_color(ctx, COLOR(config_color_circle));
+        graphics_fill_circle(ctx, center, (uint16_t) (radius + 3 + 2));
+        graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
+        graphics_fill_circle(ctx, center, (uint16_t) radius);
+    }
 #else
     uint8_t inner_color = config_color_inner_background;
     if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
@@ -293,30 +300,43 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // hour ticks
-    uint8_t tick_width = 2;
+    uint8_t tick_width = 3;
     if (config_hour_ticks != 3) {
         graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
-        for (int i = 0; i < 12; ++i) {
-            if (config_hour_ticks == 2 && (i % 3) != 0) continue;
+        if (config_square) {
+            for (int i = 0; i < 12; ++i) {
+                if (config_hour_ticks == 2 && (i % 3) != 0) continue;
 
-            int32_t angle = i * TRIG_MAX_ANGLE / 12;
-            int tick_length = PBL_IF_ROUND_ELSE(8, 6);
+                int32_t angle = i * TRIG_MAX_ANGLE / 12;
+                int tick_length = PBL_IF_ROUND_ELSE(8, 6);
 #ifdef OBSIDIAN_LONG_TICKS
-            if (i % 3 == 0) {
-                tick_length = PBL_IF_ROUND_ELSE(12, 10);
+                if (i % 3 == 0) {
+                    tick_length = PBL_IF_ROUND_ELSE(12, 10);
 #ifdef OBSIDIAN_FAT_TICKS
-                tick_width = 4;
-            } else {
-                tick_width = 2;
+                    tick_width = 4;
+                } else {
+                    tick_width = 2;
 #endif
+                }
+#endif
+                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                              get_radial_point(radius - tick_length, angle),
+                                              tick_width);
             }
-#endif
-            graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                          get_radial_point(radius - tick_length, angle),
-                                          tick_width);
+        } else {
+            for (int i = 0; i < 12; ++i) {
+                if (config_hour_ticks == 2 && (i % 3) != 0) continue;
+                int32_t angle = i * TRIG_MAX_ANGLE / 12;
+                int tick_length = PBL_IF_ROUND_ELSE(8, 6);
+                GPoint p0 = get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle);
+                GPoint p1 = get_radial_point(radius - tick_length, angle);
+                if (i == 11 || i == 0 || i == 1) {
+                    p0
+                }
+                graphics_draw_line_with_width(ctx, p0, p1, tick_width);
+            }
         }
     }
-
 
     if (config_minute_ticks == 2) {
         // only relevant minute ticks
