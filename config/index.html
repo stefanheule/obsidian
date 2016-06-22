@@ -19,16 +19,30 @@
     font-family: 'nupe2small';
     src:url("fonts/nupe2-small.ttf") format('truetype');
   }
+  canvas#preview {
+    margin: 20px auto;
+    display: block;
+  }
+  #preview-container {
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-bottom: 1px solid #dedede;
+    box-shadow: 0px 5px 5px rgba(0,0,0,0.12);
+    background: #EAEAEA;
+  }
   </style>
   <meta charset="utf-8"/>
   </head>
 
   <body>
-    <h1 class='title'>Obsidian Configuration</h1>
+    <div id="preview-container">
+      <canvas class="watchface" id="preview" width="144" height="168"></canvas>
+    </div>
 
-    <canvas id="preview" width="144" height="168"></canvas>
-    <img src="https://github.com/stefanheule/obsidian/raw/master/screenshots/basalt/main.png">
-
+    <div id="body-container">
     <div class='item-container'>
       <div class='item-container-header'>Weather</div>
 
@@ -778,15 +792,15 @@
 
     // draw preview
     updateCanvas();
+
+    // position body
+    $("#body-container").css("margin-top", ($("#preview-container").height() + 10) + "px");
   });
   </script>
-  <style type="text/css">
-    canvas {
-
-    }
-  </style>
-  <div style="font-family: nupe2">.</div>
-  <div style="font-family: nupe2small">.</div>
+  <div class="font_preload" style="opacity: 0">
+    <span style="font-family: nupe2; width: ">.</span>
+    <span style="font-family: nupe2small">.</span>
+  </div>
   <script type="text/javascript">
     var fontsAvailable = false;
     WebFontConfig = {
@@ -817,8 +831,9 @@
       var config = readConfigFromDom();
       var canvas = document.getElementById('preview');
       var ctx = canvas.getContext('2d');
-      var w = 144;
-      var h = 168;
+      var chalk = isChalk();
+      var w = PBL_IF_ROUND_ELSE(180, 144);
+      var h = PBL_IF_ROUND_ELSE(180, 168);
       var radius = w/2;
       var center = GPoint(w/2, h/2);
       var color = function(c) {
@@ -828,20 +843,11 @@
         tm_min: 10,
         tm_hour: 10
       };
-      var TRIG_MAX_ANGLE = Math.PI*2;
-      ctx.fillStyle = color(config["CONFIG_COLOR_OUTER_BACKGROUND"]);
-      ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = color(config["CONFIG_COLOR_INNER_BACKGROUND"]);
-      ctx.beginPath();
-      ctx.arc(center.x, center.y, w/2, 0, 2*Math.PI, false);
-      ctx.fill();
-      ctx.strokeStyle = color(config["CONFIG_COLOR_CIRCLE"]);
-      var circleWidth = 4;
-      ctx.lineWidth = circleWidth;
-      ctx.beginPath();
-      ctx.arc(center.x, center.y, w/2 + circleWidth/2, 0, 2*Math.PI, false);
-      ctx.stroke();
 
+      canvas.height = h;
+      canvas.width = w;
+
+      var TRIG_MAX_ANGLE = Math.PI*2;
       var get_radial_point = function(radius, angle) {
         return {
           x: Math.sin(angle) * radius + center.x,
@@ -873,6 +879,22 @@
         ctx.fillRect(rect.origin.x, rect.origin.y, rect.size.w, rect.size.h);
       };
 
+      if (chalk) {
+        graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
+        graphics_fill_circle(ctx, center, w/2);
+      } else {
+        graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_OUTER_BACKGROUND"]);
+        graphics_fill_rect(ctx, GRect(0, 0, w, h));
+        graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
+        graphics_fill_circle(ctx, center, w/2);
+        graphics_context_set_stroke_color(ctx, config["CONFIG_COLOR_CIRCLE"]);
+        var circleWidth = 4;
+        ctx.lineWidth = circleWidth;
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, w/2 + circleWidth/2, 0, 2*Math.PI, false);
+        ctx.stroke();
+      }
+
       if (config["CONFIG_HOUR_TICKS"] != 3) {
         ctx.strokeStyle = color(config["CONFIG_COLOR_TICKS"]);
         ctx.lineCap="round";
@@ -888,7 +910,7 @@
             tick_width = 2;
           }
 
-          graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+          graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
                   get_radial_point(radius - tick_length, angle),
                   tick_width);
         }
@@ -900,15 +922,15 @@
         var start_min_tick = (t.tm_min / 5) * 5;
         for (i = start_min_tick; i < start_min_tick + 5; ++i) {
           angle = i * Math.PI * 2 / 60;
-          graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                  get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 0.5);
+          graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
+                  get_radial_point(radius - PBL_IF_ROUND_ELSE(3, 3), angle), 0.5);
         }
       } else if (config["CONFIG_MINUTE_TICKS"] == 1) {
         // all minute ticks
         for (i = 0; i < 60; ++i) {
           angle = i * Math.PI * 2 / 60;
-          graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                  get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 0.5);
+          graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
+                  get_radial_point(radius - PBL_IF_ROUND_ELSE(3, 3), angle), 0.5);
         }
       }
 
@@ -947,14 +969,14 @@
 
       ctx.font = PBL_IF_ROUND_ELSE("19px Verdana", "14px Verdana");
       graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DAY_OF_WEEK"]);
-      ctx.fillText("Sat", 60, 116);
+      ctx.fillText("Sat", PBL_IF_ROUND_ELSE(70, 60), PBL_IF_ROUND_ELSE(130, 116));
       graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DATE"]);
-      ctx.fillText("May 8", 52, 130);
+      ctx.fillText("May 8", PBL_IF_ROUND_ELSE(58, 52), PBL_IF_ROUND_ELSE(150, 130));
 
-      if (fontsAvailable) {
+      if (fontsAvailable && config["CONFIG_WEATHER_LOCAL"] == true) {
         ctx.font = PBL_IF_ROUND_ELSE("23px nupe2", "23px nupe2small");
         graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
-        ctx.fillText((config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°"), 50, 60);
+        ctx.fillText((config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°"), PBL_IF_ROUND_ELSE(70, 50), PBL_IF_ROUND_ELSE(60, 60));
       }
 
       var config_battery_logo = config["CONFIG_BATTERY_LOGO"];
@@ -964,26 +986,6 @@
       if (config_battery_logo == 1 || config_battery_logo == 2) {
         var battery = PBL_IF_ROUND_ELSE(GRect((w
                 -14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
-//#ifdef PBL_ROUND
-//        // determine where we can draw the bluetooth logo without overlap
-//        GPoint b_center;
-//        const int b_x = width / 2;
-//        const int b_y = 25;
-//        const int b_border = 3;
-//        // loop through all points and use the first one that doesn't overlap with the watch hands
-//        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
-//          b_center = b_points[(i + 1) / 2];
-//          if (i % 2 == 0) {
-//            b_center.x = -b_center.x;
-//          }
-//          if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
-//                          GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
-//                          GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
-//            break;
-//          }
-//        }
-//        battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
-//#endif
         var battery_color = config["CONFIG_COLOR_BATTERY_LOGO"];
         ctx.lineWidth = 1.2;
         var GCornerNone = null;
@@ -997,5 +999,6 @@
       }
     }
   </script>
+  </div>
   </body>
 </html>
