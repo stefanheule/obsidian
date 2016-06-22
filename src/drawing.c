@@ -424,11 +424,20 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     bool weather_is_on = config_weather_refresh > 0;
     bool weather_is_available = weather.timestamp > 0;
     bool weather_is_outdated = (time(NULL) - weather.timestamp) > (config_weather_expiration * 60);
-    if (weather_is_on && weather_is_available && !weather_is_outdated) {
+    bool show_weather = weather_is_on && weather_is_available && !weather_is_outdated;
+    if (show_weather ||
+#ifdef PBL_ROUND
+        (!bluetooth && config_bluetooth_logo)
+#else
+        false
+#endif
+            ) {
         int temp = weather.temperature;
         if (weather.failed) {
 #ifdef PBL_ROUND
-            if (!bluetooth && config_bluetooth_logo) {
+            if (!show_weather) {
+                snprintf(buffer_1, 10, "z");
+            } else if (!bluetooth && config_bluetooth_logo) {
                 snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);
             } else {
 #endif
@@ -438,7 +447,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
         } else {
 #ifdef PBL_ROUND
-            if (!bluetooth && config_bluetooth_logo) {
+            if (!show_weather) {
+                snprintf(buffer_1, 10, "z");
+            } else if (!bluetooth && config_bluetooth_logo) {
                 snprintf(buffer_1, 10, "z%c%d°", weather.icon, temp);
             } else {
 #endif
