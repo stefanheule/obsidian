@@ -41,15 +41,15 @@ Pebble.addEventListener('ready', function () {
 });
 
 Pebble.addEventListener('showConfiguration', function () {
-    var url = 'https://stefanheule.com/obsidian/config-8/config/index.html';
-    url = 'https://local.com/obsidian/config/0/index.html';
+    var url = 'https://stefanheule.com/obsidian/config/8/index.html';
+    //url = 'https://local.com/obsidian/config/0/index.html';
     // url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&wtoken=' + encodeURIComponent(getWToken());
     url += '&utoken=' + encodeURIComponent(getUToken());
     url += '&watch=' + encodeURIComponent(getDetails());
-    url += '&version=2.1';
+    url += '&version=2.2';
     console.log('[ info/app ] Showing configuration page: ' + url);
     Pebble.openURL(url);
 });
