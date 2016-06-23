@@ -24,16 +24,6 @@
     margin: 20px auto;
     display: block;
   }
-  #preview-container {
-    position: fixed;
-    z-index: 999;
-    top: 0;
-    left: 0;
-    width: 100%;
-    border-bottom: 1px solid #dedede;
-    box-shadow: 0px 5px 5px rgba(0,0,0,0.12);
-    background: #EAEAEA;
-  }
   </style>
   <meta charset="utf-8"/>
   </head>
@@ -804,7 +794,18 @@
     updateCanvas();
 
     // position body
-    $("#body-container").css("margin-top", ($("#preview-container").height() + 10) + "px");
+    var preview = $("#preview-container");
+    if (true) {
+      preview.css("position", "fixed");
+      preview.css("z-index", "999");
+      preview.css("top", "0");
+      preview.css("left", "0");
+      preview.css("width", "100%");
+      preview.css("border-bottom", "1px solid #dedede");
+      preview.css("box-shadow", "0px 5px 5px rgba(0,0,0,0.12)");
+      preview.css("background", "#eaeaea");
+      $("#body-container").css("margin-top", (preview.height() + 10) + "px");
+    }
   });
   </script>
   <div class="font_preload" style="opacity: 0">
@@ -831,15 +832,18 @@
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(wf, s);
     })();
-    function GPoint(x, y) {
-      return {x: x, y: y};
+    function updateCanvas() {
+      drawConfig('preview');
     }
-    function GRect(x,y,w,h) {
-      return {origin: {x: x, y: y}, size: {w: w, h: h}};
-    }
-    function updateCanvas(){
+    function drawConfig(canvasId) {
+      var GPoint = function(x, y) {
+        return {x: x, y: y};
+      };
+      var GRect = function(x,y,w,h) {
+        return {origin: {x: x, y: y}, size: {w: w, h: h}};
+      };
       var config = readConfigFromDom();
-      var canvas = document.getElementById('preview');
+      var canvas = document.getElementById(canvasId);
       var ctx = canvas.getContext('2d');
       var chalk = isChalk();
       var w = PBL_IF_ROUND_ELSE(180, 144);
@@ -975,7 +979,6 @@
       graphics_fill_circle(ctx, center, 5+0.5);
       graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
       graphics_fill_circle(ctx, center, 2+0.5);
-
 
       ctx.font = PBL_IF_ROUND_ELSE("19px Verdana", "14px Verdana");
       ctx.textAlign="center";
