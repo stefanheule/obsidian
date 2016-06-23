@@ -808,7 +808,7 @@
   });
   </script>
   <div class="font_preload" style="opacity: 0">
-    <span style="font-family: nupe2; width: ">.</span>
+    <span style="font-family: nupe2;">.</span>
     <span style="font-family: nupe2small">.</span>
   </div>
   <script type="text/javascript">
@@ -978,15 +978,17 @@
 
 
       ctx.font = PBL_IF_ROUND_ELSE("19px Verdana", "14px Verdana");
+      ctx.textAlign="center";
       graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DAY_OF_WEEK"]);
-      ctx.fillText("Sat", PBL_IF_ROUND_ELSE(70, 60), PBL_IF_ROUND_ELSE(130, 116));
+      ctx.fillText("Sat", w/2, PBL_IF_ROUND_ELSE(130, 116));
       graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DATE"]);
-      ctx.fillText("May 8", PBL_IF_ROUND_ELSE(58, 52), PBL_IF_ROUND_ELSE(150, 130));
+      ctx.fillText("May 8", w/2, PBL_IF_ROUND_ELSE(150, 130));
 
       if (fontsAvailable && config["CONFIG_WEATHER_LOCAL"] == true) {
         ctx.font = PBL_IF_ROUND_ELSE("23px nupe2", "23px nupe2small");
         graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
-        ctx.fillText((config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°"), PBL_IF_ROUND_ELSE(70, 50), PBL_IF_ROUND_ELSE(60, 60));
+        ctx.textAlign="center";
+        ctx.fillText((config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°"), w/2, PBL_IF_ROUND_ELSE(60, 60));
       }
 
       var config_battery_logo = config["CONFIG_BATTERY_LOGO"];
