@@ -34,6 +34,9 @@ var ObsidianPreview = (function () {
         };
         var graphics_draw_line_with_width = function (ctx, p0, p1, w) {
             ctx.lineWidth = w + 0.5;
+            if (w == 1) {
+                ctx.lineWidth = 1;
+            }
             ctx.beginPath();
             ctx.moveTo(p0.x, p0.y);
             ctx.lineTo(p1.x, p1.y);
@@ -157,7 +160,8 @@ var ObsidianPreview = (function () {
             ctx.font = PBL_IF_ROUND_ELSE("23px nupe2", "23px nupe2small");
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
             ctx.textAlign = "center";
-            ctx.fillText((config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°"), w / 2, PBL_IF_ROUND_ELSE(60, 60));
+            var weatherStr = (chalk && config["CONFIG_BLUETOOTH_LOGO"] ? "z" : "") + (config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°");
+            ctx.fillText(weatherStr, w / 2, PBL_IF_ROUND_ELSE(60, 60));
         }
 
         var config_battery_logo = config["CONFIG_BATTERY_LOGO"];
@@ -166,18 +170,76 @@ var ObsidianPreview = (function () {
         };
         if (config_battery_logo == 1 || config_battery_logo == 2) {
             var battery = PBL_IF_ROUND_ELSE(GRect((w
-                - 14) / 2, 21, 14, 8), GRect(125, 3, 14, 8));
+                - 13) / 2, 21.5, 14, 8), GRect(125.5, 3.5, 14, 8));
             var battery_color = config["CONFIG_COLOR_BATTERY_LOGO"];
             ctx.lineWidth = 1.2;
             var GCornerNone = null;
             graphics_context_set_stroke_color(ctx, COLOR(battery_color));
             graphics_context_set_fill_color(ctx, COLOR(battery_color));
             graphics_draw_rect(ctx, battery);
-            graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4),
+            graphics_fill_rect(ctx, GRect(battery.origin.x + 1.5, battery.origin.y + 1.5, battery_state.charge_percent / 10, 5),
                 0, GCornerNone);
-            graphics_draw_line_with_width(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
-                GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5), 1);
+            graphics_draw_line_with_width(ctx, GPoint(battery.origin.x + battery.size.w + 1, battery.origin.y + 2.5),
+                GPoint(battery.origin.x + battery.size.w + 1, battery.origin.y + 5.5), 1);
         }
+
+        if (!chalk && config["CONFIG_BLUETOOTH_LOGO"]) {
+            var origin = GPoint(9.5, 9.5);
+            var BLUETOOTH_LOGO_STEP = 3;
+            var config_color_bluetooth_logo_2 = config["CONFIG_COLOR_BLUETOOTH_LOGO_2"];
+            var config_color_bluetooth_logo = config["CONFIG_COLOR_BLUETOOTH_LOGO"];
+            graphics_context_set_fill_color(ctx, COLOR(config_color_bluetooth_logo));
+            //graphics_fill_rect(ctx, GRect(origin.x - 2.5, origin.y - 2.5, BLUETOOTH_LOGO_STEP * 2 + 5, BLUETOOTH_LOGO_STEP * 4 + 5), 2);
+            roundRect(ctx, origin.x - 2.5, origin.y - 2.5, BLUETOOTH_LOGO_STEP * 2 + 5, BLUETOOTH_LOGO_STEP * 4 + 5, 2, true, false);
+
+            // logo on the inside
+            graphics_context_set_stroke_color(ctx, COLOR(config_color_bluetooth_logo_2));
+            graphics_draw_line_with_width(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
+                GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP), 1);
+            graphics_draw_line_with_width(ctx, GPoint(origin.x + 0, origin.y + BLUETOOTH_LOGO_STEP),
+                GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + 3 * BLUETOOTH_LOGO_STEP), 1);
+            graphics_draw_line_with_width(ctx, GPoint(origin.x + 0, origin.y + 3 * BLUETOOTH_LOGO_STEP),
+                GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP), 1);
+            graphics_draw_line_with_width(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 0),
+                GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + BLUETOOTH_LOGO_STEP), 1);
+            graphics_draw_line_with_width(ctx, GPoint(origin.x + BLUETOOTH_LOGO_STEP, origin.y + 4 * BLUETOOTH_LOGO_STEP),
+                GPoint(origin.x + 2 * BLUETOOTH_LOGO_STEP, origin.y + 3 * BLUETOOTH_LOGO_STEP), 1);
+        }
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+        if (typeof stroke == 'undefined') {
+            stroke = true;
+        }
+        if (typeof radius === 'undefined') {
+            radius = 5;
+        }
+        if (typeof radius === 'number') {
+            radius = {tl: radius, tr: radius, br: radius, bl: radius};
+        } else {
+            var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+            for (var side in defaultRadius) {
+                radius[side] = radius[side] || defaultRadius[side];
+            }
+        }
+        ctx.beginPath();
+        ctx.moveTo(x + radius.tl, y);
+        ctx.lineTo(x + width - radius.tr, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+        ctx.lineTo(x + width, y + height - radius.br);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+        ctx.lineTo(x + radius.bl, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+        ctx.lineTo(x, y + radius.tl);
+        ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+        ctx.closePath();
+        if (fill) {
+            ctx.fill();
+        }
+        if (stroke) {
+            ctx.stroke();
+        }
+
     }
 
     return {
