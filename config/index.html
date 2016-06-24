@@ -793,20 +793,21 @@
 
     // draw preview
     // also schedule many updates to make sure the right font is used
-    var fontUpdate = function (i) {
-      updateCanvas();
-      var timeout = 500;
-      if (i < 10) {
-        timeout = 100;
-      } else if (i > 30) {
-        timeout = 1000;
-      }
-      if (i > 40) return; // 40 updates over 21 seconds should be enough
-      setTimeout(function(){
-        fontUpdate(i + 1);
-      }, timeout);
-    };
-    fontUpdate(0);
+//    var fontUpdate = function (i) {
+//      updateCanvas();
+//      var timeout = 500;
+//      if (i < 10) {
+//        timeout = 100;
+//      } else if (i > 30) {
+//        timeout = 1000;
+//      }
+//      if (i > 40) return; // 40 updates over 21 seconds should be enough
+//      setTimeout(function(){
+//        fontUpdate(i + 1);
+//      }, timeout);
+//    };
+//    fontUpdate(0);
+    updateCanvas();
 
     // position body
     var preview = $("#preview-container");
@@ -828,25 +829,6 @@
     <span style="font-family: nupe2small">.</span>
   </div>
   <script type="text/javascript">
-    var fontsAvailable = false;
-    WebFontConfig = {
-      loading: function() {
-        fontsAvailable = true;
-        updateCanvas();
-      },
-      custom: {
-        families: ['nupe2', 'nupe2small']
-      }
-    };
-    (function() {
-      var wf = document.createElement('script');
-      wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-              '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-      wf.type = 'text/javascript';
-      wf.async = 'true';
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(wf, s);
-    })();
     function updateCanvas() {
       var config = readConfigFromDom();
       ObsidianPreview.drawPreview(config, 'preview');

@@ -1,5 +1,25 @@
 var ObsidianPreview = (function () {
 
+    var fontsAvailable = false;
+    WebFontConfig = {
+        loading: function() {
+            fontsAvailable = true;
+            updateCanvas();
+        },
+        custom: {
+            families: ['nupe2', 'nupe2small']
+        }
+    };
+    (function() {
+        var wf = document.createElement('script');
+        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+            '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+    })();
+
     function drawConfig(config, canvasId) {
         var GPoint = function (x, y) {
             return {x: x, y: y};
@@ -156,11 +176,12 @@ var ObsidianPreview = (function () {
         graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DATE"]);
         ctx.fillText("May 8", w / 2, PBL_IF_ROUND_ELSE(150, 130));
 
-        if (fontsAvailable && config["CONFIG_WEATHER_LOCAL"] == true) {
+        if (fontsAvailable && (config["CONFIG_WEATHER_LOCAL"] || (chalk && config["CONFIG_BLUETOOTH_LOGO"]))) {
             ctx.font = PBL_IF_ROUND_ELSE("23px nupe2", "23px nupe2small");
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
             ctx.textAlign = "center";
-            var weatherStr = (chalk && config["CONFIG_BLUETOOTH_LOGO"] ? "z" : "") + (config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°");
+            var weather = config["CONFIG_WEATHER_LOCAL"] ? (config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°") : "";
+            var weatherStr = (chalk && config["CONFIG_BLUETOOTH_LOGO"] ? "z" : "") + weather;
             ctx.fillText(weatherStr, w / 2, PBL_IF_ROUND_ELSE(60, 60));
         }
 
