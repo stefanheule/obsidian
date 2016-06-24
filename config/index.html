@@ -792,22 +792,21 @@
     document.getElementById("platform-info").innerHTML = getPlatform();
 
     // draw preview
-    // also schedule many updates to make sure the right font is used
-//    var fontUpdate = function (i) {
-//      updateCanvas();
-//      var timeout = 500;
-//      if (i < 10) {
-//        timeout = 100;
-//      } else if (i > 30) {
-//        timeout = 1000;
-//      }
-//      if (i > 40) return; // 40 updates over 21 seconds should be enough
-//      setTimeout(function(){
-//        fontUpdate(i + 1);
-//      }, timeout);
-//    };
-//    fontUpdate(0);
-    updateCanvas();
+     also schedule many updates to make sure the right font is used
+    var fontUpdate = function (i) {
+      updateCanvas();
+      var timeout = 1000;
+      if (i < 5) {
+        timeout = 500;
+      } else if (i > 10) {
+        timeout = 10000;
+      }
+      if (i > 15) return;
+      setTimeout(function(){
+        fontUpdate(i + 1);
+      }, timeout);
+    };
+    fontUpdate(0);
 
     // position body
     var preview = $("#preview-container");
