@@ -294,8 +294,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // hour ticks
     uint8_t tick_width = 2;
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
     if (config_hour_ticks != 3) {
-        graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
         for (int i = 0; i < 12; ++i) {
             if (config_hour_ticks == 2 && (i % 3) != 0) continue;
 
