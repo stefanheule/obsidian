@@ -1,15 +1,16 @@
 var ObsidianPreview = (function () {
 
-    function drawConfig(config, canvasId) {
+    function drawConfig(config, canvasId, isChalk) {
+        var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE;
         var GPoint = function (x, y) {
             return {x: x, y: y};
         };
         var GRect = function (x, y, w, h) {
             return {origin: {x: x, y: y}, size: {w: w, h: h}};
         };
+        var chalk = isChalk;
         var canvas = document.getElementById(canvasId);
         var ctx = canvas.getContext('2d');
-        var chalk = isChalk();
         var w = PBL_IF_ROUND_ELSE(180, 144);
         var h = PBL_IF_ROUND_ELSE(180, 168);
         var radius = w / 2;

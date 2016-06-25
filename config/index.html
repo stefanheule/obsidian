@@ -4,22 +4,16 @@
   <title>Obsidian Configuration</title>
   <meta name=viewport content="width=device-width, initial-scale=1" />
   <link rel='stylesheet' type='text/css' href='css/slate.min.css'>
+  <link rel='stylesheet' type='text/css' href='css/nupe.css'>
   <script src='js/slate.js'></script>
   <script src='js/gcolor.js'></script>
   <script src='js/preview.js'></script>
+  <script src='js/pebble.js'></script>
   <script src="//cdn.rawgit.com/satazor/SparkMD5/master/spark-md5.min.js"></script>
   <style>
   .title {
     padding-top: 20px;
     text-align: center;
-  }
-  @font-face {
-    font-family: 'nupe2';
-    src:url("fonts/nupe2.ttf") format('truetype');
-  }
-  @font-face {
-    font-family: 'nupe2small';
-    src:url("fonts/nupe2-small.ttf") format('truetype');
   }
   canvas#preview {
     margin: 20px auto 5px;
@@ -485,15 +479,8 @@
     return defaultValue || false;
   }
 
-  function COLOR_FALLBACK(color, bw) {
-    if (isBasalt() || isChalk()) return color;
-    return bw;
-  }
-
-  function PBL_IF_ROUND_ELSE(round, other) {
-    if (isChalk()) return round;
-    return other;
-  }
+  var COLOR_FALLBACK = PebbleHelper.COLOR_FALLBACK;
+  var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE;
 
   function readValuesFromStorage(use_defaults, did_read_defaults) {
     // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/index.html
@@ -835,7 +822,7 @@
   <script type="text/javascript">
     function updateCanvas() {
       var config = readConfigFromDom();
-      ObsidianPreview.drawPreview(config, 'preview');
+      ObsidianPreview.drawPreview(config, 'preview', isChalk());
     }
   </script>
   </div>
