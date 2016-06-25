@@ -1,25 +1,5 @@
 var ObsidianPreview = (function () {
 
-    var fontsAvailable = false;
-    WebFontConfig = {
-        loading: function() {
-            fontsAvailable = true;
-            updateCanvas();
-        },
-        custom: {
-            families: ['nupe2', 'nupe2small']
-        }
-    };
-    (function() {
-        var wf = document.createElement('script');
-        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-            '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-        wf.type = 'text/javascript';
-        wf.async = 'true';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(wf, s);
-    })();
-
     function drawConfig(config, canvasId) {
         var GPoint = function (x, y) {
             return {x: x, y: y};
@@ -96,9 +76,9 @@ var ObsidianPreview = (function () {
             ctx.stroke();
         }
 
+        ctx.strokeStyle = color(config["CONFIG_COLOR_TICKS"]);
+        ctx.lineCap = "round";
         if (config["CONFIG_HOUR_TICKS"] != 3) {
-            ctx.strokeStyle = color(config["CONFIG_COLOR_TICKS"]);
-            ctx.lineCap = "round";
             var tick_width;
             for (var i = 0; i < 12; ++i) {
                 if (config["CONFIG_HOUR_TICKS"] == 2 && (i % 3) != 0) continue;
@@ -176,7 +156,7 @@ var ObsidianPreview = (function () {
         graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DATE"]);
         ctx.fillText("May 8", w / 2, PBL_IF_ROUND_ELSE(150, 130));
 
-        if (fontsAvailable && (config["CONFIG_WEATHER_LOCAL"] || (chalk && config["CONFIG_BLUETOOTH_LOGO"]))) {
+        if (config["CONFIG_WEATHER_LOCAL"] || (chalk && config["CONFIG_BLUETOOTH_LOGO"])) {
             ctx.font = PBL_IF_ROUND_ELSE("23px nupe2", "23px nupe2small");
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
             ctx.textAlign = "center";
