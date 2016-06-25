@@ -22,8 +22,12 @@
     src:url("fonts/nupe2-small.ttf") format('truetype');
   }
   canvas#preview {
-    margin: 20px auto;
+    margin: 20px auto 5px;
     display: block;
+  }
+  #preview-container p {
+    text-align: center;
+    font-size: 11px;
   }
   </style>
   <meta charset="utf-8"/>
@@ -32,6 +36,7 @@
   <body>
     <div id="preview-container">
       <canvas class="watchface" id="preview" width="144" height="168"></canvas>
+      <p>Live preview</p>
     </div>
 
     <div id="body-container">
@@ -793,21 +798,20 @@
 
     // draw preview
     // also schedule many updates to make sure the right font is used
-//    var fontUpdate = function (i) {
-//      updateCanvas();
-//      var timeout = 1000;
-//      if (i < 5) {
-//        timeout = 500;
-//      } else if (i > 10) {
-//        timeout = 10000;
-//      }
-//      if (i > 15) return;
-//      setTimeout(function(){
-//        fontUpdate(i + 1);
-//      }, timeout);
-//    };
-//    fontUpdate(0);
-    updateCanvas();
+    var fontUpdate = function (i) {
+      updateCanvas();
+      var timeout = 1000;
+      if (i < 5) {
+        timeout = 500;
+      } else if (i > 10) {
+        timeout = 10000;
+      }
+      if (i > 15) return;
+      setTimeout(function(){
+        fontUpdate(i + 1);
+      }, timeout);
+    };
+    fontUpdate(0);
 
     // position body
     var preview = $("#preview-container");
