@@ -1,14 +1,22 @@
 var ObsidianPreview = (function () {
 
-    function drawConfig(config, canvasId, isChalk) {
-        var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE;
+    /** Map from canvasIDs to configurations. */
+    var configurations = {};
+
+    // helpers
+    var COLOR_FALLBACK = PebbleHelper.COLOR_FALLBACK;
+    var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE;
+
+    function drawConfig(canvasId) {
+        var config = configurations[canvasId];
+
         var GPoint = function (x, y) {
             return {x: x, y: y};
         };
         var GRect = function (x, y, w, h) {
             return {origin: {x: x, y: y}, size: {w: w, h: h}};
         };
-        var chalk = isChalk;
+        var chalk = PebbleHelper.isChalk();
         var canvas = document.getElementById(canvasId);
         var ctx = canvas.getContext('2d');
         var w = PBL_IF_ROUND_ELSE(180, 144);
@@ -243,9 +251,153 @@ var ObsidianPreview = (function () {
         }
 
     }
+    var lookKeys = [
+        "CONFIG_COLOR_OUTER_BACKGROUND",
+        "CONFIG_COLOR_INNER_BACKGROUND",
+        "CONFIG_COLOR_MINUTE_HAND",
+        "CONFIG_COLOR_INNER_MINUTE_HAND",
+        "CONFIG_COLOR_HOUR_HAND",
+        "CONFIG_COLOR_INNER_HOUR_HAND",
+        "CONFIG_COLOR_CIRCLE",
+        "CONFIG_COLOR_TICKS",
+        "CONFIG_COLOR_DAY_OF_WEEK",
+        "CONFIG_COLOR_DATE",
+        "CONFIG_COLOR_BATTERY_LOGO",
+        "CONFIG_COLOR_BLUETOOTH_LOGO",
+        "CONFIG_COLOR_BLUETOOTH_LOGO_2",
+        "CONFIG_COLOR_WEATHER"
+    ];
+    var chalkLookKeys = [
+        "CONFIG_COLOR_INNER_BACKGROUND",
+        "CONFIG_COLOR_MINUTE_HAND",
+        "CONFIG_COLOR_INNER_MINUTE_HAND",
+        "CONFIG_COLOR_HOUR_HAND",
+        "CONFIG_COLOR_INNER_HOUR_HAND",
+        "CONFIG_COLOR_CIRCLE",
+        "CONFIG_COLOR_TICKS",
+        "CONFIG_COLOR_DAY_OF_WEEK",
+        "CONFIG_COLOR_DATE",
+        "CONFIG_COLOR_BATTERY_LOGO",
+        "CONFIG_COLOR_WEATHER"
+    ];
+    function getLookKeys() {
+        if (PebbleHelper.isChalk()) {
+            return chalkLookKeys;
+        }
+        return lookKeys;
+    }
+    /** Return a string that identifies this look. */
+    function lookSignature(config) {
+        var keys = getLookKeys();
+        var s = "";
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            s += key;
+            s += config[key];
+        }
+        return s;
+    }
+    /** Return a default configuration, that has the look of config. */
+    function filterLook(config) {
+        var res = defaultConfig();
+        var keys = getLookKeys();
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            res[key] = config[key];
+        }
+        return res;
+    }
+    /** Is this configuration a default configuration? */
+    function isDefaultLook(config) {
+        return sameLook(defaultConfig(), b);
+    }
+    /** Do these two configurations look the same? */
+    function sameLook(a, b) {
+        var keys = getLookKeys();
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            if (a[key] != b[key]) return false;
+        }
+        return true;
+    }
+    // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/js/preview.js
+    var defaults = {
+        CONFIG_COLOR_OUTER_BACKGROUND: COLOR_FALLBACK(GColor.DarkGray, GColor.Black),
+        CONFIG_COLOR_INNER_BACKGROUND: COLOR_FALLBACK(GColor.White, GColor.White),
+        CONFIG_COLOR_MINUTE_HAND: COLOR_FALLBACK(GColor.Black, GColor.Black),
+        CONFIG_COLOR_INNER_MINUTE_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
+        CONFIG_COLOR_HOUR_HAND: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
+        CONFIG_COLOR_INNER_HOUR_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
+        CONFIG_COLOR_CIRCLE: COLOR_FALLBACK(GColor.Black, GColor.Black),
+        CONFIG_COLOR_TICKS: COLOR_FALLBACK(GColor.Black, GColor.Black),
+        CONFIG_COLOR_DAY_OF_WEEK: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
+        CONFIG_COLOR_DATE: COLOR_FALLBACK(GColor.Black, GColor.Black),
+        CONFIG_BATTERY_LOGO: 1,
+        CONFIG_COLOR_BATTERY_LOGO: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.DarkGray, GColor.Black), GColor.White),
+        CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Yellow, GColor.Black), GColor.White),
+        CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Orange, GColor.Black), GColor.White),
+        CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Red, GColor.Black), GColor.White),
+        CONFIG_COLOR_BATTERY_BG_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Yellow), GColor.Black),
+        CONFIG_COLOR_BATTERY_BG_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Orange), GColor.Black),
+        CONFIG_COLOR_BATTERY_BG_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Red), GColor.Black),
+        CONFIG_COLOR_BLUETOOTH_LOGO: COLOR_FALLBACK(GColor.White, GColor.White),
+        CONFIG_COLOR_BLUETOOTH_LOGO_2: COLOR_FALLBACK(GColor.Black, GColor.Black),
+        CONFIG_BLUETOOTH_LOGO: +true,
+        CONFIG_VIBRATE_DISCONNECT: +true,
+        CONFIG_VIBRATE_RECONNECT: +true,
+        CONFIG_MESSAGE_DISCONNECT: +true,
+        CONFIG_MESSAGE_RECONNECT: +true,
+        CONFIG_MINUTE_TICKS: 1,
+        CONFIG_HOUR_TICKS: 1,
+        CONFIG_WEATHER_LOCAL: +true,
+        CONFIG_COLOR_WEATHER: COLOR_FALLBACK(GColor.Black, GColor.Black),
+        CONFIG_WEATHER_MODE_LOCAL: 1,
+        CONFIG_WEATHER_UNIT_LOCAL: 2,
+        CONFIG_WEATHER_SOURCE_LOCAL: 1,
+        CONFIG_WEATHER_APIKEY_LOCAL: "",
+        CONFIG_WEATHER_LOCATION_LOCAL: "",
+        CONFIG_WEATHER_REFRESH: 10,
+        CONFIG_WEATHER_EXPIRATION: 3 * 60
+    };
+    function defaultConfig() {
+        return cloneConfig(defaults);
+    }
+    function cloneConfig(config) {
+        var res = {};
+        for (k in defaults) {
+            res[k] = config[k];
+        }
+        return res;
+    }
 
     return {
-        drawPreview: drawConfig
+        filterLook: filterLook,
+        sameLook: sameLook,
+        isDefaultLook: isDefaultLook,
+        lookSignature: lookSignature,
+        defaultConfig: defaultConfig,
+        drawPreview: function(config, canvasId) {
+            var first = !(canvasId in configurations);
+            configurations[canvasId] = config;
+            if (first) {
+                // schedule updates to redraw the configuration in case the fonts aren't loaded yet
+                var fontUpdate = function (i) {
+                    var timeout = 1000;
+                    if (i < 5) {
+                        timeout = 500;
+                    } else if (i > 10) {
+                        timeout = 10000;
+                    }
+                    if (i > 15) return;
+                    setTimeout(function(){
+                        drawConfig(canvasId);
+                        fontUpdate(i + 1);
+                    }, timeout);
+                };
+                fontUpdate(0);
+            }
+            drawConfig(canvasId);
+        }
     }
 
 }());

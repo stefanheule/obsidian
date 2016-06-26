@@ -412,12 +412,9 @@
   function getVersion() {
     return getParameterByName('version');
   }
-  function isBasalt() {
-    return getPlatform() == 'basalt';
-  }
-  function isChalk() {
-    return getPlatform() == 'chalk';
-  }
+  PebbleHelper.setPlatform(getPlatform());
+  var isChalk = PebbleHelper.isChalk;
+  var isBasalt = PebbleHelper.isBasalt;
 
   function getAllConfigHtmlNodes() {
     return $('[id]').filter(function () {
@@ -483,45 +480,8 @@
   var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE;
 
   function readValuesFromStorage(use_defaults, did_read_defaults) {
-    // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/index.html
-    var defaults = {
-      CONFIG_COLOR_OUTER_BACKGROUND: COLOR_FALLBACK(GColor.DarkGray, GColor.Black),
-      CONFIG_COLOR_INNER_BACKGROUND: COLOR_FALLBACK(GColor.White, GColor.White),
-      CONFIG_COLOR_MINUTE_HAND: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_COLOR_INNER_MINUTE_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
-      CONFIG_COLOR_HOUR_HAND: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
-      CONFIG_COLOR_INNER_HOUR_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
-      CONFIG_COLOR_CIRCLE: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_COLOR_TICKS: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_COLOR_DAY_OF_WEEK: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
-      CONFIG_COLOR_DATE: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_BATTERY_LOGO: 1,
-      CONFIG_COLOR_BATTERY_LOGO: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.DarkGray, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Yellow, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Orange, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Red, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_BG_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Yellow), GColor.Black),
-      CONFIG_COLOR_BATTERY_BG_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Orange), GColor.Black),
-      CONFIG_COLOR_BATTERY_BG_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Red), GColor.Black),
-      CONFIG_COLOR_BLUETOOTH_LOGO: COLOR_FALLBACK(GColor.White, GColor.White),
-      CONFIG_COLOR_BLUETOOTH_LOGO_2: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_BLUETOOTH_LOGO: +true,
-      CONFIG_VIBRATE_DISCONNECT: +true,
-      CONFIG_VIBRATE_RECONNECT: +true,
-      CONFIG_MESSAGE_DISCONNECT: +true,
-      CONFIG_MESSAGE_RECONNECT: +true,
-      CONFIG_MINUTE_TICKS: 1,
-      CONFIG_HOUR_TICKS: 1,
-      CONFIG_WEATHER_LOCAL: +true,
-      CONFIG_COLOR_WEATHER: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_WEATHER_MODE_LOCAL: 1,
-      CONFIG_WEATHER_UNIT_LOCAL: 2,
-      CONFIG_WEATHER_SOURCE_LOCAL: 1,
-      CONFIG_WEATHER_APIKEY_LOCAL: "",
-      CONFIG_WEATHER_LOCATION_LOCAL: "",
-      CONFIG_WEATHER_REFRESH: 10,
-      CONFIG_WEATHER_EXPIRATION: 3*60
-    };
+
+    var defaults = ObsidianPreview.defaultConfig();
 
     var stringTypes = ["CONFIG_WEATHER_APIKEY_LOCAL", "CONFIG_WEATHER_LOCATION_LOCAL"];
 
@@ -784,21 +744,7 @@
     document.getElementById("platform-info").innerHTML = getPlatform();
 
     // draw preview
-    // also schedule many updates to make sure the right font is used
-    var fontUpdate = function (i) {
-      updateCanvas();
-      var timeout = 1000;
-      if (i < 5) {
-        timeout = 500;
-      } else if (i > 10) {
-        timeout = 10000;
-      }
-      if (i > 15) return;
-      setTimeout(function(){
-        fontUpdate(i + 1);
-      }, timeout);
-    };
-    fontUpdate(0);
+    updateCanvas();
 
     // position body
     var preview = $("#preview-container");
