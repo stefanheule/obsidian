@@ -7,8 +7,8 @@
   <link rel='stylesheet' type='text/css' href='css/nupe.css'>
   <script src='js/slate.js'></script>
   <script src='js/gcolor.js'></script>
-  <script src='js/preview.js'></script>
   <script src='js/pebble.js'></script>
+  <script src='js/preview.js'></script>
   <script src="//cdn.rawgit.com/satazor/SparkMD5/master/spark-md5.min.js"></script>
   <style>
   .title {
@@ -412,9 +412,8 @@
   function getVersion() {
     return getParameterByName('version');
   }
-  PebbleHelper.setPlatform(getPlatform());
-  var isChalk = PebbleHelper.isChalk;
-  var isBasalt = PebbleHelper.isBasalt;
+  var isChalk = function() { return getPlatform() == "chalk"; };
+  var isBasalt = function() { return getPlatform() == "basalt"; };
 
   function getAllConfigHtmlNodes() {
     return $('[id]').filter(function () {
@@ -476,12 +475,12 @@
     return defaultValue || false;
   }
 
-  var COLOR_FALLBACK = PebbleHelper.COLOR_FALLBACK;
-  var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE;
+  var COLOR_FALLBACK = PebbleHelper.COLOR_FALLBACK(getPlatform());
+  var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE(getPlatform());
 
   function readValuesFromStorage(use_defaults, did_read_defaults) {
 
-    var defaults = ObsidianPreview.defaultConfig();
+    var defaults = ObsidianPreview.defaultConfig(getPlatform());
 
     var stringTypes = ["CONFIG_WEATHER_APIKEY_LOCAL", "CONFIG_WEATHER_LOCATION_LOCAL"];
 
@@ -768,7 +767,7 @@
   <script type="text/javascript">
     function updateCanvas() {
       var config = readConfigFromDom();
-      ObsidianPreview.drawPreview(config, 'preview', isChalk());
+      ObsidianPreview.drawPreview(config, 'preview', getPlatform());
     }
   </script>
   </div>
