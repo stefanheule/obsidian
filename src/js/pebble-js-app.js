@@ -58,7 +58,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
     var urlconfig = JSON.parse(decodeURIComponent(e.response));
 
     // decode config
-    // config keys are also duplicated in src/obsidian.h, appinfo.json, src/js/pebble-js-app.js and config/index.html
+    // config keys are also duplicated in src/obsidian.h, appinfo.json, src/js/pebble-js-app.js and config/js/preview.js
     var keys = {
         "CONFIG_COLOR_OUTER_BACKGROUND": 1,
         "CONFIG_COLOR_INNER_BACKGROUND": 2,

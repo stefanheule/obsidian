@@ -4,21 +4,36 @@
   <title>Obsidian Configuration</title>
   <meta name=viewport content="width=device-width, initial-scale=1" />
   <link rel='stylesheet' type='text/css' href='css/slate.min.css'>
+  <link rel='stylesheet' type='text/css' href='css/nupe.css'>
   <script src='js/slate.js'></script>
   <script src='js/gcolor.js'></script>
+  <script src='js/pebble.js'></script>
+  <script src='js/preview.js'></script>
   <script src="//cdn.rawgit.com/satazor/SparkMD5/master/spark-md5.min.js"></script>
   <style>
   .title {
     padding-top: 20px;
     text-align: center;
   }
+  canvas#preview {
+    margin: 20px auto 5px;
+    display: block;
+  }
+  #preview-container p {
+    text-align: center;
+    font-size: 11px;
+  }
   </style>
   <meta charset="utf-8"/>
   </head>
 
   <body>
-    <h1 class='title'>Obsidian Configuration</h1>
+    <div id="preview-container">
+      <canvas class="watchface" id="preview" width="144" height="168"></canvas>
+      <p>Live preview</p>
+    </div>
 
+    <div id="body-container">
     <div class='item-container'>
       <div class='item-container-header'>Weather</div>
 
@@ -397,12 +412,8 @@
   function getVersion() {
     return getParameterByName('version');
   }
-  function isBasalt() {
-    return getPlatform() == 'basalt';
-  }
-  function isChalk() {
-    return getPlatform() == 'chalk';
-  }
+  var isChalk = function() { return getPlatform() == "chalk"; };
+  var isBasalt = function() { return getPlatform() == "basalt"; };
 
   function getAllConfigHtmlNodes() {
     return $('[id]').filter(function () {
@@ -447,8 +458,8 @@
       }
     });
 
-    console.log('[ info ] configuration read from DOM:');
-    console.log(options);
+//    console.log('[ info ] configuration read from DOM:');
+//    console.log(options);
     return options;
   }
 
@@ -464,56 +475,12 @@
     return defaultValue || false;
   }
 
-  function COLOR_FALLBACK(color, bw) {
-    if (isBasalt() || isChalk()) return color;
-    return bw;
-  }
-
-  function PBL_IF_ROUND_ELSE(round, other) {
-    if (isChalk()) return round;
-    return other;
-  }
+  var COLOR_FALLBACK = PebbleHelper.COLOR_FALLBACK(getPlatform());
+  var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE(getPlatform());
 
   function readValuesFromStorage(use_defaults, did_read_defaults) {
-    // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/index.html
-    var defaults = {
-      CONFIG_COLOR_OUTER_BACKGROUND: COLOR_FALLBACK(GColor.DarkGray, GColor.Black),
-      CONFIG_COLOR_INNER_BACKGROUND: COLOR_FALLBACK(GColor.White, GColor.White),
-      CONFIG_COLOR_MINUTE_HAND: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_COLOR_INNER_MINUTE_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
-      CONFIG_COLOR_HOUR_HAND: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
-      CONFIG_COLOR_INNER_HOUR_HAND: COLOR_FALLBACK(GColor.LightGray, GColor.Black),
-      CONFIG_COLOR_CIRCLE: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_COLOR_TICKS: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_COLOR_DAY_OF_WEEK: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
-      CONFIG_COLOR_DATE: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_BATTERY_LOGO: 1,
-      CONFIG_COLOR_BATTERY_LOGO: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.DarkGray, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Yellow, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Orange, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.Red, GColor.Black), GColor.White),
-      CONFIG_COLOR_BATTERY_BG_30: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Yellow), GColor.Black),
-      CONFIG_COLOR_BATTERY_BG_20: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Orange), GColor.Black),
-      CONFIG_COLOR_BATTERY_BG_10: COLOR_FALLBACK(PBL_IF_ROUND_ELSE(GColor.White, GColor.Red), GColor.Black),
-      CONFIG_COLOR_BLUETOOTH_LOGO: COLOR_FALLBACK(GColor.White, GColor.White),
-      CONFIG_COLOR_BLUETOOTH_LOGO_2: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_BLUETOOTH_LOGO: +true,
-      CONFIG_VIBRATE_DISCONNECT: +true,
-      CONFIG_VIBRATE_RECONNECT: +true,
-      CONFIG_MESSAGE_DISCONNECT: +true,
-      CONFIG_MESSAGE_RECONNECT: +true,
-      CONFIG_MINUTE_TICKS: 1,
-      CONFIG_HOUR_TICKS: 1,
-      CONFIG_WEATHER_LOCAL: +true,
-      CONFIG_COLOR_WEATHER: COLOR_FALLBACK(GColor.Black, GColor.Black),
-      CONFIG_WEATHER_MODE_LOCAL: 1,
-      CONFIG_WEATHER_UNIT_LOCAL: 2,
-      CONFIG_WEATHER_SOURCE_LOCAL: 1,
-      CONFIG_WEATHER_APIKEY_LOCAL: "",
-      CONFIG_WEATHER_LOCATION_LOCAL: "",
-      CONFIG_WEATHER_REFRESH: 10,
-      CONFIG_WEATHER_EXPIRATION: 3*60
-    };
+
+    var defaults = ObsidianPreview.defaultConfig(getPlatform());
 
     var stringTypes = ["CONFIG_WEATHER_APIKEY_LOCAL", "CONFIG_WEATHER_LOCATION_LOCAL"];
 
@@ -676,7 +643,6 @@
   function post(event, data) {
     var http = new XMLHttpRequest();
     var url = "https://stefanheule.com/obsidian/analytics/";
-    //url = "https://local.com/obsidian/analytics/";
     var params = "id=" + __uid + "&event=" + event;
     for (var k in data) {
       var val = data[k];
@@ -704,6 +670,8 @@
       config_id: id,
       value: readOneConfig($(event.target))
     });
+
+    updateCanvas();
   }
 
   // get default values from the url
@@ -773,7 +741,35 @@
     // update version information
     document.getElementById("version-info").innerHTML = getVersion();
     document.getElementById("platform-info").innerHTML = getPlatform();
+
+    // draw preview
+    updateCanvas();
+
+    // position body
+    var preview = $("#preview-container");
+    if (true) {
+      preview.css("position", "fixed");
+      preview.css("z-index", "999");
+      preview.css("top", "0");
+      preview.css("left", "0");
+      preview.css("width", "100%");
+      preview.css("border-bottom", "1px solid #dedede");
+      preview.css("box-shadow", "0px 5px 5px rgba(0,0,0,0.12)");
+      preview.css("background", "#eaeaea");
+      $("#body-container").css("margin-top", (preview.height() + 10) + "px");
+    }
   });
   </script>
+  <div class="font_preload" style="opacity: 0">
+    <span style="font-family: nupe2;">.</span>
+    <span style="font-family: nupe2small">.</span>
+  </div>
+  <script type="text/javascript">
+    function updateCanvas() {
+      var config = readConfigFromDom();
+      ObsidianPreview.drawPreview(config, 'preview', getPlatform());
+    }
+  </script>
+  </div>
   </body>
 </html>

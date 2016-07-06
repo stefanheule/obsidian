@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'nupe2';
+    src:url("../fonts/nupe2.ttf") format('truetype');
+}
+@font-face {
+    font-family: 'nupe2small';
+    src:url("../fonts/nupe2-small.ttf") format('truetype');
+}
