@@ -300,10 +300,10 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // hour ticks
-    uint8_t tick_width = 3;
+    uint8_t tick_width = 2;
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
     if (config_hour_ticks != 3) {
-        graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
-        if (config_square) {
+        if (!config_square) {
             for (int i = 0; i < 12; ++i) {
                 if (config_hour_ticks == 2 && (i % 3) != 0) continue;
 
@@ -444,11 +444,20 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     bool weather_is_on = config_weather_refresh > 0;
     bool weather_is_available = weather.timestamp > 0;
     bool weather_is_outdated = (time(NULL) - weather.timestamp) > (config_weather_expiration * 60);
-    if (weather_is_on && weather_is_available && !weather_is_outdated) {
+    bool show_weather = weather_is_on && weather_is_available && !weather_is_outdated;
+    if (show_weather ||
+#ifdef PBL_ROUND
+        (!bluetooth && config_bluetooth_logo)
+#else
+        false
+#endif
+            ) {
         int temp = weather.temperature;
         if (weather.failed) {
 #ifdef PBL_ROUND
-            if (!bluetooth && config_bluetooth_logo) {
+            if (!show_weather) {
+                snprintf(buffer_1, 10, "z");
+            } else if (!bluetooth && config_bluetooth_logo) {
                 snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);
             } else {
 #endif
@@ -458,7 +467,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
         } else {
 #ifdef PBL_ROUND
-            if (!bluetooth && config_bluetooth_logo) {
+            if (!show_weather) {
+                snprintf(buffer_1, 10, "z");
+            } else if (!bluetooth && config_bluetooth_logo) {
                 snprintf(buffer_1, 10, "z%c%d°", weather.icon, temp);
             } else {
 #endif

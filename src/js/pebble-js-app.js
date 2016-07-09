@@ -41,15 +41,15 @@ Pebble.addEventListener('ready', function () {
 });
 
 Pebble.addEventListener('showConfiguration', function () {
-    var url = 'https://stefanheule.com/obsidian/config-8/config/index.html';
-    url = 'https://local.com/obsidian/config/0/index.html';
+    var url = 'https://stefanheule.com/obsidian/config/8/index.html';
+    //url = 'https://local.com/obsidian/config/0/index.html';
     // url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&wtoken=' + encodeURIComponent(getWToken());
     url += '&utoken=' + encodeURIComponent(getUToken());
     url += '&watch=' + encodeURIComponent(getDetails());
-    url += '&version=2.1';
+    url += '&version=2.3';
     console.log('[ info/app ] Showing configuration page: ' + url);
     Pebble.openURL(url);
 });
@@ -58,7 +58,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
     var urlconfig = JSON.parse(decodeURIComponent(e.response));
 
     // decode config
-    // config keys are also duplicated in src/obsidian.h, appinfo.json, src/js/pebble-js-app.js and config/index.html
+    // config keys are also duplicated in src/obsidian.h, appinfo.json, src/js/pebble-js-app.js and config/js/preview.js
     var keys = {
         "CONFIG_COLOR_OUTER_BACKGROUND": 1,
         "CONFIG_COLOR_INNER_BACKGROUND": 2,
