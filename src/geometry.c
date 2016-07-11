@@ -26,6 +26,33 @@ GPoint get_radial_point(const int16_t distance_from_center, const int32_t angle)
 }
 
 /**
+ * Returns a point on the line from the center away at a given angel, at an offset from the border.
+ */
+GPoint get_radial_border_point(const int16_t distance_from_border, const int32_t angle) {
+    const int32_t topright_angle = atan2_lookup(width, height);
+    bool top = angle > (TRIG_MAX_ANGLE - topright_angle) || angle <= topright_angle;
+//    bool right = angle > topright_angle && angle <= TRIG_MAX_ANGLE/2 - topright_angle;
+    bool bottom = angle > TRIG_MAX_ANGLE/2 - topright_angle && angle <= TRIG_MAX_ANGLE/2 + topright_angle;
+    bool left = angle > TRIG_MAX_ANGLE/2 + topright_angle && angle <= TRIG_MAX_ANGLE - topright_angle;
+    int32_t sine = sin_lookup(angle);
+    int32_t cosine = cos_lookup(angle);
+    if (top || bottom) {
+        GPoint result = {
+                .x = (int16_t) (sine * (int32_t) (height / 2 - distance_from_border) / cosine) +
+                     center.x,
+                .y = top ? distance_from_border : height - distance_from_border,
+        };
+        return result;
+    }
+    // assert(left || right);
+    GPoint result = {
+            .x = left ? distance_from_border : width - distance_from_border,
+            .y = (int16_t) (cosine * (int32_t) (width / 2 - distance_from_border) / sine) + center.y,
+    };
+    return result;
+}
+
+/**
  * Do the line segments a0->a1 and b0->b1 intersect?
  * Loosely based on http://stackoverflow.com/questions/4977491/determining-if-two-line-segments-intersect/4977569#4977569
  */

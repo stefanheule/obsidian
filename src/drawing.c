@@ -327,13 +327,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             for (int i = 0; i < 12; ++i) {
                 if (config_hour_ticks == 2 && (i % 3) != 0) continue;
                 int32_t angle = i * TRIG_MAX_ANGLE / 12;
-                int tick_length = PBL_IF_ROUND_ELSE(8, 6);
-                GPoint p0 = get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle);
-                GPoint p1 = get_radial_point(radius - tick_length, angle);
-                if (i == 11 || i == 0 || i == 1) {
-                    p0
-                }
-                graphics_draw_line_with_width(ctx, p0, p1, tick_width);
+                int tick_length = 8;
+                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
             }
         }
     }
@@ -343,15 +338,26 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         int start_min_tick = (t->tm_min / 5) * 5;
         for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                          get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
+            if (!config_square) {
+                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                              get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
+            } else {
+                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                                              get_radial_border_point(3, angle), 1);
+            }
+
         }
     } else if (config_minute_ticks == 1) {
         // all minute ticks
         for (int i = 0; i < 60; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                          get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
+            if (!config_square) {
+                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                              get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
+            } else {
+                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                                              get_radial_border_point(3, angle), 1);
+            }
         }
     }
 
