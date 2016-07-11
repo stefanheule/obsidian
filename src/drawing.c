@@ -566,6 +566,10 @@ void background_update_proc(Layer *layer, GContext *ctx) {
          !battery_state.is_plugged)) {
         GRect battery = PBL_IF_ROUND_ELSE(GRect((width
                                                   -14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
+        if (config_square) {
+            battery.origin.x = 123;
+            battery.origin.y = 7;
+        }
 #ifdef PBL_ROUND
         // determine where we can draw the bluetooth logo without overlap
         GPoint b_center;
