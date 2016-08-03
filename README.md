@@ -104,6 +104,10 @@ In this case, the last attempt to update the weather failed.  This can be for an
 
 ## Changelog
 
+**Version 2.3 (2016-08-04)**
+
+- Square version of the watch face.
+
 **Version 2.3 (2016-06-25)**
 
 - Fix bug where the minute ticks were not shown in the right color if hour ticks were turned off.

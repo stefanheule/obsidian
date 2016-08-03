@@ -95,7 +95,8 @@ Pebble.addEventListener('webviewclosed', function (e) {
         "CONFIG_WEATHER_APIKEY_LOCAL": 33,
         "CONFIG_WEATHER_LOCATION_LOCAL": 34,
         "CONFIG_WEATHER_REFRESH": 35,
-        "CONFIG_WEATHER_EXPIRATION": 36
+        "CONFIG_WEATHER_EXPIRATION": 36,
+        "CONFIG_SQUARE": 37
     };
     var config = {};
     var fullconfig = {};
