@@ -361,7 +361,8 @@ var ObsidianPreview = (function () {
             CONFIG_WEATHER_APIKEY_LOCAL: "",
             CONFIG_WEATHER_LOCATION_LOCAL: "",
             CONFIG_WEATHER_REFRESH: 10,
-            CONFIG_WEATHER_EXPIRATION: 3 * 60
+            CONFIG_WEATHER_EXPIRATION: 3 * 60,
+            CONFIG_SQUARE: +false
         };
         return cloneConfig(defaults);
     }

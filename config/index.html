@@ -9,7 +9,7 @@
   <script src='js/gcolor.js'></script>
   <script src='js/pebble.js'></script>
   <script src='js/preview.js'></script>
-  <script src="//cdn.rawgit.com/satazor/SparkMD5/master/spark-md5.min.js"></script>
+  <script src="js/spark-md5.min.js"></script>
   <style>
   .title {
     padding-top: 20px;
@@ -584,7 +584,8 @@
       "CONFIG_WEATHER_APIKEY_LOCAL": 33,
       "CONFIG_WEATHER_LOCATION_LOCAL": 34,
       "CONFIG_WEATHER_REFRESH": 35,
-      "CONFIG_WEATHER_EXPIRATION": 36
+      "CONFIG_WEATHER_EXPIRATION": 36,
+      "CONFIG_SQUARE": 37
     };
 
     // store settings
@@ -648,6 +649,7 @@
   var __uid = null;
 
   function post(event, data) {
+    if (window.location.hostname != "stefanheule.com") return;
     var http = new XMLHttpRequest();
     var url = "https://stefanheule.com/obsidian/analytics/";
     var params = "id=" + __uid + "&event=" + event;

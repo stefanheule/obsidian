@@ -42,8 +42,10 @@ Pebble.addEventListener('ready', function () {
 
 Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://stefanheule.com/obsidian/config/8/index.html';
-    //url = 'https://local.com/obsidian/config/0/index.html';
     // url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
+
+    url = 'https://local.com/obsidian/config/0/index.html';
+
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&wtoken=' + encodeURIComponent(getWToken());
@@ -131,7 +133,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
 /** Read a configuration element (handles defaults) */
 function readConfig(key) {
     var res = localStorage.getItem(key);
-    // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/index.html
+    // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/js/preview.js
     if (res === null) {
         if (key == "CONFIG_WEATHER_UNIT_LOCAL") {
             return 2;
