@@ -333,6 +333,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         }
     }
 
+    int square_minute_tick = 4;
     if (config_minute_ticks == 2) {
         // only relevant minute ticks
         int start_min_tick = (t->tm_min / 5) * 5;
@@ -343,7 +344,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                                               get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
             } else {
                 graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
-                                              get_radial_border_point(3, angle), 1);
+                                              get_radial_border_point(square_minute_tick, angle), 1);
             }
 
         }
@@ -356,7 +357,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                                               get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
             } else {
                 graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
-                                              get_radial_border_point(3, angle), 1);
+                                              get_radial_border_point(square_minute_tick, angle), 1);
             }
         }
     }
