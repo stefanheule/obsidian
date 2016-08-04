@@ -414,7 +414,7 @@ var ObsidianPreview = (function () {
             CONFIG_WEATHER_SOURCE_LOCAL: 1,
             CONFIG_WEATHER_APIKEY_LOCAL: "",
             CONFIG_WEATHER_LOCATION_LOCAL: "",
-            CONFIG_WEATHER_REFRESH: 10,
+            CONFIG_WEATHER_REFRESH: 30,
             CONFIG_WEATHER_EXPIRATION: 3 * 60,
             CONFIG_SQUARE: +false
         };

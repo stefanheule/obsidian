@@ -107,7 +107,8 @@ In this case, the last attempt to update the weather failed.  This can be for an
 **Version 2.4 (2016-08-04)**
 
 - Square version of the watch face.
-- Use actual temperature rather than "feels like" for forecast.io.
+- Use actual temperature rather than apparent temperature for forecast.io.
+- Change default refresh rate for weather to 30 minutes.
 
 **Version 2.3 (2016-06-25)**
 

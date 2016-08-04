@@ -357,7 +357,8 @@ function fetchWeather(latitude, longitude) {
                     var data = response.daily.data[i];
                     var date = new Date(data.time*1000);
                     if (sameDate(now, date)) {
-                        temp = data.apparentTemperatureMax;
+                        console.log(data);
+                        temp = data. temperatureMax;
                         icon = data.icon;
                         console.log('[ info/app ] using this information: ' + JSON.stringify(data));
                         break;
