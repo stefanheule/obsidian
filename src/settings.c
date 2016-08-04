@@ -115,6 +115,8 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
     dirty |= sync_helper(CONFIG_COLOR_WEATHER, iter, &config_color_weather);
     dirty |= sync_helper_2(CONFIG_WEATHER_REFRESH, iter, &config_weather_refresh);
     dirty |= sync_helper_2(CONFIG_WEATHER_EXPIRATION, iter, &config_weather_expiration);
+    dirty |= sync_helper(CONFIG_SQUARE, iter, &config_square);
+
 
     bool ask_for_weather_update = true;
 
@@ -204,6 +206,7 @@ void read_config_all() {
     read_config(CONFIG_COLOR_WEATHER, &config_color_weather);
     read_config_2(CONFIG_WEATHER_REFRESH, &config_weather_refresh);
     read_config_2(CONFIG_WEATHER_EXPIRATION, &config_weather_expiration);
+    read_config(CONFIG_SQUARE, &config_square);
 
     if (persist_exists(PERSIST_KEY_WEATHER)) {
         persist_read_data(PERSIST_KEY_WEATHER, &weather, sizeof(Weather));

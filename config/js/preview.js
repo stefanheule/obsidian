@@ -34,6 +34,8 @@ var ObsidianPreview = (function () {
 
         canvas.height = h;
         canvas.width = w;
+        var width = w;
+        var height = h;
 
         var TRIG_MAX_ANGLE = Math.PI * 2;
         var get_radial_point = function (radius, angle) {
@@ -41,6 +43,28 @@ var ObsidianPreview = (function () {
                 x: Math.sin(angle) * radius + center.x,
                 y: -Math.cos(angle) * radius + center.y
             };
+        };
+        var get_radial_border_point = function (distance_from_border, angle) {
+            var topright_angle = Math.atan2(width, height);
+            var top = angle > (TRIG_MAX_ANGLE - topright_angle) || angle <= topright_angle;
+            var bottom = angle > TRIG_MAX_ANGLE / 2 - topright_angle && angle <= TRIG_MAX_ANGLE / 2 + topright_angle;
+            var left = angle > TRIG_MAX_ANGLE / 2 + topright_angle && angle <= TRIG_MAX_ANGLE - topright_angle;
+            var sine = Math.sin(angle);
+            var cosine = Math.cos(angle);
+            var result;
+            if (top || bottom) {
+                result = {
+                    x: (sine * (height / 2 - distance_from_border) / cosine) +
+                    center.x,
+                    y: top ? distance_from_border : height - distance_from_border
+                };
+                return result;
+            }
+            result = {
+                x: left ? distance_from_border : width - distance_from_border,
+                y: (cosine * (width / 2 - distance_from_border) / sine) + center.y
+            };
+            return result;
         };
         var graphics_draw_line_with_width = function (ctx, p0, p1, w) {
             ctx.lineWidth = w + 0.5;
@@ -70,58 +94,84 @@ var ObsidianPreview = (function () {
             ctx.fillRect(rect.origin.x, rect.origin.y, rect.size.w, rect.size.h);
         };
 
+        config_square = config["CONFIG_SQUARE"];
         if (chalk) {
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
             graphics_fill_circle(ctx, center, w / 2);
         } else {
-            graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_OUTER_BACKGROUND"]);
-            graphics_fill_rect(ctx, GRect(0, 0, w, h));
-            graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
-            graphics_fill_circle(ctx, center, w / 2);
-            graphics_context_set_stroke_color(ctx, config["CONFIG_COLOR_CIRCLE"]);
-            var circleWidth = 4;
-            ctx.lineWidth = circleWidth;
-            ctx.beginPath();
-            ctx.arc(center.x, center.y, w / 2 + circleWidth / 2, 0, 2 * Math.PI, false);
-            ctx.stroke();
+            if (!config_square) {
+                graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_OUTER_BACKGROUND"]);
+                graphics_fill_rect(ctx, GRect(0, 0, w, h));
+                graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
+                graphics_fill_circle(ctx, center, w / 2);
+                graphics_context_set_stroke_color(ctx, config["CONFIG_COLOR_CIRCLE"]);
+                var circleWidth = 4;
+                ctx.lineWidth = circleWidth;
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, w / 2 + circleWidth / 2, 0, 2 * Math.PI, false);
+                ctx.stroke();
+            } else {
+                graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
+                graphics_fill_rect(ctx, GRect(0, 0, w, h));
+            }
         }
 
         ctx.strokeStyle = color(config["CONFIG_COLOR_TICKS"]);
         ctx.lineCap = "round";
         if (config["CONFIG_HOUR_TICKS"] != 3) {
             var tick_width;
-            for (var i = 0; i < 12; ++i) {
-                if (config["CONFIG_HOUR_TICKS"] == 2 && (i % 3) != 0) continue;
-                var angle = i * Math.PI * 2 / 12;
-                var tick_length = PBL_IF_ROUND_ELSE(8, 6);
-                if (i % 3 == 0) {
-                    tick_length = PBL_IF_ROUND_ELSE(12, 10);
-                    tick_width = 4;
-                } else {
-                    tick_width = 2;
-                }
+            if (!config_square) {
+                for (var i = 0; i < 12; ++i) {
+                    if (config["CONFIG_HOUR_TICKS"] == 2 && (i % 3) != 0) continue;
+                    var angle = i * Math.PI * 2 / 12;
+                    var tick_length = PBL_IF_ROUND_ELSE(8, 6);
+                    if (i % 3 == 0) {
+                        tick_length = PBL_IF_ROUND_ELSE(12, 10);
+                        tick_width = 4;
+                    } else {
+                        tick_width = 2;
+                    }
 
-                graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
-                    get_radial_point(radius - tick_length, angle),
-                    tick_width);
+                    graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
+                        get_radial_point(radius - tick_length, angle),
+                        tick_width);
+                }
+            } else {
+                for (var i = 0; i < 12; ++i) {
+                    if (config["CONFIG_HOUR_TICKS"] == 2 && (i % 3) != 0) continue;
+                    var angle = i * TRIG_MAX_ANGLE / 12;
+                    var tick_length = 8;
+                    graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
+                }
             }
         }
 
         ctx.lineWidth = 1 + 1;
+        var square_minute_tick = 4;
         if (config["CONFIG_MINUTE_TICKS"] == 2) {
             // only relevant minute ticks
             var start_min_tick = (t.tm_min / 5) * 5;
             for (i = start_min_tick; i < start_min_tick + 5; ++i) {
                 angle = i * Math.PI * 2 / 60;
-                graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
-                    get_radial_point(radius - PBL_IF_ROUND_ELSE(3, 3), angle), 0.5);
+                if (!config_square) {
+                    graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
+                        get_radial_point(radius - PBL_IF_ROUND_ELSE(3, 3), angle), 0.5);
+                } else {
+                    graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                        get_radial_border_point(square_minute_tick, angle), 1);
+                }
             }
         } else if (config["CONFIG_MINUTE_TICKS"] == 1) {
             // all minute ticks
             for (i = 0; i < 60; ++i) {
                 angle = i * Math.PI * 2 / 60;
-                graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
-                    get_radial_point(radius - PBL_IF_ROUND_ELSE(3, 3), angle), 0.5);
+                if (!config_square) {
+                    graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
+                        get_radial_point(radius - PBL_IF_ROUND_ELSE(3, 3), angle), 0.5);
+                } else {
+                    graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                        get_radial_border_point(square_minute_tick, angle), 1);
+                }
             }
         }
 
@@ -182,6 +232,10 @@ var ObsidianPreview = (function () {
         if (config_battery_logo == 1 || config_battery_logo == 2) {
             var battery = PBL_IF_ROUND_ELSE(GRect((w
                 - 13) / 2, 21.5, 14, 8), GRect(125.5, 3.5, 14, 8));
+            if (config_square) {
+                battery.origin.x = 123.5;
+                battery.origin.y = 7.5;
+            }
             var battery_color = config["CONFIG_COLOR_BATTERY_LOGO"];
             ctx.lineWidth = 1.2;
             var GCornerNone = null;
@@ -361,7 +415,8 @@ var ObsidianPreview = (function () {
             CONFIG_WEATHER_APIKEY_LOCAL: "",
             CONFIG_WEATHER_LOCATION_LOCAL: "",
             CONFIG_WEATHER_REFRESH: 10,
-            CONFIG_WEATHER_EXPIRATION: 3 * 60
+            CONFIG_WEATHER_EXPIRATION: 3 * 60,
+            CONFIG_SQUARE: +false
         };
         return cloneConfig(defaults);
     }

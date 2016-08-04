@@ -41,15 +41,17 @@ Pebble.addEventListener('ready', function () {
 });
 
 Pebble.addEventListener('showConfiguration', function () {
-    var url = 'https://stefanheule.com/obsidian/config/8/index.html';
+    var url = 'https://stefanheule.com/obsidian/config/9/index.html';
+    //url = 'https://rawgit.com/stefanheule/obsidian/feature-square/config/index.html';
+
     //url = 'https://local.com/obsidian/config/0/index.html';
-    // url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
+
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
     url += '&wtoken=' + encodeURIComponent(getWToken());
     url += '&utoken=' + encodeURIComponent(getUToken());
     url += '&watch=' + encodeURIComponent(getDetails());
-    url += '&version=2.3';
+    url += '&version=2.4';
     console.log('[ info/app ] Showing configuration page: ' + url);
     Pebble.openURL(url);
 });
@@ -95,7 +97,8 @@ Pebble.addEventListener('webviewclosed', function (e) {
         "CONFIG_WEATHER_APIKEY_LOCAL": 33,
         "CONFIG_WEATHER_LOCATION_LOCAL": 34,
         "CONFIG_WEATHER_REFRESH": 35,
-        "CONFIG_WEATHER_EXPIRATION": 36
+        "CONFIG_WEATHER_EXPIRATION": 36,
+        "CONFIG_SQUARE": 37
     };
     var config = {};
     var fullconfig = {};
@@ -130,7 +133,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
 /** Read a configuration element (handles defaults) */
 function readConfig(key) {
     var res = localStorage.getItem(key);
-    // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/index.html
+    // defaults are also in src/obsidian.c, src/js/pebble-js-app.js and config/js/preview.js
     if (res === null) {
         if (key == "CONFIG_WEATHER_UNIT_LOCAL") {
             return 2;

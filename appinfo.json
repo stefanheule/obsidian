@@ -3,7 +3,7 @@
   "shortName": "Obsidian",
   "longName": "Obsidian",
   "companyName": "Stefan Heule",
-  "versionLabel": "2.3",
+  "versionLabel": "2.4",
   "sdkVersion": "3",
   "targetPlatforms": [
     "aplite",
@@ -53,6 +53,7 @@
     "CONFIG_WEATHER_LOCATION_LOCAL": 34,
     "CONFIG_WEATHER_REFRESH": 35,
     "CONFIG_WEATHER_EXPIRATION": 36,
+    "CONFIG_SQUARE": 37,
     "MSG_KEY_WEATHER_TEMP": 100,
     "MSG_KEY_WEATHER_ICON": 101,
     "MSG_KEY_FETCH_WEATHER": 102,

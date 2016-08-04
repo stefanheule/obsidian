@@ -58,7 +58,7 @@ uint8_t config_hour_ticks = 1;
 uint8_t config_color_weather = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
 uint16_t config_weather_refresh = 10;
 uint16_t config_weather_expiration = 3*60;
-
+uint8_t config_square = false;
 
 
 ////////////////////////////////////////////
