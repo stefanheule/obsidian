@@ -47,7 +47,7 @@ GPoint get_radial_border_point(const int16_t distance_from_border, const int32_t
     // assert(left || right);
     GPoint result = {
             .x = left ? distance_from_border : width - distance_from_border,
-            .y = (int16_t) (cosine * (int32_t) (width / 2 - distance_from_border) / sine) + center.y,
+            .y = (int16_t) -(cosine * (int32_t) (width / 2 - distance_from_border) / sine) + center.y,
     };
     return result;
 }

@@ -62,7 +62,7 @@ var ObsidianPreview = (function () {
             }
             result = {
                 x: left ? distance_from_border : width - distance_from_border,
-                y: (cosine * (width / 2 - distance_from_border) / sine) + center.y
+                y: -(cosine * (width / 2 - distance_from_border) / sine) + center.y
             };
             return result;
         };
