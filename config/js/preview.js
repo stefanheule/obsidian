@@ -4,7 +4,6 @@ var ObsidianPreview = (function () {
     var configurations = {};
     /** Map from canvasIDs to platforms. */
     var platforms = {};
-
     function drawConfig(canvasId) {
         var config = configurations[canvasId];
         var platform = platforms[canvasId];
@@ -54,7 +53,7 @@ var ObsidianPreview = (function () {
             var result;
             if (top || bottom) {
                 result = {
-                    x: (sine * (height / 2 - distance_from_border) / cosine) +
+                    x: (top ? 1 : -1) * (sine * (height / 2 - distance_from_border) / cosine) +
                     center.x,
                     y: top ? distance_from_border : height - distance_from_border
                 };
@@ -62,7 +61,7 @@ var ObsidianPreview = (function () {
             }
             result = {
                 x: left ? distance_from_border : width - distance_from_border,
-                y: -(cosine * (width / 2 - distance_from_border) / sine) + center.y
+                y: (left ? 1 : -1) * (cosine * (width / 2 - distance_from_border) / sine) + center.y
             };
             return result;
         };
@@ -150,7 +149,7 @@ var ObsidianPreview = (function () {
         var square_minute_tick = 4;
         if (config["CONFIG_MINUTE_TICKS"] == 2) {
             // only relevant minute ticks
-            var start_min_tick = (t.tm_min / 5) * 5;
+            var start_min_tick = Math.floor(t.tm_min / 5) * 5;
             for (i = start_min_tick; i < start_min_tick + 5; ++i) {
                 angle = i * Math.PI * 2 / 60;
                 if (!config_square) {
