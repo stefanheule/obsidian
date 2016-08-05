@@ -321,6 +321,13 @@
 
       <div class='item-container-content'>
         <label class='item'>
+          Show Bluetooth Logo When Disconnected
+          <input id='CONFIG_BLUETOOTH_LOGO' type='checkbox' class='item-toggle'>
+        </label>
+      </div>
+
+      <div class='item-container-content'>
+        <label class='item'>
           Bluetooth Icon Color (Outside)
           <input id='CONFIG_COLOR_BLUETOOTH_LOGO' type='text' class='item-color item-color-normal'>
         </label>
@@ -333,13 +340,6 @@
         </label>
       </div>
       
-      <div class='item-container-content'>
-        <label class='item'>
-          Show Bluetooth Logo When Disconnected
-          <input id='CONFIG_BLUETOOTH_LOGO' type='checkbox' class='item-toggle'>
-        </label>
-      </div>
-
       <div class='item-container-content'>
         <label class='item'>
           Vibrate on Disconnect
@@ -670,15 +670,87 @@
     http.send(params);
   }
 
+  function hideOption(key) {
+    var el = document.getElementById(key);
+    while (!el.classList.contains("item-container-content")) {
+      el = el.parentElement;
+    }
+    el.style.display = "none";
+  }
+  function showOption(key) {
+    var el = document.getElementById(key);
+    while (!el.classList.contains("item-container-content")) {
+      el = el.parentElement;
+    }
+    el.style.display = "block";
+  }
+
+  /** Initialize whether certain config options need to be shown or not. */
+  function initShowHideStatus(config) {
+    for (var k in config) {
+      updateShowHideStatus(k, config[k]);
+    }
+  }
+  /** Some options only make sense when other options are enabled/disabled. */
+  function updateShowHideStatus(id, value) {
+    if (id == "CONFIG_BLUETOOTH_LOGO") {
+      if (value) {
+        showOption("CONFIG_COLOR_BLUETOOTH_LOGO");
+        showOption("CONFIG_COLOR_BLUETOOTH_LOGO_2");
+      } else {
+        hideOption("CONFIG_COLOR_BLUETOOTH_LOGO");
+        hideOption("CONFIG_COLOR_BLUETOOTH_LOGO_2");
+      }
+    }
+    if (id == "CONFIG_SQUARE") {
+      if (value) {
+        hideOption("CONFIG_COLOR_OUTER_BACKGROUND");
+        hideOption("CONFIG_COLOR_BATTERY_BG_30");
+        hideOption("CONFIG_COLOR_BATTERY_BG_20");
+        hideOption("CONFIG_COLOR_BATTERY_BG_10");
+      } else {
+        showOption("CONFIG_COLOR_OUTER_BACKGROUND");
+        showOption("CONFIG_COLOR_BATTERY_BG_30");
+        showOption("CONFIG_COLOR_BATTERY_BG_20");
+        showOption("CONFIG_COLOR_BATTERY_BG_10");
+      }
+    }
+    if (id == "CONFIG_WEATHER_LOCAL") {
+      if (value) {
+        showOption("CONFIG_COLOR_WEATHER");
+        showOption("CONFIG_WEATHER_MODE_LOCAL");
+        showOption("CONFIG_WEATHER_UNIT_LOCAL");
+        showOption("CONFIG_WEATHER_SOURCE_LOCAL");
+        showOption("CONFIG_WEATHER_APIKEY_LOCAL");
+        showOption("CONFIG_WEATHER_LOCATION_LOCAL");
+        showOption("CONFIG_WEATHER_REFRESH");
+        showOption("CONFIG_WEATHER_EXPIRATION");
+      } else {
+        hideOption("CONFIG_COLOR_WEATHER");
+        hideOption("CONFIG_WEATHER_MODE_LOCAL");
+        hideOption("CONFIG_WEATHER_UNIT_LOCAL");
+        hideOption("CONFIG_WEATHER_SOURCE_LOCAL");
+        hideOption("CONFIG_WEATHER_APIKEY_LOCAL");
+        hideOption("CONFIG_WEATHER_LOCATION_LOCAL");
+        hideOption("CONFIG_WEATHER_REFRESH");
+        hideOption("CONFIG_WEATHER_EXPIRATION");
+      }
+    }
+  }
+
   function onconfigchange(event) {
     var id = event.target.id;
     if (id == "CONFIG_WEATHER_APIKEY_LOCAL") {
       return;
     }
+    var value = readOneConfig($(event.target));
     post("change", {
       config_id: id,
-      value: readOneConfig($(event.target))
+      value: value
     });
+
+    // do we need to hide/show certain elements?
+    updateShowHideStatus(id, value);
 
     updateCanvas();
   }
@@ -733,7 +805,7 @@
       config: (did_read_defaults["defaults"] ? "defaults" : initialConfig)
     });
 
-    // hide outer background color for chalk
+    // hide some non-relevant config for chalk
     if (isChalk()) {
       var el = document.getElementById("CONFIG_COLOR_OUTER_BACKGROUND").parentElement.parentElement;
       el.style.display = "none";
@@ -746,6 +818,7 @@
       el = document.getElementById("weatherlabel");
       el.style.display = "block";
     }
+    initShowHideStatus(initialConfig);
 
     // update version information
     document.getElementById("version-info").innerHTML = getVersion();
