@@ -694,7 +694,7 @@
   /** Some options only make sense when other options are enabled/disabled. */
   function updateShowHideStatus(id, value) {
     if (id == "CONFIG_BLUETOOTH_LOGO") {
-      if (value) {
+      if (value && !isChalk()) {
         showOption("CONFIG_COLOR_BLUETOOTH_LOGO");
         showOption("CONFIG_COLOR_BLUETOOTH_LOGO_2");
       } else {
@@ -734,6 +734,9 @@
         hideOption("CONFIG_WEATHER_LOCATION_LOCAL");
         hideOption("CONFIG_WEATHER_REFRESH");
         hideOption("CONFIG_WEATHER_EXPIRATION");
+      }
+      if (isChalk()) {
+        showOption("CONFIG_COLOR_WEATHER");
       }
     }
   }
@@ -807,14 +810,11 @@
 
     // hide some non-relevant config for chalk
     if (isChalk()) {
-      var el = document.getElementById("CONFIG_COLOR_OUTER_BACKGROUND").parentElement.parentElement;
-      el.style.display = "none";
-      el = document.getElementById("CONFIG_COLOR_CIRCLE").parentElement.parentElement;
-      el.style.display = "none";
-      el = document.getElementById("CONFIG_COLOR_BLUETOOTH_LOGO").parentElement.parentElement;
-      el.style.display = "none";
-      el = document.getElementById("CONFIG_COLOR_BLUETOOTH_LOGO_2").parentElement.parentElement;
-      el.style.display = "none";
+      hideOption("CONFIG_COLOR_OUTER_BACKGROUND");
+      hideOption("CONFIG_COLOR_CIRCLE");
+      hideOption("CONFIG_COLOR_BLUETOOTH_LOGO");
+      hideOption("CONFIG_COLOR_BLUETOOTH_LOGO_2");
+      hideOption("CONFIG_SQUARE");
       el = document.getElementById("weatherlabel");
       el.style.display = "block";
     }
