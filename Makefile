@@ -98,4 +98,7 @@ clean: clean_header
 clean_header:
 	echo "" > src/config.h
 
+updated_config:
+	src/scripts/updated_config.sh
+
 .PHONY: all deploy build build_quiet config log resources install_emulator install_deploy menu_icon screenshots screenshot screenshot_config write_header clean clean_header
