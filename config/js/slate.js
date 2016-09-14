@@ -120,7 +120,7 @@ var Zepto=function(){function L(t){return null==t?String(t):j[S.call(t)]||"objec
       ];
       
       // only black and white for aplite platform
-      if (location.search.search('platform=aplite') != -1) {
+      if (location.search.search('platform=aplite') != -1 || location.search.search('platform=diorite') != -1) {
         layout = [
           ['#FFFFFF', '#555555', '#000000'],
         ];

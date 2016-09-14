@@ -8,7 +8,8 @@
   "targetPlatforms": [
     "aplite",
     "basalt",
-    "chalk"
+    "chalk",
+    "diorite"
   ],
   "watchapp": {
     "watchface": true
@@ -74,7 +75,7 @@
         "name": "NUPE_23",
         "type": "font",
         "targetPlatforms": [
-          "basalt", "aplite"
+          "basalt", "aplite", "diorite"
         ]
       },
       {
