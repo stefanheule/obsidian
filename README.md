@@ -104,6 +104,12 @@ In this case, the last attempt to update the weather failed.  This can be for an
 
 ## Changelog
 
+**Version 2.5 () **
+
+- Optimized for Pebble OS 4.0
+- Added support for diorite platform
+- Addes support for Timeline Quick View
+
 **Version 2.4 (2016-08-04)**
 
 - Square version of the watch face.
