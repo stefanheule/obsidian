@@ -359,11 +359,6 @@ void init() {
     });
     window_stack_push(window, true);
 
-    GRect bounds = layer_get_bounds(window_get_root_layer(window));
-    center = grect_center_point(&bounds);
-    height = bounds.size.h;
-    width = bounds.size.w;
-
     TimeUnits unit = MINUTE_UNIT;
 #ifdef DEBUG_ITER_COUNTER
     unit = SECOND_UNIT;

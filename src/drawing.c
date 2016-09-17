@@ -16,6 +16,17 @@
 #include "obsidian.h"
 
 /**
+ * Is something obstructing our layer?
+ */
+bool is_obstructed() {
+    Layer* layer = layer_background;
+    GRect full = layer_get_bounds(layer);
+    GRect partial = layer_get_unobstructed_bounds(layer);
+
+    return full.size.h != partial.size.h || full.size.w != partial.size.w;
+}
+
+/**
  * Draw a line with a given width.
  */
 void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, uint8_t width) {
@@ -30,6 +41,7 @@ void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 #define BLUETOOTH_LOGO_STEP 3
 
     if (!config_bluetooth_logo) return;
+    if (is_obstructed()) return;
 
     // background
     graphics_context_set_fill_color(ctx, COLOR(config_color_bluetooth_logo));
@@ -151,8 +163,13 @@ static GPoint b_points[] = {
 void background_update_proc(Layer *layer, GContext *ctx) {
 //    APP_LOG(APP_LOG_LEVEL_DEBUG, "drawing...");
 
-    GRect bounds = layer_get_bounds(layer);
-    int16_t radius = bounds.size.w / 2;
+    // update bounds
+    GRect bounds = layer_get_unobstructed_bounds(layer_background);
+    center = grect_center_point(&bounds);
+    height = bounds.size.h;
+    width = bounds.size.w;
+
+    int16_t radius = width / 2;
     bool bluetooth = bluetooth_connection_service_peek();
 #ifdef DEBUG_NO_BLUETOOTH
     bluetooth = false;
@@ -328,7 +345,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 if (config_hour_ticks == 2 && (i % 3) != 0) continue;
                 int32_t angle = i * TRIG_MAX_ANGLE / 12;
                 int tick_length = 8;
-                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
+                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                                              get_radial_border_point(tick_length, angle), 4);
             }
         }
     }
@@ -453,9 +471,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     bool weather_is_outdated = (time(NULL) - weather.timestamp) > (config_weather_expiration * 60);
     bool show_weather = weather_is_on && weather_is_available && !weather_is_outdated;
     if (show_weather ||
-#ifdef PBL_ROUND
+        #ifdef PBL_ROUND
         (!bluetooth && config_bluetooth_logo)
-#else
+        #else
         false
 #endif
             ) {
@@ -468,7 +486,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);
             } else {
 #endif
-                snprintf(buffer_1, 10, "%c%d", weather.icon, temp);
+            snprintf(buffer_1, 10, "%c%d", weather.icon, temp);
 #ifdef PBL_ROUND
             }
 #endif
@@ -490,7 +508,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         const int w_border = 2;
         const int w_height = 23;
         const int w_x = width / 2;
-        const int w_y = PBL_IF_ROUND_ELSE(36, 36);
+        const int w_y = PBL_IF_ROUND_ELSE(36, height/2 - 48);
         GSize weather_size = graphics_text_layout_get_content_size(buffer_1, font_nupe, GRect(0, 0, 300, 300),
                                                                    GTextOverflowModeWordWrap, GTextAlignmentCenter);
         // loop through all points and use the first one that doesn't overlap with the watch hands
@@ -562,50 +580,52 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     graphics_fill_circle(ctx, center, 2);
 
     // battery status
-    if (config_battery_logo == 1 ||
-        (config_battery_logo == 2 && battery_state.charge_percent <= 30 && !battery_state.is_charging &&
-         !battery_state.is_plugged)) {
-        GRect battery = PBL_IF_ROUND_ELSE(GRect((width
-                                                  -14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
-        if (config_square) {
-            battery.origin.x = 123;
-            battery.origin.y = 7;
-        }
-#ifdef PBL_ROUND
-        // determine where we can draw the bluetooth logo without overlap
-        GPoint b_center;
-        const int b_x = width / 2;
-        const int b_y = 25;
-        const int b_border = 3;
-        // loop through all points and use the first one that doesn't overlap with the watch hands
-        for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
-            b_center = b_points[(i + 1) / 2];
-            if (i % 2 == 0) {
-                b_center.x = -b_center.x;
+    if (!is_obstructed()) {
+        if (config_battery_logo == 1 ||
+            (config_battery_logo == 2 && battery_state.charge_percent <= 30 && !battery_state.is_charging &&
+             !battery_state.is_plugged)) {
+            GRect battery = PBL_IF_ROUND_ELSE(GRect((width
+                                                      -14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
+            if (config_square) {
+                battery.origin.x = 123;
+                battery.origin.y = 7;
             }
-            if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                      GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
-                                      GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
-                break;
+    #ifdef PBL_ROUND
+            // determine where we can draw the bluetooth logo without overlap
+            GPoint b_center;
+            const int b_x = width / 2;
+            const int b_y = 25;
+            const int b_border = 3;
+            // loop through all points and use the first one that doesn't overlap with the watch hands
+            for (i = 0; i < 1 + (ARRAY_LENGTH(b_points) - 1) * 2; i++) {
+                b_center = b_points[(i + 1) / 2];
+                if (i % 2 == 0) {
+                    b_center.x = -b_center.x;
+                }
+                if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
+                                          GPoint(b_x + b_center.x - battery.size.w/2 - b_border, b_y + b_center.y - b_border),
+                                          GPoint(b_x + b_center.x + battery.size.w/2 + b_border, b_y + b_center.y + battery.size.h + b_border))) {
+                    break;
+                }
             }
+            battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
+    #endif
+            uint8_t battery_color = config_color_battery_logo;
+            if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
+                battery_color = config_color_battery_10;
+            } else if (battery_state.charge_percent <= 20 && !battery_state.is_charging && !battery_state.is_plugged) {
+                battery_color = config_color_battery_20;
+            } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
+                battery_color = config_color_battery_30;
+            }
+            graphics_context_set_stroke_color(ctx, COLOR(battery_color));
+            graphics_context_set_fill_color(ctx, COLOR(battery_color));
+            graphics_draw_rect(ctx, battery);
+            graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4),
+                               0, GCornerNone);
+            graphics_draw_line_with_width(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
+                                          GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5), 1);
         }
-        battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
-#endif
-        uint8_t battery_color = config_color_battery_logo;
-        if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
-            battery_color = config_color_battery_10;
-        } else if (battery_state.charge_percent <= 20 && !battery_state.is_charging && !battery_state.is_plugged) {
-            battery_color = config_color_battery_20;
-        } else if (battery_state.charge_percent <= 30 && !battery_state.is_charging && !battery_state.is_plugged) {
-            battery_color = config_color_battery_30;
-        }
-        graphics_context_set_stroke_color(ctx, COLOR(battery_color));
-        graphics_context_set_fill_color(ctx, COLOR(battery_color));
-        graphics_draw_rect(ctx, battery);
-        graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4),
-                           0, GCornerNone);
-        graphics_draw_line_with_width(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
-                                      GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5), 1);
     }
 
     // draw the bluetooth popup
