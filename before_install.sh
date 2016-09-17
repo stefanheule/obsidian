@@ -2,11 +2,14 @@
 
 # source: https://github.com/sGerli/pBuild
 
+npm install npm@3 -g
+
 set -e
-echo 'pBuild 1.0'
+echo 'pBuild 1.4'
 echo 'Installing Pebble SDK and its Dependencies...'
 
 cd ~
+
 mkdir -p ~/pebble-dev
 mkdir -p ~/.pebble-sdk
 touch ~/.pebble-sdk/ENABLE_ANALYTICS
