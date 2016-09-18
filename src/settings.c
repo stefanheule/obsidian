@@ -208,6 +208,10 @@ void read_config_all() {
     read_config_2(CONFIG_WEATHER_EXPIRATION, &config_weather_expiration);
     read_config(CONFIG_SQUARE, &config_square);
 
+#ifdef DEBUG_SQUARE
+    config_square = true;
+#endif
+
     if (persist_exists(PERSIST_KEY_WEATHER)) {
         persist_read_data(PERSIST_KEY_WEATHER, &weather, sizeof(Weather));
     } else {
