@@ -70,6 +70,24 @@
         "file": "images/menu_icon.png"
       },
       {
+        "characterRegex": "[0-9:a-zA-Z./\\- ]",
+        "file": "fonts/ObsidianI.ttf",
+        "name": "ORBITRON_16",
+        "type": "font",
+        "targetPlatforms": [
+          "basalt", "aplite", "chalk", "diorite"
+        ]
+      },
+      {
+        "characterRegex": "[0-9:a-zA-Z./\\- ]",
+        "file": "fonts/orbitron-medium.otf",
+        "name": "ORBITRON_24",
+        "type": "font",
+        "targetPlatforms": [
+          "basalt", "aplite", "chalk", "diorite"
+        ]
+      },
+      {
         "characterRegex": "[0-9:°a-jzA-IZ\\-]",
         "file": "fonts/nupe2-small.ttf",
         "name": "NUPE_23",

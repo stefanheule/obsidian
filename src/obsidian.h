@@ -121,8 +121,8 @@ extern uint8_t config_square;
 
 extern Window *window;
 extern Layer *layer_background;
-extern char buffer_1[30];
 extern char buffer_2[30];
+extern char buffer_1[30];
 extern GPoint center;
 extern int16_t height;
 extern int16_t width;
@@ -132,6 +132,8 @@ extern GFont font_open_sans;
 #endif
 extern GFont font_system_18px_bold;
 extern GFont font_nupe;
+extern GFont font_orbitron;
+extern GFont font_orbitron2;
 #ifdef PBL_ROUND
 extern GFont font_system_24px_bold;
 #endif

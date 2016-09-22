@@ -398,12 +398,23 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // format date strings
     setlocale(LC_ALL, "");
-    strftime(buffer_1, sizeof(buffer_1), "%b %d", t);
+    char* format1 = "%a";
+    char* format2 = "%b %d";
+//    char* format1 = "%m/%d";
+//    char* format2 = "";
+    strftime(buffer_2, sizeof(buffer_2), format2, t);
     // remove leading zeros
-    if (buffer_1[4] == '0') {
-        memcpy(&buffer_1[4], &buffer_1[5], 2);
-    }
-    strftime(buffer_2, sizeof(buffer_2), "%a", t);
+//    if (buffer_2[4] == '0') {
+//        memcpy(&buffer_2[4], &buffer_2[5], 2);
+//    }
+    strftime(buffer_1, sizeof(buffer_1), format1, t);
+
+#ifdef DEBUG_DATE_POSITION
+    strcpy(buffer_2, "Nov 29");
+    strcpy(buffer_1, "Wed");
+#endif
+
+    bool oneline = buffer_2[0] == 0;
 
     // determine where we can draw the date without overlap
     const int d_offset = PBL_IF_ROUND_ELSE(20, 15);
@@ -412,8 +423,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     bool found = false;
     uint16_t i;
     GPoint d_center;
-    GRect date_pos;
-    GRect day_pos;
+    GRect date_pos1;
+    GRect date_pos2;
     const int border = 2;
     // loop through all points and use the first one that doesn't overlap with the watch hands
     for (i = 0; i < 1 + (ARRAY_LENGTH(d_points) - 1) * 2; i++) {
@@ -425,21 +436,21 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         d_center.x = d_center.x * 7 / 6;
         //d_center.y = d_center.y * 7 / 6;
 #endif
-        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
-        GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
+        date_pos2 = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
+        GSize date_size2 = graphics_text_layout_get_content_size(buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_orbitron), date_pos2,
                                                                 GTextOverflowModeWordWrap, GTextAlignmentCenter);
-        day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
-        GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
+        date_pos1 = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
+        GSize date_size1 = graphics_text_layout_get_content_size(buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_orbitron), date_pos1,
                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
         if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(width / 2 + d_center.x - day_size.w / 2 - border,
+                                   GPoint(width / 2 + d_center.x - date_size1.w / 2 - border,
                                           d_y_start + d_center.y - border),
-                                   GPoint(width / 2 + d_center.x + day_size.w / 2 + border,
+                                   GPoint(width / 2 + d_center.x + date_size1.w / 2 + border,
                                           d_y_start + d_center.y + d_height + border)) ||
               line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(width / 2 + d_center.x - date_size.w / 2 - border,
+                                   GPoint(width / 2 + d_center.x - date_size2.w / 2 - border,
                                           d_y_start + d_center.y + d_offset - border),
-                                   GPoint(width / 2 + d_center.x + date_size.w / 2 + border,
+                                   GPoint(width / 2 + d_center.x + date_size2.w / 2 + border,
                                           d_y_start + d_center.y + d_height + d_offset + border)))) {
             found = true;
             break;
@@ -449,19 +460,19 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // this should not happen, but if it does, then use the default position
     if (!found) {
         d_center = d_points[0];
-        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
-        day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
+        date_pos2 = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
+        date_pos1 = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
     }
 
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
     graphics_context_set_text_color(ctx, COLOR(config_color_day_of_week));
-    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), day_pos,
+    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_orbitron), date_pos1,
                        GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
     graphics_context_set_text_color(ctx, COLOR(config_color_date));
 #endif
-    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos,
+    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_orbitron), date_pos2,
                        GTextOverflowModeWordWrap, GTextAlignmentCenter,
                        NULL);
 
@@ -481,24 +492,24 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         if (weather.failed) {
 #ifdef PBL_ROUND
             if (!show_weather) {
-                snprintf(buffer_1, 10, "z");
+                snprintf(buffer_2, 10, "z");
             } else if (!bluetooth && config_bluetooth_logo) {
-                snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);
+                snprintf(buffer_2, 10, "z%c%d", weather.icon, temp);
             } else {
 #endif
-            snprintf(buffer_1, 10, "%c%d", weather.icon, temp);
+            snprintf(buffer_2, 10, "%c%d", weather.icon, temp);
 #ifdef PBL_ROUND
             }
 #endif
         } else {
 #ifdef PBL_ROUND
             if (!show_weather) {
-                snprintf(buffer_1, 10, "z");
+                snprintf(buffer_2, 10, "z");
             } else if (!bluetooth && config_bluetooth_logo) {
-                snprintf(buffer_1, 10, "z%c%d°", weather.icon, temp);
+                snprintf(buffer_2, 10, "z%c%d°", weather.icon, temp);
             } else {
 #endif
-            snprintf(buffer_1, 10, "%c%d°", weather.icon, temp);
+            snprintf(buffer_2, 10, "%c%d°", weather.icon, temp);
 #ifdef PBL_ROUND
             }
 #endif
@@ -509,7 +520,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         const int w_height = 23;
         const int w_x = width / 2;
         const int w_y = PBL_IF_ROUND_ELSE(36, height/2 - 48);
-        GSize weather_size = graphics_text_layout_get_content_size(buffer_1, font_nupe, GRect(0, 0, 300, 300),
+        GSize weather_size = graphics_text_layout_get_content_size(buffer_2, font_nupe, GRect(0, 0, 300, 300),
                                                                    GTextOverflowModeWordWrap, GTextAlignmentCenter);
         // loop through all points and use the first one that doesn't overlap with the watch hands
         for (i = 0; i < 1 + (ARRAY_LENGTH(w_points) - 1) * 2; i++) {
@@ -542,7 +553,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
         w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
         graphics_context_set_text_color(ctx, COLOR(config_color_weather));
-        graphics_draw_text(ctx, buffer_1, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+        graphics_draw_text(ctx, buffer_2, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
 
     // bluetooth status

@@ -72,8 +72,8 @@ Window *window;
 Layer *layer_background;
 
 /** Buffers for strings */
-char buffer_1[30];
 char buffer_2[30];
+char buffer_1[30];
 
 /** The center of the watch */
 GPoint center;
@@ -90,6 +90,8 @@ GFont font_open_sans;
 /** Fonts. */
 GFont font_system_18px_bold;
 GFont font_nupe;
+GFont font_orbitron;
+GFont font_orbitron2;
 #ifdef PBL_ROUND
 GFont font_system_24px_bold;
 #endif
@@ -215,6 +217,8 @@ void window_load(Window *window) {
     font_system_24px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
 #endif
     font_nupe = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_NUPE_23));
+    font_orbitron = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_ORBITRON_16));
+    font_orbitron2 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_ORBITRON_24));
 
     // initialize
     show_bluetooth_popup = false;
@@ -229,6 +233,8 @@ void window_unload(Window *window) {
     fonts_unload_custom_font(font_open_sans);
 #endif
     fonts_unload_custom_font(font_nupe);
+    fonts_unload_custom_font(font_orbitron);
+    fonts_unload_custom_font(font_orbitron2);
 }
 
 /**
