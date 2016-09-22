@@ -104,7 +104,7 @@ In this case, the last attempt to update the weather failed.  This can be for an
 
 ## Changelog
 
-**Version 2.5 () **
+**Version 2.5 (2016-09-22) **
 
 - Optimized for Pebble OS 4.0
 - Added support for diorite platform
