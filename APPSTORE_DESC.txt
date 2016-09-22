@@ -1,6 +1,7 @@
 App Store Descriptions
 ======================
 
+To view on the appstore, use https://apps.getpebble.com/en_US/dev-settings?dev_settings=true
 
 aplite
 ------
@@ -17,6 +18,7 @@ This is a usable and elegant analog watchface for the Pebble.  It's designed suc
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
 - Fully configurable, both in terms of appearance (black/white, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
 - Square or round version.
+- Supports Timeline Quick View.
 
 
 basalt
@@ -35,6 +37,7 @@ This is a usable and elegant analog watchface for the Pebble Time.  It's designe
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
 - Fully configurable, both in terms of appearance (colors, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
 - Square or round version.
+- Supports Timeline Quick View.
 
 
 chalk
@@ -69,3 +72,4 @@ This is a usable and elegant analog watchface for the Pebble 2.  It's designed s
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
 - Fully configurable, both in terms of appearance (black/white, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
 - Square or round version.
+- Supports Timeline Quick View.
