@@ -11,7 +11,7 @@ This is a usable and elegant analog watchface for the Pebble.  It's designed suc
 - Display of the current date (day and month) as well as day of the week.
 - The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
 - Display the current weather information (icon and temperature). Just like the date, this information is never obstructed.
-- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, forecast.io, or wunderground.com.
+- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, darksky.net, or wunderground.com.
 - Weather is displayed for the current location by default, but it is possible to set a fixed location.
 - Display of the battery level.
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.
@@ -28,7 +28,7 @@ This is a usable and elegant analog watchface for the Pebble Time.  It's designe
 - Display of the current date (day and month) as well as day of the week.
 - The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
 - Display the current weather information (icon and temperature). Just like the date, this information is never obstructed.
-- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, forecast.io, or wunderground.com.
+- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, darksky.net, or wunderground.com.
 - Weather is displayed for the current location by default, but it is possible to set a fixed location.
 - Display of the battery level.
 - Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
@@ -46,7 +46,7 @@ This is a usable and elegant analog watchface for the Pebble Time Round.  It's d
 - Display of the current date (day and month) as well as day of the week.
 - The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
 - Display the current weather information (icon and temperature). Just like the date, this information is never obstructed.
-- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, forecast.io, or wunderground.com.
+- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, darksky.net, or wunderground.com.
 - Weather is displayed for the current location by default, but it is possible to set a fixed location.
 - Display of the battery level.
 - Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
@@ -63,7 +63,7 @@ This is a usable and elegant analog watchface for the Pebble 2.  It's designed s
 - Display of the current date (day and month) as well as day of the week.
 - The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
 - Display the current weather information (icon and temperature). Just like the date, this information is never obstructed.
-- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, forecast.io, or wunderground.com.
+- Weather information in Celcius or Fahrentheit. Weather information source is configurable to use openweathermap.org, darksky.net, or wunderground.com.
 - Weather is displayed for the current location by default, but it is possible to set a fixed location.
 - Display of the battery level.
 - Vibrates when the bluetooth connection is lost or regained, shows an information overlay for a few seconds and keeps showing an icon when no connection is available.

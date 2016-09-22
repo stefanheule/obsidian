@@ -341,7 +341,7 @@ function fetchWeather(latitude, longitude) {
         });
     } else {
         // source == 2
-        var baseurl = "https://api.forecast.io/forecast/" + apikey + "/" + latitude + "," + longitude + "?units=si&";
+        var baseurl = "https://api.darksky.net/forecast/" + apikey + "/" + latitude + "," + longitude + "?units=si&";
         var exclude = "exclude=minutely,hourly,alerts,flags,";
         if (daily) {
             exclude += "currently"

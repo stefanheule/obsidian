@@ -19,7 +19,7 @@ It's main features are:
 - Display of the current date (day and month) as well as day of the week.
 - The date display is never obstructed by the watch hands.  If they would cover the date, the date moves slightly to the side.
 - Display the current weather information (icon and temperature).  Just like the date, this information is never obstructed.
-- Weather information in Celcius or Fahrentheit.  Weather information source is configurable to use [openweathermap.org](http://openweathermap.org/), [forecast.io](http://forecast.io/), or [wunderground.com](https://www.wunderground.com/).  Note that forecast.io and wunderground.com require a (free) API key.
+- Weather information in Celcius or Fahrentheit.  Weather information source is configurable to use [openweathermap.org](http://openweathermap.org/), [darksky.net](https://darksky.net/), or [wunderground.com](https://www.wunderground.com/).  Note that darksky.net and wunderground.com require a (free) API key.
 - Weather is displayed for the current location by default, but it is possible to set a fixed location.
 - Display of the battery level.
 - Change in background for low battery levels (yellow at 30%, orange at 20%, and red at 10%).
@@ -95,7 +95,7 @@ There are many possible causes:
 - Make sure weather is turned on in the settings.
 - Ensure that your phone is connected to the internet.
 - Make sure the color for the weather information is different from the background color.
-- If you use forecast.io or wunderground.com as a weather source, make sure the API key is correct.
+- If you use darksky.net or wunderground.com as a weather source, make sure the API key is correct.
 - If you use a custom location, make sure it is a valid location.
 
 **What does it mean when the degree sign is missing for the weather?**
@@ -109,6 +109,7 @@ In this case, the last attempt to update the weather failed.  This can be for an
 - Optimized for Pebble OS 4.0
 - Added support for diorite platform
 - Addes support for Timeline Quick View
+- Updated forecast.io to darksky.net (their service got renamed).
 
 **Version 2.4 (2016-08-04)**
 
