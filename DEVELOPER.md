@@ -13,6 +13,7 @@ To release a new version, do the following:
     - Publish a new branch `config-X` if a new configuration version `X` was necessary.
 - Build a clean version: `make clean build`.
 - Upload and publish new version.
+- Consider building for OS3 by doing `make clean build_os3`, and uploading the result.
 
 ## Pebble Screen Sizes
 
