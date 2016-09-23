@@ -102,6 +102,11 @@ There are many possible causes:
 
 In this case, the last attempt to update the weather failed.  This can be for any number of reasons (see above).  Obsidian will keep displaying the previous weather information until it expires.
 
+**I still use Pebble OS 3 and the latest Obsidian does not work.  What can I do?**
+
+There is an [older version available on the Pebble App Store](https://apps.getpebble.com/applications/57e56bd087d6bb99f1000298).
+
+
 ## Changelog
 
 **Version 2.5 (2016-09-22) **

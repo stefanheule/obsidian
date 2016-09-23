@@ -17,6 +17,21 @@ build:
 	cp resources/fonts/nupe2-small.ttf config/fonts/nupe2-small.ttf
 	pebble build
 
+build_os3:
+	sed -i "s/ef42caba-0c65-4879-ab23-edd2bde68824/529f2905-ac36-4991-90c6-fc25f2381cac/g" appinfo.json
+	pebble sdk activate 3.14
+	$(MAKE) write_header OBSIDIAN_CONFIG="__COMPILE_OS3"
+	# copy fonts
+	cp resources/fonts/nupe2.ttf config/fonts/nupe2.ttf
+	cp resources/fonts/nupe2-small.ttf config/fonts/nupe2-small.ttf
+	pebble build
+	$(MAKE) clean_header
+	sed -i "s/529f2905-ac36-4991-90c6-fc25f2381cac/ef42caba-0c65-4879-ab23-edd2bde68824/g" appinfo.json
+	@echo ""
+	@echo ""
+	@echo ""
+	@echo "Now activate the latest SKD again!"
+
 build_quiet:
 	@scripts/build_quiet.sh
 

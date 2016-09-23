@@ -15,6 +15,12 @@
 #include "drawing.h"
 #include "obsidian.h"
 
+#ifdef __COMPILE_OS3
+GRect layer_get_unobstructed_bounds(Layer* layer) {
+    return layer_get_bounds(layer);
+}
+#endif
+
 /**
  * Is something obstructing our layer?
  */

@@ -73,3 +73,9 @@ This is a usable and elegant analog watchface for the Pebble 2.  It's designed s
 - Fully configurable, both in terms of appearance (black/white, minute/hour ticks, etc.) as well as behavior (if and when to vibrate, show messages, etc.).
 - Square or round version.
 - Supports Timeline Quick View.
+
+
+os3 version
+-----------
+
+This is an outdated build of Obsidian for users who want to stick with OS 3 of Pebble.  Do NOT use unless you absolutely have to.  Use https://apps.getpebble.com/applications/55ee57da2b0b31132c00008b instead!
