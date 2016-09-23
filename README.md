@@ -109,7 +109,7 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
-**Version 2.5 (2016-09-22) **
+**Version 2.5 (2016-09-22)**
 
 - Optimized for Pebble OS 4.0
 - Added support for diorite platform
