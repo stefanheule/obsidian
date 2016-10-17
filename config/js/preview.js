@@ -4,6 +4,7 @@ var ObsidianPreview = (function () {
     var configurations = {};
     /** Map from canvasIDs to platforms. */
     var platforms = {};
+
     function drawConfig(canvasId) {
         var config = configurations[canvasId];
         var platform = platforms[canvasId];
@@ -93,25 +94,25 @@ var ObsidianPreview = (function () {
             ctx.fillRect(rect.origin.x, rect.origin.y, rect.size.w, rect.size.h);
         };
         var draw_triangle = function (ctx, outer, width, height, angle) {
-			ctx.beginPath();
-			ctx.moveTo(outer.x, outer.y);
-			ctx.lineTo(outer.x-width/2, outer.y+height);
-			ctx.lineTo(outer.x+width/2, outer.y+height);
-			ctx.closePath();
+            ctx.beginPath();
+            ctx.moveTo(outer.x, outer.y);
+            ctx.lineTo(outer.x - width / 2, outer.y + height);
+            ctx.lineTo(outer.x + width / 2, outer.y + height);
+            ctx.closePath();
 
-			// Fill the path:
-			graphics_context_set_fill_color(ctx, GColor.Red);
-			ctx.fill();
-			graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_TICKS"]);
-			// Stroke the path:
-			ctx.lineWidth = 1;
-			graphics_context_set_stroke_color(ctx, GColor.Red);
-			ctx.stroke();
-			graphics_context_set_stroke_color(ctx, config["CONFIG_COLOR_TICKS"]);
+            // Fill the path:
+            graphics_context_set_fill_color(ctx, GColor.Red);
+            ctx.fill();
+            graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_TICKS"]);
+            // Stroke the path:
+            ctx.lineWidth = 1;
+            graphics_context_set_stroke_color(ctx, GColor.Red);
+            ctx.stroke();
+            graphics_context_set_stroke_color(ctx, config["CONFIG_COLOR_TICKS"]);
         };
 
         config_square = config["CONFIG_SQUARE"];
-		var tick_to_emphasize = config["CONFIG_SECONDS"] == 0? -1 : 0;
+        var tick_to_emphasize = config["CONFIG_SECONDS"] == 0 ? -1 : 0;
 
         if (chalk) {
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
@@ -150,26 +151,26 @@ var ObsidianPreview = (function () {
                         tick_width = 2;
                     }
 
-					if (i == tick_to_emphasize) {
-					  draw_triangle(ctx, get_radial_point(radius, angle), 10, 12, angle);
-					}
-					else {
-						graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
-							get_radial_point(radius - tick_length, angle),
-							tick_width);
-					}
+                    if (i == tick_to_emphasize) {
+                        draw_triangle(ctx, get_radial_point(radius, angle), 10, 12, angle);
+                    }
+                    else {
+                        graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
+                            get_radial_point(radius - tick_length, angle),
+                            tick_width);
+                    }
                 }
             } else {
                 for (var i = 0; i < 12; ++i) {
                     if (config["CONFIG_HOUR_TICKS"] == 2 && (i % 3) != 0) continue;
                     var angle = i * TRIG_MAX_ANGLE / 12;
                     var tick_length = 8;
-					if (i == tick_to_emphasize) {
-					  draw_triangle(ctx, get_radial_border_point(0, angle), 10, 12, angle);
-					}
-					else {
-						graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
-					}
+                    if (i == tick_to_emphasize) {
+                        draw_triangle(ctx, get_radial_border_point(0, angle), 10, 12, angle);
+                    }
+                    else {
+                        graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
+                    }
                 }
             }
         }
@@ -334,6 +335,7 @@ var ObsidianPreview = (function () {
         }
 
     }
+
     var lookKeys = [
         "CONFIG_COLOR_OUTER_BACKGROUND",
         "CONFIG_COLOR_INNER_BACKGROUND",
@@ -363,12 +365,14 @@ var ObsidianPreview = (function () {
         "CONFIG_COLOR_BATTERY_LOGO",
         "CONFIG_COLOR_WEATHER"
     ];
+
     function getLookKeys(platform) {
         if (platform == "chalk") {
             return chalkLookKeys;
         }
         return lookKeys;
     }
+
     /** Return a string that identifies this look. */
     function lookSignature(platform, config) {
         var keys = getLookKeys(platform);
@@ -380,6 +384,7 @@ var ObsidianPreview = (function () {
         }
         return s;
     }
+
     /** Return a default configuration, that has the look of config. */
     function filterLook(platform, config) {
         var res = defaultConfig(platform);
@@ -390,10 +395,12 @@ var ObsidianPreview = (function () {
         }
         return res;
     }
+
     /** Is this configuration a default configuration? */
     function isDefaultLook(platform, config) {
         return sameLook(platform, defaultConfig(platform), b);
     }
+
     /** Do these two configurations look the same? */
     function sameLook(platform, a, b) {
         var keys = getLookKeys(platform);
@@ -403,6 +410,7 @@ var ObsidianPreview = (function () {
         }
         return true;
     }
+
     function defaultConfig(platform) {
         var COLOR_FALLBACK = PebbleHelper.COLOR_FALLBACK(platform);
         var PBL_IF_ROUND_ELSE = PebbleHelper.PBL_IF_ROUND_ELSE(platform);
@@ -449,6 +457,7 @@ var ObsidianPreview = (function () {
         };
         return cloneConfig(defaults);
     }
+
     function cloneConfig(config) {
         var res = {};
         for (k in config) {
@@ -463,7 +472,7 @@ var ObsidianPreview = (function () {
         isDefaultLook: isDefaultLook,
         lookSignature: lookSignature,
         defaultConfig: defaultConfig,
-        drawPreview: function(config, canvasId, platform) {
+        drawPreview: function (config, canvasId, platform) {
             var first = !(canvasId in configurations);
             platforms[canvasId] = platform;
             configurations[canvasId] = config;
@@ -477,7 +486,7 @@ var ObsidianPreview = (function () {
                         timeout = 10000;
                     }
                     if (i > 15) return;
-                    setTimeout(function(){
+                    setTimeout(function () {
                         drawConfig(canvasId);
                         fontUpdate(i + 1);
                     }, timeout);
