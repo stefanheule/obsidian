@@ -93,7 +93,7 @@ var ObsidianPreview = (function () {
         var graphics_fill_rect = function (ctx, rect) {
             ctx.fillRect(rect.origin.x, rect.origin.y, rect.size.w, rect.size.h);
         };
-        var draw_triangle = function (ctx, outer, width, height, angle) {
+        var draw_triangle = function (ctx, outer, width, height, angle, color) {
             ctx.beginPath();
             ctx.moveTo(outer.x, outer.y);
             ctx.lineTo(outer.x - width / 2, outer.y + height);
@@ -101,18 +101,18 @@ var ObsidianPreview = (function () {
             ctx.closePath();
 
             // Fill the path:
-            graphics_context_set_fill_color(ctx, GColor.Red);
+            graphics_context_set_fill_color(ctx, color);
             ctx.fill();
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_TICKS"]);
             // Stroke the path:
             ctx.lineWidth = 1;
-            graphics_context_set_stroke_color(ctx, GColor.Red);
+            graphics_context_set_stroke_color(ctx, color);
             ctx.stroke();
             graphics_context_set_stroke_color(ctx, config["CONFIG_COLOR_TICKS"]);
         };
 
         config_square = config["CONFIG_SQUARE"];
-        var tick_to_emphasize = config["CONFIG_SECONDS"] == 0 ? -1 : 4;
+        var tick_to_emphasize = config["CONFIG_SECONDS"] == 0 ? -1 : 0;
 
         if (chalk) {
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
@@ -152,7 +152,7 @@ var ObsidianPreview = (function () {
                     }
 
                     if (i == tick_to_emphasize) {
-                        draw_triangle(ctx, get_radial_point(radius, angle), 10, 12, angle);
+                        draw_triangle(ctx, get_radial_point(radius, angle), 10, 12, angle, config["CONFIG_SECONDS"]);
                     }
                     else {
                         graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
@@ -166,7 +166,7 @@ var ObsidianPreview = (function () {
                     var angle = i * TRIG_MAX_ANGLE / 12;
                     var tick_length = 8;
                     if (i == tick_to_emphasize) {
-                        draw_triangle(ctx, get_radial_border_point(0, angle), 10, 12, angle);
+                        draw_triangle(ctx, get_radial_border_point(0, angle), 10, 12, angle, config["CONFIG_SECONDS"]);
                     }
                     else {
                         graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
