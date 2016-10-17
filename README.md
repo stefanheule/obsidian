@@ -109,6 +109,10 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
+**Version 2.6 ()**
+
+- Second hand (mostly implemented by Tamás Iván)
+
 **Version 2.5 (2016-09-22)**
 
 - Optimized for Pebble OS 4.0
@@ -194,6 +198,7 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |         2.0 - 2.1 |                     7 |
 |         2.2 - 2.3 |                     8 |
 |         2.4 - 2.5 |                     9 |
+|               2.6 |                    10 |
 
 ## Contributing
 
@@ -227,3 +232,5 @@ platforms, I modified NUPE2 slightly further to include a smaller font for numbe
 Both modifications are again licenced under the [Open Font Licence](licences/ofl.txt).
 - [Simple.Watch](http://apps.getpebble.com/en_US/application/5551c537c60fc8732d000006)
 - [TH3](http://apps.getpebble.com/en_US/application/5551c4a91113bc93a00000de)
+
+I would also like to thank Tamás Iván who implemented most of the second hand feature.
