@@ -352,10 +352,39 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     }
 #endif
 
+    // minute ticks
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
+    int square_minute_tick = 4;
+    if (config_minute_ticks == 2) {
+        // only relevant minute ticks
+        int start_min_tick = (t->tm_min / 5) * 5;
+        for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
+            int32_t angle = i * TRIG_MAX_ANGLE / 60;
+            if (!config_square) {
+                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                              get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
+            } else {
+                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                                              get_radial_border_point(square_minute_tick, angle), 1);
+            }
+
+        }
+    } else if (config_minute_ticks == 1) {
+        // all minute ticks
+        for (int i = 0; i < 60; ++i) {
+            int32_t angle = i * TRIG_MAX_ANGLE / 60;
+            if (!config_square) {
+                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                              get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
+            } else {
+                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                                              get_radial_border_point(square_minute_tick, angle), 1);
+            }
+        }
+    }
+
     // hour ticks
     uint8_t tick_width = 2;
-    uint16_t sec_radius = 4;
-    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
     if (config_hour_ticks != 3) {
         if (!config_square) {
             for (int i = 0; i < 12; ++i) {
@@ -395,35 +424,6 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                   graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
                                                 get_radial_border_point(tick_length, angle), 4);                    
                 }
-            }
-        }
-    }
-
-    int square_minute_tick = 4;
-    if (config_minute_ticks == 2) {
-        // only relevant minute ticks
-        int start_min_tick = (t->tm_min / 5) * 5;
-        for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
-            int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            if (!config_square) {
-                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                              get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
-            } else {
-                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
-                                              get_radial_border_point(square_minute_tick, angle), 1);
-            }
-
-        }
-    } else if (config_minute_ticks == 1) {
-        // all minute ticks
-        for (int i = 0; i < 60; ++i) {
-            int32_t angle = i * TRIG_MAX_ANGLE / 60;
-            if (!config_square) {
-                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                              get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
-            } else {
-                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
-                                              get_radial_border_point(square_minute_tick, angle), 1);
             }
         }
     }
