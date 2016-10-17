@@ -375,7 +375,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
                 if (i == tick_to_emphasize) {
-                  draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle, COLOR_FALLBACK(GColorRed, GColorBlack));
+                  draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle, COLOR(config_color_seconds));
                 }
                 else {
                   graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
@@ -389,7 +389,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 int32_t angle = i * TRIG_MAX_ANGLE / 12;
                 int tick_length = 8;
                 if (i == tick_to_emphasize) {
-                  draw_pointer(ctx, get_radial_border_point(0, angle), 10, 12, angle, COLOR_FALLBACK(GColorRed, GColorBlack));
+                  draw_pointer(ctx, get_radial_border_point(0, angle), 10, 12, angle, COLOR(config_color_seconds));
                 }
                 else {
                   graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
