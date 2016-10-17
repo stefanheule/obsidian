@@ -112,7 +112,7 @@ var ObsidianPreview = (function () {
         };
 
         config_square = config["CONFIG_SQUARE"];
-        var tick_to_emphasize = config["CONFIG_SECONDS"] == 0 ? -1 : 0;
+        var tick_to_emphasize = config["CONFIG_SECONDS"] == 0 ? -1 : 4;
 
         if (chalk) {
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
@@ -453,7 +453,8 @@ var ObsidianPreview = (function () {
             CONFIG_WEATHER_REFRESH: 30,
             CONFIG_WEATHER_EXPIRATION: 3 * 60,
             CONFIG_SQUARE: +false,
-            CONFIG_SECONDS: 10
+            CONFIG_SECONDS: 0,
+            CONFIG_COLOR_SECONDS: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black)
         };
         return cloneConfig(defaults);
     }

@@ -59,7 +59,8 @@ uint8_t config_color_weather = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8
 uint16_t config_weather_refresh = 30;
 uint16_t config_weather_expiration = 3*60;
 uint8_t config_square = false;
-uint8_t config_seconds = 10;  // 5, 10, 15, 20, 30 or 0 for no seconds
+uint8_t config_seconds = 0;
+uint8_t config_color_seconds = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
 
 
 ////////////////////////////////////////////
@@ -146,12 +147,12 @@ AppTimer * weather_request_timer;
  * Handler for time ticks.
  */
 void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
-    if ((config_seconds == 0) || (tick_time->tm_sec % config_seconds == 0)) {
+    if ((tick_time->tm_sec == 0) || (tick_time->tm_sec % config_seconds == 0)) {
       layer_mark_dirty(layer_background);
+    }
 #ifdef DEBUG_ITER_COUNTER
     debug_iter += 1;
 #endif
-    }
 }
 
 void timer_callback_bluetooth_popup(void *data) {
@@ -232,6 +233,20 @@ void window_unload(Window *window) {
     fonts_unload_custom_font(font_open_sans);
 #endif
     fonts_unload_custom_font(font_nupe);
+}
+
+void subscribe_tick(bool also_unsubscribe) {
+    if (also_unsubscribe) {
+        tick_timer_service_unsubscribe();
+    }
+    TimeUnits unit = MINUTE_UNIT;
+    if (config_seconds != 0) {
+      unit = SECOND_UNIT;
+    }
+#ifdef DEBUG_ITER_COUNTER
+    unit = SECOND_UNIT;
+#endif
+    tick_timer_service_subscribe(unit, handle_second_tick);
 }
 
 /**
@@ -362,16 +377,7 @@ void init() {
     });
     window_stack_push(window, true);
 
-    TimeUnits unit = MINUTE_UNIT;
-    if (config_seconds != 0) {
-      unit = SECOND_UNIT;
-    }
-#ifdef DEBUG_ITER_COUNTER
-    unit = SECOND_UNIT;
-#endif
-    tick_timer_service_subscribe(unit, handle_second_tick);
-    // we can actually just ignore this to not waste battery.  it's fine if battery updates are 1 minute delayed
-//    battery_state_service_subscribe(handle_battery);
+    subscribe_tick(false);
     bluetooth_connection_service_subscribe(handle_bluetooth);
 
     app_message_open(OBSIDIAN_INBOX_SIZE, OBSIDIAN_OUTBOX_SIZE);

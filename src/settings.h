@@ -20,5 +20,6 @@
 void update_weather();
 void inbox_received_handler(DictionaryIterator *iter, void *context);
 void read_config_all();
+void subscribe_tick(bool also_unsubscribe);
 
 #endif //OBSIDIAN_CONFIGURATION_H

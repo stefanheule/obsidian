@@ -117,7 +117,7 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
     dirty |= sync_helper_2(CONFIG_WEATHER_EXPIRATION, iter, &config_weather_expiration);
     dirty |= sync_helper(CONFIG_SQUARE, iter, &config_square);
     dirty |= sync_helper(CONFIG_SECONDS, iter, &config_seconds);
-
+    dirty |= sync_helper(CONFIG_COLOR_SECONDS, iter, &config_color_seconds);
 
     bool ask_for_weather_update = true;
 
@@ -143,6 +143,8 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
         js_ready = true;
     }
     if (dirty) {
+        // make sure we update tick frequency if necessary
+        subscribe_tick(true);
         layer_mark_dirty(layer_background);
     }
     if (ask_for_weather_update) {
@@ -208,6 +210,8 @@ void read_config_all() {
     read_config_2(CONFIG_WEATHER_REFRESH, &config_weather_refresh);
     read_config_2(CONFIG_WEATHER_EXPIRATION, &config_weather_expiration);
     read_config(CONFIG_SQUARE, &config_square);
+    read_config(CONFIG_SECONDS, &config_seconds);
+    read_config(CONFIG_COLOR_SECONDS, &config_color_seconds);
 
 #ifdef DEBUG_SQUARE
     config_square = true;

@@ -180,13 +180,20 @@
         <label class="item">
           Refresh Second Hand
           <select id='CONFIG_SECONDS' dir='rtl' class="item-select">
-            <option class="item-select-option" value="5">In every 5 seconds</option>
-            <option class="item-select-option" value="10">In every 10 seconds</option>
-            <option class="item-select-option" value="15">In every 15 seconds</option>
-            <option class="item-select-option" value="20">In every 20 seconds</option>
-            <option class="item-select-option" value="30">In every 30 seconds</option>
             <option class="item-select-option" value="0">Never</option>
+            <option class="item-select-option" value="5">Every 5 seconds</option>
+            <option class="item-select-option" value="10">Every 10 seconds</option>
+            <option class="item-select-option" value="15">Every 15 seconds</option>
+            <option class="item-select-option" value="20">Every 20 seconds</option>
+            <option class="item-select-option" value="30">Every 30 seconds</option>
           </select>
+        </label>
+      </div>
+
+      <div class='item-container-content'>
+        <label class='item'>
+          Second Hand Color
+          <input id='CONFIG_COLOR_SECONDS' type='text' class='item-color item-color-normal'>
         </label>
       </div>
 
@@ -597,7 +604,8 @@
       "CONFIG_WEATHER_REFRESH": 35,
       "CONFIG_WEATHER_EXPIRATION": 36,
       "CONFIG_SQUARE": 37,
-      "CONFIG_SECONDS": 38
+      "CONFIG_SECONDS": 38,
+      "CONFIG_COLOR_SECONDS": 39
     };
 
     // store settings

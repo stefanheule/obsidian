@@ -44,7 +44,7 @@ Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://stefanheule.com/obsidian/config/9/index.html';
     //url = 'https://rawgit.com/stefanheule/obsidian/feature-square/config/index.html';
 
-    //url = 'https://local.com/obsidian/config/0/index.html';
+    url = 'https://local.com/obsidian/config/0/index.html';
 
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
@@ -99,7 +99,8 @@ Pebble.addEventListener('webviewclosed', function (e) {
         "CONFIG_WEATHER_REFRESH": 35,
         "CONFIG_WEATHER_EXPIRATION": 36,
         "CONFIG_SQUARE": 37,
-        "CONFIG_SECONDS": 38
+        "CONFIG_SECONDS": 38,
+        "CONFIG_COLOR_SECONDS": 39
     };
     var config = {};
     var fullconfig = {};

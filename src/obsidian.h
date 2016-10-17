@@ -66,7 +66,8 @@
 #define CONFIG_WEATHER_EXPIRATION 36
 #define CONFIG_SQUARE 37
 #define CONFIG_SECONDS 38
-#define CONFIG_END_MARKER 38
+#define CONFIG_COLOR_SECONDS 39
+#define CONFIG_END_MARKER 39
 
 // message keys (also duplicated in appinfo.json)
 #define MSG_KEY_WEATHER_TEMP 100
@@ -115,6 +116,7 @@ extern uint16_t config_weather_refresh;
 extern uint16_t config_weather_expiration;
 extern uint8_t config_square;
 extern uint8_t config_seconds;
+extern uint8_t config_color_seconds;
 
 
 ////////////////////////////////////////////
