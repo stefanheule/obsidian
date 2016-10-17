@@ -59,6 +59,7 @@ uint8_t config_color_weather = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8
 uint16_t config_weather_refresh = 30;
 uint16_t config_weather_expiration = 3*60;
 uint8_t config_square = false;
+uint8_t config_seconds = 10;  // 5, 10, 15, 20, 30 or 0 for no seconds
 
 
 ////////////////////////////////////////////
@@ -145,10 +146,12 @@ AppTimer * weather_request_timer;
  * Handler for time ticks.
  */
 void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
-    layer_mark_dirty(layer_background);
+    if ((config_seconds == 0) || (tick_time->tm_sec % config_seconds == 0)) {
+      layer_mark_dirty(layer_background);
 #ifdef DEBUG_ITER_COUNTER
     debug_iter += 1;
 #endif
+    }
 }
 
 void timer_callback_bluetooth_popup(void *data) {
@@ -360,6 +363,9 @@ void init() {
     window_stack_push(window, true);
 
     TimeUnits unit = MINUTE_UNIT;
+    if (config_seconds != 0) {
+      unit = SECOND_UNIT;
+    }
 #ifdef DEBUG_ITER_COUNTER
     unit = SECOND_UNIT;
 #endif

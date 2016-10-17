@@ -92,8 +92,27 @@ var ObsidianPreview = (function () {
         var graphics_fill_rect = function (ctx, rect) {
             ctx.fillRect(rect.origin.x, rect.origin.y, rect.size.w, rect.size.h);
         };
+        var draw_triangle = function (ctx, outer, width, height, angle) {
+			ctx.beginPath();
+			ctx.moveTo(outer.x, outer.y);
+			ctx.lineTo(outer.x-width/2, outer.y+height);
+			ctx.lineTo(outer.x+width/2, outer.y+height);
+			ctx.closePath();
+
+			// Fill the path:
+			graphics_context_set_fill_color(ctx, GColor.Red);
+			ctx.fill();
+			graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_TICKS"]);
+			// Stroke the path:
+			ctx.lineWidth = 1;
+			graphics_context_set_stroke_color(ctx, GColor.Red);
+			ctx.stroke();
+			graphics_context_set_stroke_color(ctx, config["CONFIG_COLOR_TICKS"]);
+        };
 
         config_square = config["CONFIG_SQUARE"];
+		var tick_to_emphasize = config["CONFIG_SECONDS"] == 0? -1 : 0;
+
         if (chalk) {
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_INNER_BACKGROUND"]);
             graphics_fill_circle(ctx, center, w / 2);
@@ -131,16 +150,26 @@ var ObsidianPreview = (function () {
                         tick_width = 2;
                     }
 
-                    graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
-                        get_radial_point(radius - tick_length, angle),
-                        tick_width);
+					if (i == tick_to_emphasize) {
+					  draw_triangle(ctx, get_radial_point(radius, angle), 10, 12, angle);
+					}
+					else {
+						graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
+							get_radial_point(radius - tick_length, angle),
+							tick_width);
+					}
                 }
             } else {
                 for (var i = 0; i < 12; ++i) {
                     if (config["CONFIG_HOUR_TICKS"] == 2 && (i % 3) != 0) continue;
                     var angle = i * TRIG_MAX_ANGLE / 12;
                     var tick_length = 8;
-                    graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
+					if (i == tick_to_emphasize) {
+					  draw_triangle(ctx, get_radial_border_point(0, angle), 10, 12, angle);
+					}
+					else {
+						graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
+					}
                 }
             }
         }
@@ -415,7 +444,8 @@ var ObsidianPreview = (function () {
             CONFIG_WEATHER_LOCATION_LOCAL: "",
             CONFIG_WEATHER_REFRESH: 30,
             CONFIG_WEATHER_EXPIRATION: 3 * 60,
-            CONFIG_SQUARE: +false
+            CONFIG_SQUARE: +false,
+            CONFIG_SECONDS: 10
         };
         return cloneConfig(defaults);
     }

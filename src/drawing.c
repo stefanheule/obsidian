@@ -15,6 +15,34 @@
 #include "drawing.h"
 #include "obsidian.h"
 
+void draw_pointer(GContext *ctx, GPoint target, int16_t width, int16_t height, int32_t angle, GColor color) {
+  GPoint vertices[3];
+  vertices[0].x = 0;    vertices[0].y = 0;
+  vertices[1].x = -width/2;   vertices[1].y = height;
+  vertices[2].x = width/2;    vertices[2].y = height;
+  GPathInfo T;
+  T.num_points = 3;
+  T.points = vertices;
+  GPath * triangle = gpath_create(&T);
+
+  gpath_rotate_to(triangle, angle);
+  gpath_move_to(triangle, target);
+  
+  // Fill the path:
+  graphics_context_set_fill_color(ctx, color);
+  gpath_draw_filled(ctx, triangle);
+  // Stroke the path:
+  graphics_context_set_stroke_width(ctx, 1);
+  graphics_context_set_stroke_color(ctx, color);
+  gpath_draw_outline(ctx, triangle);
+
+  gpath_destroy(triangle);
+
+  graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
+  graphics_context_set_fill_color(ctx, COLOR(config_color_ticks));
+}
+
+
 #ifdef __COMPILE_OS3
 GRect layer_get_unobstructed_bounds(Layer* layer) {
     return layer_get_bounds(layer);
@@ -192,6 +220,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
+    int16_t tick_to_emphasize = (config_seconds == 0)? -1 : (t->tm_sec % 60) / 5;
+
 #ifdef DEBUG_NICE_TIME
     t->tm_min = 10;
     t->tm_hour = 10;
@@ -324,6 +354,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // hour ticks
     uint8_t tick_width = 2;
+    uint16_t sec_radius = 4;
     graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
     if (config_hour_ticks != 3) {
         if (!config_square) {
@@ -342,17 +373,28 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
                 }
 #endif
-                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                              get_radial_point(radius - tick_length, angle),
-                                              tick_width);
+
+                if (i == tick_to_emphasize) {
+                  draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle, COLOR_FALLBACK(GColorRed, GColorBlack));
+                }
+                else {
+                  graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                                get_radial_point(radius - tick_length, angle),
+                                                tick_width);
+                }
             }
         } else {
             for (int i = 0; i < 12; ++i) {
                 if (config_hour_ticks == 2 && (i % 3) != 0) continue;
                 int32_t angle = i * TRIG_MAX_ANGLE / 12;
                 int tick_length = 8;
-                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
-                                              get_radial_border_point(tick_length, angle), 4);
+                if (i == tick_to_emphasize) {
+                  draw_pointer(ctx, get_radial_border_point(0, angle), 10, 12, angle, COLOR_FALLBACK(GColorRed, GColorBlack));
+                }
+                else {
+                  graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                                                get_radial_border_point(tick_length, angle), 4);                    
+                }
             }
         }
     }

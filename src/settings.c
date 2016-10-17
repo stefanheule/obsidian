@@ -116,6 +116,7 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
     dirty |= sync_helper_2(CONFIG_WEATHER_REFRESH, iter, &config_weather_refresh);
     dirty |= sync_helper_2(CONFIG_WEATHER_EXPIRATION, iter, &config_weather_expiration);
     dirty |= sync_helper(CONFIG_SQUARE, iter, &config_square);
+    dirty |= sync_helper(CONFIG_SECONDS, iter, &config_seconds);
 
 
     bool ask_for_weather_update = true;
