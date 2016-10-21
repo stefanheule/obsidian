@@ -16,30 +16,33 @@
 #include "obsidian.h"
 
 void draw_pointer(GContext *ctx, GPoint target, int16_t width, int16_t height, int32_t angle, GColor color) {
-  GPoint vertices[3];
-  vertices[0].x = 0;    vertices[0].y = 0;
-  vertices[1].x = -width/2;   vertices[1].y = height;
-  vertices[2].x = width/2;    vertices[2].y = height;
-  GPathInfo T;
-  T.num_points = 3;
-  T.points = vertices;
-  GPath * triangle = gpath_create(&T);
+    GPoint vertices[3];
+    vertices[0].x = 0;
+    vertices[0].y = 0;
+    vertices[1].x = -width / 2;
+    vertices[1].y = height;
+    vertices[2].x = width / 2;
+    vertices[2].y = height;
+    GPathInfo T;
+    T.num_points = 3;
+    T.points = vertices;
+    GPath *triangle = gpath_create(&T);
 
-  gpath_rotate_to(triangle, angle);
-  gpath_move_to(triangle, target);
-  
-  // Fill the path:
-  graphics_context_set_fill_color(ctx, color);
-  gpath_draw_filled(ctx, triangle);
-  // Stroke the path:
-  graphics_context_set_stroke_width(ctx, 1);
-  graphics_context_set_stroke_color(ctx, color);
-  gpath_draw_outline(ctx, triangle);
+    gpath_rotate_to(triangle, angle);
+    gpath_move_to(triangle, target);
 
-  gpath_destroy(triangle);
+    // Fill the path:
+    graphics_context_set_fill_color(ctx, color);
+    gpath_draw_filled(ctx, triangle);
+    // Stroke the path:
+    graphics_context_set_stroke_width(ctx, 1);
+    graphics_context_set_stroke_color(ctx, color);
+    gpath_draw_outline(ctx, triangle);
 
-  graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
-  graphics_context_set_fill_color(ctx, COLOR(config_color_ticks));
+    gpath_destroy(triangle);
+
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
+    graphics_context_set_fill_color(ctx, COLOR(config_color_ticks));
 }
 
 
@@ -53,7 +56,7 @@ GRect layer_get_unobstructed_bounds(Layer* layer) {
  * Is something obstructing our layer?
  */
 bool is_obstructed() {
-    Layer* layer = layer_background;
+    Layer *layer = layer_background;
     GRect full = layer_get_bounds(layer);
     GRect partial = layer_get_unobstructed_bounds(layer);
 
@@ -158,7 +161,7 @@ int debug_iter = 0;
 
 /** Array of candidate points to draw the weather string at */
 static GPoint w_points[] = {
-        {0, 0},
+        {0,                            0},
         {10 + PBL_IF_ROUND_ELSE(2, 0), 3},
         {17 + PBL_IF_ROUND_ELSE(3, 0), 7},
         {26 + PBL_IF_ROUND_ELSE(4, 0), 13},
@@ -169,7 +172,7 @@ static GPoint w_points[] = {
 };
 /** Array of candidate points to draw the date string at */
 static GPoint d_points[] = {
-        {0, 16},
+        {0,  16},
         {10, 16 - 3},
         {17, 16 - 7},
         {26, 16 - 13},
@@ -371,17 +374,17 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 }
 #endif
 
-                  graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                                get_radial_point(radius - tick_length, angle),
-                                                tick_width);
+                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                              get_radial_point(radius - tick_length, angle),
+                                              tick_width);
             }
         } else {
             for (int i = 0; i < 12; ++i) {
                 if (config_hour_ticks == 2 && (i % 3) != 0) continue;
                 int32_t angle = i * TRIG_MAX_ANGLE / 12;
                 int tick_length = 8;
-                  graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
-                                                get_radial_border_point(tick_length, angle), 4);                    
+                graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
+                                              get_radial_border_point(tick_length, angle), 4);
             }
         }
     }
@@ -396,9 +399,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
             if (!config_square) {
                 if (i == t->tm_sec % 60) {
-                    draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle, COLOR(config_color_seconds));
-                }
-                else {
+                    draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle,
+                                 COLOR(config_color_seconds));
+                } else {
                     graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
                                                   get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
                 }
@@ -414,9 +417,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
             if (!config_square) {
                 if (i == t->tm_sec % 60) {
-                    draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle, COLOR(config_color_seconds));
-                }
-                else {
+                    draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle,
+                                 COLOR(config_color_seconds));
+                } else {
                     graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
                                                   get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
                 }
@@ -555,7 +558,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         const int w_border = 2;
         const int w_height = 23;
         const int w_x = width / 2;
-        const int w_y = PBL_IF_ROUND_ELSE(36, height/2 - 48);
+        const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - 48);
         GSize weather_size = graphics_text_layout_get_content_size(buffer_1, font_nupe, GRect(0, 0, 300, 300),
                                                                    GTextOverflowModeWordWrap, GTextAlignmentCenter);
         // loop through all points and use the first one that doesn't overlap with the watch hands
@@ -637,7 +640,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 battery.origin.x = 123;
                 battery.origin.y = 7;
             }
-    #ifdef PBL_ROUND
+#ifdef PBL_ROUND
             // determine where we can draw the bluetooth logo without overlap
             GPoint b_center;
             const int b_x = width / 2;
@@ -656,7 +659,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 }
             }
             battery = GRect(b_x + b_center.x - battery.size.w/2, b_y + b_center.y, battery.size.w, battery.size.h);
-    #endif
+#endif
             uint8_t battery_color = config_color_battery_logo;
             if (battery_state.charge_percent <= 10 && !battery_state.is_charging && !battery_state.is_plugged) {
                 battery_color = config_color_battery_10;
@@ -668,7 +671,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             graphics_context_set_stroke_color(ctx, COLOR(battery_color));
             graphics_context_set_fill_color(ctx, COLOR(battery_color));
             graphics_draw_rect(ctx, battery);
-            graphics_fill_rect(ctx, GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4),
+            graphics_fill_rect(ctx,
+                               GRect(battery.origin.x + 2, battery.origin.y + 2, battery_state.charge_percent / 10, 4),
                                0, GCornerNone);
             graphics_draw_line_with_width(ctx, GPoint(battery.origin.x + battery.size.w, battery.origin.y + 2),
                                           GPoint(battery.origin.x + battery.size.w, battery.origin.y + 5), 1);

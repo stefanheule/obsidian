@@ -16,7 +16,7 @@
 #include "settings.h"
 
 
-static void update_weather_helper(void* unused);
+static void update_weather_helper(void *unused);
 
 void set_weather_timer(int timeout_min) {
     const uint32_t timeout_ms = timeout_min * 1000 * 60;
@@ -50,7 +50,7 @@ void update_weather() {
 /**
  * Utility function.
  */
-static void update_weather_helper(void* unused) {
+static void update_weather_helper(void *unused) {
     update_weather();
 }
 
