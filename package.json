@@ -1,0 +1,112 @@
+{
+  "version": "2.6.0",
+  "author": "Stefan Heule",
+  "private": true,
+  "dependencies": {},
+  "keywords": [
+    "pebble-app"
+  ],
+  "pebble": {
+    "sdkVersion": "3",
+    "resources": {
+      "media": [
+        {
+          "menuIcon": true,
+          "type": "png",
+          "name": "IMAGE_MENU_ICON",
+          "file": "images/menu_icon.png"
+        },
+        {
+          "type": "font",
+          "targetPlatforms": [
+            "basalt",
+            "aplite",
+            "diorite"
+          ],
+          "characterRegex": "[0-9:\u00b0a-jzA-IZ\\-]",
+          "name": "NUPE_23",
+          "file": "fonts/nupe2-small.ttf"
+        },
+        {
+          "type": "font",
+          "targetPlatforms": [
+            "chalk"
+          ],
+          "characterRegex": "[0-9:\u00b0a-jzA-IZ\\-]",
+          "name": "NUPE_23",
+          "file": "fonts/nupe2.ttf"
+        },
+        {
+          "type": "raw",
+          "name": "OSWALD_FFONT",
+          "file": "Oswald-Regular.ffont"
+        }
+      ]
+    },
+    "projectType": "native",
+    "uuid": "ef42caba-0c65-4879-ab23-edd2bde68824",
+    "messageKeys": {
+      "CONFIG_WEATHER_REFRESH": 35,
+      "CONFIG_VIBRATE_DISCONNECT": 19,
+      "CONFIG_WEATHER_EXPIRATION": 36,
+      "CONFIG_COLOR_WEATHER": 29,
+      "CONFIG_COLOR_DATE": 10,
+      "MSG_KEY_FETCH_WEATHER": 102,
+      "CONFIG_COLOR_HOUR_HAND": 5,
+      "MSG_KEY_WEATHER_TEMP": 100,
+      "CONFIG_MINUTE_TICKS": 23,
+      "CONFIG_MESSAGE_RECONNECT": 22,
+      "CONFIG_COLOR_BATTERY_BG_20": 14,
+      "CONFIG_WEATHER_UNIT_LOCAL": 31,
+      "CONFIG_COLOR_MINUTE_HAND": 3,
+      "CONFIG_VIBRATE_RECONNECT": 20,
+      "MSG_KEY_WEATHER_ICON": 101,
+      "CONFIG_COLOR_INNER_MINUTE_HAND": 4,
+      "CONFIG_COLOR_BATTERY_LOGO": 12,
+      "CONFIG_COLOR_TICKS": 8,
+      "MSG_KEY_WEATHER_FAILED": 104,
+      "CONFIG_COLOR_BATTERY_30": 25,
+      "CONFIG_WEATHER_MODE_LOCAL": 30,
+      "CONFIG_COLOR_BATTERY_10": 27,
+      "CONFIG_WEATHER_APIKEY_LOCAL": 33,
+      "CONFIG_WEATHER_LOCAL": 28,
+      "CONFIG_WEATHER_SOURCE_LOCAL": 32,
+      "CONFIG_COLOR_BATTERY_20": 26,
+      "CONFIG_BLUETOOTH_LOGO": 18,
+      "CONFIG_BATTERY_LOGO": 11,
+      "CONFIG_COLOR_OUTER_BACKGROUND": 1,
+      "CONFIG_WEATHER_LOCATION_LOCAL": 34,
+      "CONFIG_SECONDS": 38,
+      "CONFIG_COLOR_BLUETOOTH_LOGO": 16,
+      "CONFIG_COLOR_BLUETOOTH_LOGO_2": 17,
+      "CONFIG_COLOR_INNER_BACKGROUND": 2,
+      "CONFIG_COLOR_CIRCLE": 7,
+      "CONFIG_COLOR_BATTERY_BG_30": 13,
+      "CONFIG_COLOR_SECONDS": 39,
+      "CONFIG_SQUARE": 37,
+      "CONFIG_COLOR_INNER_HOUR_HAND": 6,
+      "CONFIG_HOUR_TICKS": 24,
+      "MSG_KEY_JS_READY": 103,
+      "CONFIG_COLOR_DAY_OF_WEEK": 9,
+      "CONFIG_COLOR_BATTERY_BG_10": 15,
+      "CONFIG_MESSAGE_DISCONNECT": 21
+    },
+    "enableMultiJS": false,
+    "displayName": "Obsidian",
+    "watchapp": {
+      "onlyShownOnCommunication": false,
+      "hiddenApp": false,
+      "watchface": true
+    },
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "capabilities": [
+      "configurable"
+    ]
+  },
+  "name": "Obsidian"
+}
