@@ -1,0 +1,6 @@
+[submodule "src/fctx"]
+	path = src/fctx
+	url = git@github.com:jrmobley/pebble-fctx.git
+[submodule "tools/fctx-compiler"]
+	path = tools/fctx-compiler
+	url = git@github.com:jrmobley/pebble-fctx-compiler.git
