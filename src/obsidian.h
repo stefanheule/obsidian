@@ -17,6 +17,10 @@
 
 #include <pebble.h>
 
+// fctx headers
+#include "fctx/include/fctx.h"
+#include "fctx/include/ffont.h"
+
 // I don't know how to pass parameters to the compiler, so I'm using this file
 // for various configurations
 #include "config.h"
@@ -139,6 +143,8 @@ extern GFont font_nupe;
 #ifdef PBL_ROUND
 extern GFont font_system_24px_bold;
 #endif
+extern FFont* font_main;
+
 extern bool show_bluetooth_popup;
 extern AppTimer *timer_bluetooth_popup;
 

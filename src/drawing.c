@@ -591,8 +591,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         }
 
         w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
-        graphics_context_set_text_color(ctx, COLOR(config_color_weather));
-        graphics_draw_text(ctx, buffer_1, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+
+        FContext fctx;
+        fctx_init_context(&fctx, ctx);
+        fctx_set_fill_color(&fctx, COLOR(config_color_weather));
+        fctx_set_text_em_height(&fctx, font_main, 18);
+        fctx_draw_string(&fctx, buffer_1, font_main, GTextAlignmentCenter, FTextAnchorBaseline);
+//        graphics_context_set_text_color(ctx, COLOR(config_color_weather));
+//        graphics_draw_text(ctx, buffer_1, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
 
     // bluetooth status

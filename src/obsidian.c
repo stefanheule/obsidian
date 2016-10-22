@@ -95,6 +95,7 @@ GFont font_nupe;
 #ifdef PBL_ROUND
 GFont font_system_24px_bold;
 #endif
+FFont* font_main;
 
 /** Is the bluetooth popup current supposed to be shown? */
 bool show_bluetooth_popup;
@@ -219,6 +220,7 @@ void window_load(Window *window) {
     font_system_24px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
 #endif
     font_nupe = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_NUPE_23));
+    font_main = ffont_create_from_resource(RESOURCE_ID_OSWALD_FFONT);
 
     // initialize
     show_bluetooth_popup = false;
@@ -233,6 +235,7 @@ void window_unload(Window *window) {
     fonts_unload_custom_font(font_open_sans);
 #endif
     fonts_unload_custom_font(font_nupe);
+    ffont_destroy(font_main);
 }
 
 void subscribe_tick(bool also_unsubscribe) {

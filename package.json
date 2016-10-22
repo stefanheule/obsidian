@@ -2,7 +2,9 @@
   "version": "2.6.0",
   "author": "Stefan Heule",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "pebble-fctx": "^1.6.1"
+  },
   "keywords": [
     "pebble-app"
   ],
@@ -23,7 +25,7 @@
             "aplite",
             "diorite"
           ],
-          "characterRegex": "[0-9:\u00b0a-jzA-IZ\\-]",
+          "characterRegex": "[0-9:°a-jzA-IZ\\-]",
           "name": "NUPE_23",
           "file": "fonts/nupe2-small.ttf"
         },
@@ -32,7 +34,7 @@
           "targetPlatforms": [
             "chalk"
           ],
-          "characterRegex": "[0-9:\u00b0a-jzA-IZ\\-]",
+          "characterRegex": "[0-9:°a-jzA-IZ\\-]",
           "name": "NUPE_23",
           "file": "fonts/nupe2.ttf"
         },
