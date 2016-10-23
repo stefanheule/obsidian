@@ -526,17 +526,11 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
-    graphics_context_set_text_color(ctx, COLOR(config_color_day_of_week));
-//    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), day_pos,
-//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-//                       NULL);
-    draw_centered_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 16);
+    draw_centered_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 20);
 #endif
-    graphics_context_set_text_color(ctx, COLOR(config_color_date));
-//    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos,
-//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-//                       NULL);
-    draw_centered_string(&fctx, buffer_1, date_pos.origin, font_main, COLOR(config_color_date), 16);
+    GPoint tmp = date_pos.origin;
+//    tmp.y -= 10;
+    draw_centered_string(&fctx, buffer_1, tmp, font_main, COLOR(config_color_date), 20);
 
     // weather information
     bool weather_is_on = config_weather_refresh > 0;

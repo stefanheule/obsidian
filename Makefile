@@ -120,5 +120,6 @@ updated_config:
 font_build:
 	node_modules/pebble-fctx-compiler/fctx-compiler.js -r "[\"1-9]" resources/fonts/Meteocons.svg
 	node_modules/pebble-fctx-compiler/fctx-compiler.js -r "[0-9a-zA-Z.:\-/° ]" resources/fonts/Oswald-Medium.svg
+	node_modules/pebble-fctx-compiler/fctx-compiler.js -r "[0-9a-zA-Z.:\-/° ]" resources/fonts/Teko-Regular.svg
 
 .PHONY: all deploy build build_quiet config log resources install_emulator install_deploy menu_icon screenshots screenshot screenshot_config write_header clean clean_header

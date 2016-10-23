@@ -221,7 +221,7 @@ void window_load(Window *window) {
     font_system_24px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
 #endif
     font_nupe = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_NUPE_23));
-    font_main = ffont_create_from_resource(RESOURCE_ID_OSWALD_FFONT);
+    font_main = ffont_create_from_resource(RESOURCE_ID_MAIN_FFONT);
     font_weather = ffont_create_from_resource(RESOURCE_ID_WEATHER_FFONT);
 
     // initialize

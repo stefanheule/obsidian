@@ -40,8 +40,8 @@
         },
         {
           "type": "raw",
-          "name": "OSWALD_FFONT",
-          "file": "Oswald-Medium.ffont"
+          "name": "MAIN_FFONT",
+          "file": "Teko-Regular.ffont"
         },
         {
           "type": "raw",
