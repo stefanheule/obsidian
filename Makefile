@@ -118,6 +118,7 @@ updated_config:
 	src/scripts/updated_config.sh
 
 font_build:
-	tools/fctx-compiler/fctx-compiler.js -r "[0-9a-zA-Z.:\-/]" resources/fonts/Oswald-Regular.svg
+	node_modules/pebble-fctx-compiler/fctx-compiler.js -r "[0-9a-zA-Z.:\-/°]" resources/fonts/Oswald-Regular.svg
+	node_modules/pebble-fctx-compiler/fctx-compiler.js -r "[0-9a-zA-Z.:\-/°]" resources/fonts/Oswald-Medium.svg
 
 .PHONY: all deploy build build_quiet config log resources install_emulator install_deploy menu_icon screenshots screenshot screenshot_config write_header clean clean_header

@@ -41,7 +41,7 @@
         {
           "type": "raw",
           "name": "OSWALD_FFONT",
-          "file": "Oswald-Regular.ffont"
+          "file": "Oswald-Medium.ffont"
         }
       ]
     },
@@ -110,5 +110,8 @@
       "configurable"
     ]
   },
-  "name": "Obsidian"
+  "name": "Obsidian",
+  "devDependencies": {
+    "pebble-fctx-compiler": "^1.2.1"
+  }
 }

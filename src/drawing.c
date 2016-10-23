@@ -181,6 +181,22 @@ static GPoint d_points[] = {
         {33, 16 - 32},
         {33, 16 - 39},
 };
+
+void draw_centered_string(FContext *fctx, char* str, GPoint position, GColor color) {
+    fctx_begin_fill(fctx);
+    fctx_set_fill_color(fctx, color);
+    fctx_set_color_bias(fctx, 0);
+    fctx_set_pivot(fctx, FPointZero);
+    FPoint pos;
+    pos.x = INT_TO_FIXED(position.x + width / 2);
+    pos.y = INT_TO_FIXED(position.y + 5);
+    fctx_set_offset(fctx, pos);
+    fctx_set_rotation(fctx, 0);
+    fctx_set_text_em_height(fctx, font_main, 16);
+    fctx_draw_string(fctx, str, font_main, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_end_fill(fctx);
+}
+
 #ifdef PBL_ROUND
 /** Array of candidate points to draw the battery information */
 static GPoint b_points[] = {
@@ -198,6 +214,11 @@ static GPoint b_points[] = {
  * Update procedure for the background
  */
 void background_update_proc(Layer *layer, GContext *ctx) {
+
+    // initialize fctx
+    FContext fctx;
+    fctx_init_context(&fctx, ctx);
+
 //    APP_LOG(APP_LOG_LEVEL_DEBUG, "drawing...");
 
     // update bounds
@@ -506,14 +527,16 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
     graphics_context_set_text_color(ctx, COLOR(config_color_day_of_week));
-    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), day_pos,
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
-    graphics_context_set_text_color(ctx, COLOR(config_color_date));
+//    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), day_pos,
+//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+//                       NULL);
+    draw_centered_string(&fctx, buffer_2, day_pos.origin, COLOR(config_color_day_of_week));
 #endif
-    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos,
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
+    graphics_context_set_text_color(ctx, COLOR(config_color_date));
+//    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos,
+//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+//                       NULL);
+    draw_centered_string(&fctx, buffer_1, date_pos.origin, COLOR(config_color_date));
 
     // weather information
     bool weather_is_on = config_weather_refresh > 0;
@@ -589,17 +612,31 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         if (!found) {
             w_center = w_points[0];
         }
-
         w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
+//        FContext fctx;
+//        fctx_init_context(&fctx, ctx);
+//        fctx_begin_fill(&fctx);
+////        fctx_set_fill_color(&fctx, COLOR(config_color_weather));
+//        fctx_set_color_bias(&fctx, 0);
+//        fctx_set_fill_color(&fctx, GColorBlack);
+//        fctx_set_pivot(&fctx, FPointZero);
+//        FPoint pos;
+//        pos.x = w_pos.origin.x;
+//        pos.y = w_pos.origin.y;
+//        fctx_set_offset(&fctx, pos);
+//        fctx_set_rotation(&fctx, 0);
+//        fctx_set_text_em_height(&fctx, font_main, 18);
+//        fctx_draw_string(&fctx, buffer_1, font_main, GTextAlignmentCenter, FTextAnchorBaseline);
+//        fctx_end_fill(&fctx);
+//        fctx_deinit_context(&fctx);
 
-        FContext fctx;
-        fctx_init_context(&fctx, ctx);
-        fctx_set_fill_color(&fctx, COLOR(config_color_weather));
-        fctx_set_text_em_height(&fctx, font_main, 18);
-        fctx_draw_string(&fctx, buffer_1, font_main, GTextAlignmentCenter, FTextAnchorBaseline);
+        draw_centered_string(&fctx, buffer_1, w_pos.origin, COLOR(config_color_weather));
+
 //        graphics_context_set_text_color(ctx, COLOR(config_color_weather));
 //        graphics_draw_text(ctx, buffer_1, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
+
+    snprintf(buffer_1, 5, "21");
 
     // bluetooth status
     if (!bluetooth && config_bluetooth_logo) {
@@ -687,4 +724,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // draw the bluetooth popup
     bluetooth_popup(ctx, bluetooth);
+
+    // end fctx
+    fctx_deinit_context(&fctx);
 }
+
