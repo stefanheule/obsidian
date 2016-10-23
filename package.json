@@ -2,9 +2,6 @@
   "version": "2.6.0",
   "author": "Stefan Heule",
   "private": true,
-  "dependencies": {
-    "pebble-fctx": "^1.6.1"
-  },
   "keywords": [
     "pebble-app"
   ],
@@ -41,12 +38,12 @@
         {
           "type": "raw",
           "name": "MAIN_FFONT",
-          "file": "Teko-Regular.ffont"
+          "file": "OpenSans-CondensedBold.ffont"
         },
         {
           "type": "raw",
           "name": "WEATHER_FFONT",
-          "file": "Meteocons.ffont"
+          "file": "nupe2.ffont"
         }
       ]
     },
@@ -118,5 +115,8 @@
   "name": "Obsidian",
   "devDependencies": {
     "pebble-fctx-compiler": "^1.2.1"
+  },
+  "dependencies": {
+    "pebble-fctx": "^1.6.2"
   }
 }

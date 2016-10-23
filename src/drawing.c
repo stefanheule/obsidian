@@ -526,11 +526,13 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
-    draw_centered_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 20);
+    bool big = true;
+    if (!big)
+    draw_centered_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 18);
 #endif
     GPoint tmp = date_pos.origin;
-//    tmp.y -= 10;
-    draw_centered_string(&fctx, buffer_1, tmp, font_main, COLOR(config_color_date), 20);
+    if (big) tmp.y -= 10;
+    draw_centered_string(&fctx, buffer_1, tmp, font_main, COLOR(config_color_date), big ? 24 : 18);
 
     // weather information
     bool weather_is_on = config_weather_refresh > 0;
@@ -549,11 +551,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #ifdef PBL_ROUND
             if (!show_weather) {
                 snprintf(buffer_1, 10, "z");
+                snprintf(buffer_2, 10, "");
             } else if (!bluetooth && config_bluetooth_logo) {
-                snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);
+                snprintf(buffer_1, 10, "z%c", weather.icon);
+                snprintf(buffer_2, 10, " %d", temp);
             } else {
 #endif
-            snprintf(buffer_1, 10, "!%c%d", weather.icon, temp);
+            snprintf(buffer_1, 10, "%c", weather.icon);
+            snprintf(buffer_2, 10, " %d", temp);
 #ifdef PBL_ROUND
             }
 #endif
@@ -561,11 +566,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #ifdef PBL_ROUND
             if (!show_weather) {
                 snprintf(buffer_1, 10, "z");
+                snprintf(buffer_2, 10, "");
             } else if (!bluetooth && config_bluetooth_logo) {
-                snprintf(buffer_1, 10, "z%c%d°", weather.icon, temp);
+                snprintf(buffer_1, 10, "z%c", weather.icon);
+                snprintf(buffer_1, 10, " %d°", temp);
             } else {
 #endif
-            snprintf(buffer_1, 10, "!%c%d°", weather.icon, temp);
+            snprintf(buffer_1, 10, "%c", weather.icon);
+            snprintf(buffer_2, 10, " %d°", temp);
 #ifdef PBL_ROUND
             }
 #endif
@@ -607,7 +615,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             w_center = w_points[0];
         }
         w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
-        snprintf(buffer_1, 10, "8");
+        snprintf(buffer_1, 10, "A");
         draw_centered_string(&fctx, buffer_1, w_pos.origin, font_weather, COLOR(config_color_weather), 24);
     }
 
