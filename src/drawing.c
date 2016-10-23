@@ -182,7 +182,7 @@ static GPoint d_points[] = {
         {33, 16 - 39},
 };
 
-void draw_centered_string(FContext *fctx, char* str, GPoint position, FFont* font, GColor color, uint8_t size) {
+void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor color, uint8_t size, bool center) {
     fctx_begin_fill(fctx);
     fctx_set_fill_color(fctx, color);
     fctx_set_color_bias(fctx, 0);
@@ -193,8 +193,14 @@ void draw_centered_string(FContext *fctx, char* str, GPoint position, FFont* fon
     fctx_set_offset(fctx, pos);
     fctx_set_rotation(fctx, 0);
     fctx_set_text_em_height(fctx, font, size);
-    fctx_draw_string(fctx, str, font, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_draw_string(fctx, str, font, center ? GTextAlignmentCenter : GTextAlignmentLeft, FTextAnchorCapTop);
     fctx_end_fill(fctx);
+}
+
+fixed_t string_width(FContext *fctx, char* str, FFont* font, uint8_t size) {
+    if (str[0] == 0) return 0;
+    fctx_set_text_em_height(fctx, font, size);
+    return FIXED_TO_INT(fctx_string_width(fctx, str, font));
 }
 
 #ifdef PBL_ROUND
@@ -528,11 +534,11 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #ifndef DEBUG_NO_DATE
     bool big = true;
     if (!big)
-    draw_centered_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 18);
+        draw_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 18, true);
 #endif
     GPoint tmp = date_pos.origin;
     if (big) tmp.y -= 10;
-    draw_centered_string(&fctx, buffer_1, tmp, font_main, COLOR(config_color_date), big ? 24 : 18);
+    draw_string(&fctx, buffer_1, tmp, font_main, COLOR(config_color_date), big ? 24 : 18, true);
 
     // weather information
     bool weather_is_on = config_weather_refresh > 0;
@@ -551,14 +557,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #ifdef PBL_ROUND
             if (!show_weather) {
                 snprintf(buffer_1, 10, "z");
-                snprintf(buffer_2, 10, "");
+                buffer_2[0] = 0;
             } else if (!bluetooth && config_bluetooth_logo) {
                 snprintf(buffer_1, 10, "z%c", weather.icon);
-                snprintf(buffer_2, 10, " %d", temp);
+                snprintf(buffer_2, 10, "%d", temp);
             } else {
 #endif
             snprintf(buffer_1, 10, "%c", weather.icon);
-            snprintf(buffer_2, 10, " %d", temp);
+            snprintf(buffer_2, 10, "%d", temp);
 #ifdef PBL_ROUND
             }
 #endif
@@ -566,26 +572,31 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #ifdef PBL_ROUND
             if (!show_weather) {
                 snprintf(buffer_1, 10, "z");
-                snprintf(buffer_2, 10, "");
+                buffer_2[0] = 0;
             } else if (!bluetooth && config_bluetooth_logo) {
                 snprintf(buffer_1, 10, "z%c", weather.icon);
-                snprintf(buffer_1, 10, " %d°", temp);
+                snprintf(buffer_1, 10, "%d°", temp);
             } else {
 #endif
             snprintf(buffer_1, 10, "%c", weather.icon);
-            snprintf(buffer_2, 10, " %d°", temp);
+            snprintf(buffer_2, 10, "%d°", temp);
 #ifdef PBL_ROUND
             }
 #endif
         }
         GPoint w_center;
-        GRect w_pos;
         const int w_border = 2;
-        const int w_height = 23;
         const int w_x = width / 2;
         const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - 48);
-        GSize weather_size = graphics_text_layout_get_content_size(buffer_1, font_nupe, GRect(0, 0, 300, 300),
-                                                                   GTextOverflowModeWordWrap, GTextAlignmentCenter);
+
+        const int w_font_size2 = 17;
+        const int w_font_size1 = w_font_size2+5;
+        const int w_height = w_font_size2;
+        const int w_w1 = string_width(&fctx, buffer_1, font_weather, w_font_size1);
+        const int w_w2 = string_width(&fctx, buffer_2, font_main, w_font_size2);
+        const int w_w = w_w1 + w_w2;
+
+        GSize weather_size = GSize(w_w, w_height);
         // loop through all points and use the first one that doesn't overlap with the watch hands
         for (i = 0; i < 1 + (ARRAY_LENGTH(w_points) - 1) * 2; i++) {
 //            i = debug_iter % ARRAY_LENGTH(w_points);
@@ -597,14 +608,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 //            break;
             if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
                                       GPoint(w_x + w_center.x - weather_size.w / 2 - w_border,
-                                             w_y + w_center.y - w_border),
+                                             w_y + w_center.y),
                                       GPoint(w_x + w_center.x + weather_size.w / 2 + w_border,
-                                             w_y + w_center.y + w_height + w_border))) {
-                // show bounding box
-//                graphics_draw_rect(ctx, GRect(w_x + w_center.x - weather_size.w / 2 - w_border,
-//                                              w_y + w_center.y - w_border,
-//                                              weather_size.w+2*w_border,
-//                                              weather_size.h+2*w_border));
+                                             w_y + w_center.y + w_height + 2 * w_border))) {
                 found = true;
                 break;
             }
@@ -614,9 +620,16 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         if (!found) {
             w_center = w_points[0];
         }
-        w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
-        snprintf(buffer_1, 10, "A");
-        draw_centered_string(&fctx, buffer_1, w_pos.origin, font_weather, COLOR(config_color_weather), 24);
+        GPoint pos1 = GPoint(w_center.x - w_w / 2, w_y + w_center.y + 2);
+        GPoint pos2 = GPoint(w_center.x - w_w / 2 + w_w1, w_y + w_center.y);
+        draw_string(&fctx, buffer_1, pos1, font_weather, COLOR(config_color_weather), w_font_size1, false);
+        draw_string(&fctx, buffer_2, pos2, font_main, COLOR(config_color_weather), w_font_size2, false);
+
+//        // show bounding box
+//        graphics_draw_rect(ctx, GRect(w_x + w_center.x - weather_size.w / 2 - w_border,
+//                                      w_y + w_center.y,
+//                                      weather_size.w+2*w_border,
+//                                      weather_size.h+2*w_border));
     }
 
     snprintf(buffer_1, 5, "21");
