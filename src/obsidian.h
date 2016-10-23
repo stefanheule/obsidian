@@ -144,6 +144,7 @@ extern GFont font_nupe;
 extern GFont font_system_24px_bold;
 #endif
 extern FFont* font_main;
+extern FFont* font_weather;
 
 extern bool show_bluetooth_popup;
 extern AppTimer *timer_bluetooth_popup;

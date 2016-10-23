@@ -42,6 +42,11 @@
           "type": "raw",
           "name": "OSWALD_FFONT",
           "file": "Oswald-Medium.ffont"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_FFONT",
+          "file": "Meteocons.ffont"
         }
       ]
     },

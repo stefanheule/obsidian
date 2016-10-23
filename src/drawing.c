@@ -182,7 +182,7 @@ static GPoint d_points[] = {
         {33, 16 - 39},
 };
 
-void draw_centered_string(FContext *fctx, char* str, GPoint position, GColor color) {
+void draw_centered_string(FContext *fctx, char* str, GPoint position, FFont* font, GColor color, uint8_t size) {
     fctx_begin_fill(fctx);
     fctx_set_fill_color(fctx, color);
     fctx_set_color_bias(fctx, 0);
@@ -192,8 +192,8 @@ void draw_centered_string(FContext *fctx, char* str, GPoint position, GColor col
     pos.y = INT_TO_FIXED(position.y + 5);
     fctx_set_offset(fctx, pos);
     fctx_set_rotation(fctx, 0);
-    fctx_set_text_em_height(fctx, font_main, 16);
-    fctx_draw_string(fctx, str, font_main, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_set_text_em_height(fctx, font, size);
+    fctx_draw_string(fctx, str, font, GTextAlignmentCenter, FTextAnchorTop);
     fctx_end_fill(fctx);
 }
 
@@ -530,13 +530,13 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 //    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), day_pos,
 //                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
 //                       NULL);
-    draw_centered_string(&fctx, buffer_2, day_pos.origin, COLOR(config_color_day_of_week));
+    draw_centered_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 16);
 #endif
     graphics_context_set_text_color(ctx, COLOR(config_color_date));
 //    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos,
 //                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
 //                       NULL);
-    draw_centered_string(&fctx, buffer_1, date_pos.origin, COLOR(config_color_date));
+    draw_centered_string(&fctx, buffer_1, date_pos.origin, font_main, COLOR(config_color_date), 16);
 
     // weather information
     bool weather_is_on = config_weather_refresh > 0;
@@ -559,7 +559,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);
             } else {
 #endif
-            snprintf(buffer_1, 10, "%c%d", weather.icon, temp);
+            snprintf(buffer_1, 10, "!%c%d", weather.icon, temp);
 #ifdef PBL_ROUND
             }
 #endif
@@ -571,7 +571,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 snprintf(buffer_1, 10, "z%c%d°", weather.icon, temp);
             } else {
 #endif
-            snprintf(buffer_1, 10, "%c%d°", weather.icon, temp);
+            snprintf(buffer_1, 10, "!%c%d°", weather.icon, temp);
 #ifdef PBL_ROUND
             }
 #endif
@@ -613,27 +613,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             w_center = w_points[0];
         }
         w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
-//        FContext fctx;
-//        fctx_init_context(&fctx, ctx);
-//        fctx_begin_fill(&fctx);
-////        fctx_set_fill_color(&fctx, COLOR(config_color_weather));
-//        fctx_set_color_bias(&fctx, 0);
-//        fctx_set_fill_color(&fctx, GColorBlack);
-//        fctx_set_pivot(&fctx, FPointZero);
-//        FPoint pos;
-//        pos.x = w_pos.origin.x;
-//        pos.y = w_pos.origin.y;
-//        fctx_set_offset(&fctx, pos);
-//        fctx_set_rotation(&fctx, 0);
-//        fctx_set_text_em_height(&fctx, font_main, 18);
-//        fctx_draw_string(&fctx, buffer_1, font_main, GTextAlignmentCenter, FTextAnchorBaseline);
-//        fctx_end_fill(&fctx);
-//        fctx_deinit_context(&fctx);
-
-        draw_centered_string(&fctx, buffer_1, w_pos.origin, COLOR(config_color_weather));
-
-//        graphics_context_set_text_color(ctx, COLOR(config_color_weather));
-//        graphics_draw_text(ctx, buffer_1, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+        snprintf(buffer_1, 10, "8");
+        draw_centered_string(&fctx, buffer_1, w_pos.origin, font_weather, COLOR(config_color_weather), 24);
     }
 
     snprintf(buffer_1, 5, "21");
@@ -644,15 +625,6 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         draw_bluetooth_logo(ctx, GPoint(9, 9));
 #endif
     }
-
-    // second hand
-//    GPoint second_hand = get_radial_point_basic(radius, t->tm_sec, 60);
-//    graphics_context_set_stroke_width(ctx, 4);
-//    graphics_context_set_stroke_color(ctx, GColorBlack);
-//    graphics_draw_line(ctx, second_hand, center);
-//    graphics_context_set_stroke_width(ctx, 3);
-//    graphics_context_set_stroke_color(ctx, GColorWhite);
-//    graphics_draw_line(ctx, second_hand, center);
 
     // minute hand
     graphics_context_set_stroke_color(ctx, COLOR(config_color_minute_hand));

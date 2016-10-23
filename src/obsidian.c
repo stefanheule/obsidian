@@ -96,6 +96,7 @@ GFont font_nupe;
 GFont font_system_24px_bold;
 #endif
 FFont* font_main;
+FFont* font_weather;
 
 /** Is the bluetooth popup current supposed to be shown? */
 bool show_bluetooth_popup;
@@ -221,6 +222,7 @@ void window_load(Window *window) {
 #endif
     font_nupe = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_NUPE_23));
     font_main = ffont_create_from_resource(RESOURCE_ID_OSWALD_FFONT);
+    font_weather = ffont_create_from_resource(RESOURCE_ID_WEATHER_FFONT);
 
     // initialize
     show_bluetooth_popup = false;
@@ -236,6 +238,7 @@ void window_unload(Window *window) {
 #endif
     fonts_unload_custom_font(font_nupe);
     ffont_destroy(font_main);
+    ffont_destroy(font_weather);
 }
 
 void subscribe_tick(bool also_unsubscribe) {
