@@ -589,8 +589,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         const int w_x = width / 2;
         const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - 48);
 
-        const int w_font_size2 = 17;
-        const int w_font_size1 = w_font_size2+5;
+        const int w_font_size2 = 18;
+        const int w_font_size1 = w_font_size2 + w_font_size2*10/34;
         const int w_height = w_font_size2;
         const int w_w1 = string_width(&fctx, buffer_1, font_weather, w_font_size1);
         const int w_w2 = string_width(&fctx, buffer_2, font_main, w_font_size2);
