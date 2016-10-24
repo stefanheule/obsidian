@@ -16,26 +16,6 @@
           "file": "images/menu_icon.png"
         },
         {
-          "type": "font",
-          "targetPlatforms": [
-            "basalt",
-            "aplite",
-            "diorite"
-          ],
-          "characterRegex": "[0-9:°a-jzA-IZ\\-]",
-          "name": "NUPE_23",
-          "file": "fonts/nupe2-small.ttf"
-        },
-        {
-          "type": "font",
-          "targetPlatforms": [
-            "chalk"
-          ],
-          "characterRegex": "[0-9:°a-jzA-IZ\\-]",
-          "name": "NUPE_23",
-          "file": "fonts/nupe2.ttf"
-        },
-        {
           "type": "raw",
           "name": "MAIN_FFONT",
           "file": "OpenSans-CondensedBold.ffont"

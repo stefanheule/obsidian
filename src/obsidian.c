@@ -90,11 +90,6 @@ GFont font_open_sans;
 #endif
 
 /** Fonts. */
-GFont font_system_18px_bold;
-GFont font_nupe;
-#ifdef PBL_ROUND
-GFont font_system_24px_bold;
-#endif
 FFont* font_main;
 FFont* font_weather;
 
@@ -213,14 +208,6 @@ void window_load(Window *window) {
     layer_add_child(window_layer, layer_background);
 
     // load fonts
-#ifdef OBSIDIAN_SHOW_NUMBERS
-    font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
-#endif
-    font_system_18px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
-#ifdef PBL_ROUND
-    font_system_24px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
-#endif
-    font_nupe = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_NUPE_23));
     font_main = ffont_create_from_resource(RESOURCE_ID_MAIN_FFONT);
     font_weather = ffont_create_from_resource(RESOURCE_ID_WEATHER_FFONT);
 
@@ -236,7 +223,6 @@ void window_unload(Window *window) {
 #ifdef OBSIDIAN_SHOW_NUMBERS
     fonts_unload_custom_font(font_open_sans);
 #endif
-    fonts_unload_custom_font(font_nupe);
     ffont_destroy(font_main);
     ffont_destroy(font_weather);
 }

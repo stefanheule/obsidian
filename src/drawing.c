@@ -123,10 +123,11 @@ void bluetooth_popup(GContext *ctx, bool connected) {
     graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_fill_rect(ctx, GRect(-10, height - yoffset - 3, width + 20, 50 - 8), 0, GCornersAll);
     graphics_context_set_text_color(ctx, GColorBlack);
-    graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
-                       GRect(PBL_IF_ROUND_ELSE(22, 2), notification_rect.origin.y + 4, 105, 40),
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
+    // TODO
+//    graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
+//                       GRect(PBL_IF_ROUND_ELSE(22, 2), notification_rect.origin.y + 4, 105, 40),
+//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+//                       NULL);
     if (connected) {
         graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorGreen, GColorBlack));
     } else {
@@ -215,6 +216,18 @@ static GPoint b_points[] = {
         {24, 12},
 };
 #endif
+
+void remove_leading_zero(char* buffer, size_t length) {
+    bool last_was_space = true;
+    int i = 0;
+    while (buffer[i] != 0) {
+        if (buffer[i] == '0' && last_was_space) {
+            memcpy(&buffer[i], &buffer[i+1], length - (i + 1));
+        }
+        last_was_space = buffer[i] == ' ';
+        i += 1;
+    }
+}
 
 /**
  * Update procedure for the background
@@ -476,15 +489,21 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // format date strings
     setlocale(LC_ALL, "");
     strftime(buffer_1, sizeof(buffer_1), "%b %d", t);
-    // remove leading zeros
-    if (buffer_1[4] == '0') {
-        memcpy(&buffer_1[4], &buffer_1[5], 2);
-    }
     strftime(buffer_2, sizeof(buffer_2), "%a", t);
+    // remove leading zeros
+    remove_leading_zero(buffer_1, sizeof(buffer_1));
+    remove_leading_zero(buffer_2, sizeof(buffer_1));
+
+    // determine size
+    buffer_2[0] = 0;
+    bool big = buffer_2[0] == 0;
+    const int date_font_size = big ? 22 : 18;
+    const int d_w1 = string_width(&fctx, buffer_2, font_main, date_font_size);
+    const int d_w2 = string_width(&fctx, buffer_1, font_main, date_font_size);
 
     // determine where we can draw the date without overlap
-    const int d_offset = PBL_IF_ROUND_ELSE(20, 15);
-    const int d_height = 21;
+    const int d_offset = PBL_IF_ROUND_ELSE(20, 15) + (big ? -10 : 0);
+    const int d_height = date_font_size;
     const int d_y_start = height / 2;
     bool found = false;
     uint16_t i;
@@ -503,21 +522,18 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         //d_center.y = d_center.y * 7 / 6;
 #endif
         date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
-        GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
-                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
         day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
-        GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
-                                                               GTextOverflowModeWordWrap, GTextAlignmentCenter);
+
         if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(width / 2 + d_center.x - day_size.w / 2 - border,
-                                          d_y_start + d_center.y - border),
-                                   GPoint(width / 2 + d_center.x + day_size.w / 2 + border,
-                                          d_y_start + d_center.y + d_height + border)) ||
+                                   GPoint(width / 2 + d_center.x - d_w1 / 2 - border,
+                                          d_y_start + d_center.y),
+                                   GPoint(width / 2 + d_center.x + d_w1 / 2 + border,
+                                          d_y_start + d_center.y + d_height + 2*border)) ||
               line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(width / 2 + d_center.x - date_size.w / 2 - border,
-                                          d_y_start + d_center.y + d_offset - border),
-                                   GPoint(width / 2 + d_center.x + date_size.w / 2 + border,
-                                          d_y_start + d_center.y + d_height + d_offset + border)))) {
+                                   GPoint(width / 2 + d_center.x - d_w2 / 2 - border,
+                                          d_y_start + d_center.y + d_offset),
+                                   GPoint(width / 2 + d_center.x + d_w2 / 2 + border,
+                                          d_y_start + d_center.y + d_height + d_offset + 2*border)))) {
             found = true;
             break;
         }
@@ -526,19 +542,29 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // this should not happen, but if it does, then use the default position
     if (!found) {
         d_center = d_points[0];
-        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
         day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
+        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
     }
+
+//    // show bounding box
+//    if (!big) {
+//        graphics_draw_rect(ctx, GRect(width / 2 + d_center.x - d_w1 / 2 - border,
+//                                      d_y_start + d_center.y,
+//                                      d_w1 + 2*border,
+//                                      d_height+ 2* border));
+//    }
+//    graphics_draw_rect(ctx, GRect(width / 2 + d_center.x - d_w2 / 2 - border,
+//                                  d_y_start + d_center.y + d_offset,
+//                                  d_w2 + 2*border,
+//                                  d_height+ 2* border));
 
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
-    bool big = true;
-    if (!big)
+    if (!big) {
         draw_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 18, true);
+    }
 #endif
-    GPoint tmp = date_pos.origin;
-    if (big) tmp.y -= 10;
-    draw_string(&fctx, buffer_1, tmp, font_main, COLOR(config_color_date), big ? 24 : 18, true);
+    draw_string(&fctx, buffer_1, date_pos.origin, font_main, COLOR(config_color_date), date_font_size, true);
 
     // weather information
     bool weather_is_on = config_weather_refresh > 0;
@@ -594,7 +620,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         const int w_height = w_font_size2;
         const int w_w1 = string_width(&fctx, buffer_1, font_weather, w_font_size1);
         const int w_w2 = string_width(&fctx, buffer_2, font_main, w_font_size2);
-        const int w_w = w_w1 + w_w2;
+        const int w_w = w_w1 + w_w2 + 1;
 
         GSize weather_size = GSize(w_w, w_height);
         // loop through all points and use the first one that doesn't overlap with the watch hands
@@ -621,7 +647,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             w_center = w_points[0];
         }
         GPoint pos1 = GPoint(w_center.x - w_w / 2, w_y + w_center.y + 2);
-        GPoint pos2 = GPoint(w_center.x - w_w / 2 + w_w1, w_y + w_center.y);
+        GPoint pos2 = GPoint(w_center.x - w_w / 2 + w_w1 + 1, w_y + w_center.y);
         draw_string(&fctx, buffer_1, pos1, font_weather, COLOR(config_color_weather), w_font_size1, false);
         draw_string(&fctx, buffer_2, pos2, font_main, COLOR(config_color_weather), w_font_size2, false);
 

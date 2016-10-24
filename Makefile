@@ -14,7 +14,6 @@ deploy: install_deploy
 build:
 	# copy fonts
 	cp resources/fonts/nupe2.ttf config/fonts/nupe2.ttf
-	cp resources/fonts/nupe2-small.ttf config/fonts/nupe2-small.ttf
 	pebble build
 
 build_os3:
