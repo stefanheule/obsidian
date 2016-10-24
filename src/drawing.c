@@ -198,7 +198,7 @@ void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor
     fctx_end_fill(fctx);
 }
 
-fixed_t string_width(FContext *fctx, char* str, FFont* font, uint8_t size) {
+fixed_t string_width(FContext *fctx, char* str, FFont* font, int size) {
     if (str[0] == 0) return 0;
     fctx_set_text_em_height(fctx, font, size);
     return FIXED_TO_INT(fctx_string_width(fctx, str, font));
@@ -477,6 +477,53 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #ifdef DEBUG_WEATHER_POSITION
     t->tm_hour = 6;
     t->tm_min = (debug_iter + 55) % 60;
+#endif
+
+// determining which numbers/months are widest
+//#define DEBUG_WIDTH_OF_STRINGS
+#ifdef DEBUG_WIDTH_OF_STRINGS
+    int widest_num = 0;
+    int widest_num3 = 0;
+    int widest_num_tmp = 0;
+    int widest_num_tmp3 = 0;
+    for (int i = 0; i < 10; i++) {
+        snprintf(buffer_1, 10, "%d", i);
+        int w = string_width(&fctx, buffer_1, font_main, 18);
+        if (w > widest_num_tmp) {
+            widest_num_tmp = w;
+            widest_num = i;
+        }
+        if (i > 0 && i < 4 && w > widest_num_tmp3) {
+            widest_num_tmp3 = w;
+            widest_num3 = i;
+        }
+    }
+    char* months[] = {
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
+    int widest_month_tmp = 0;
+    char* widest_month = NULL;
+    int widest_month_int = 0;
+    int widest_month_int_tmp = 0;
+    for (int i = 0; i < 12; i++) {
+        snprintf(buffer_1, 10, "%s %d%d", months[i], widest_num3, widest_num);
+        int w = string_width(&fctx, buffer_1, font_main, 18);
+        if (w > widest_month_tmp) {
+            widest_month_tmp = w;
+            widest_month = months[i];
+        }
+
+        snprintf(buffer_1, 10, "%d/%d%d", i+1, widest_num3, widest_num);
+        w = string_width(&fctx, buffer_1, font_main, 18);
+        if (w > widest_month_int_tmp) {
+            widest_month_int_tmp = w;
+            widest_month_int = i + 1;
+        }
+    }
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest number: %d", widest_num); // 0
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest number below 3: %d", widest_num3); // 1
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest month: %s (%d)", widest_month, widest_month_tmp); // May 10 at 51
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest month: %d (%d)", widest_month_int, widest_month_int_tmp); // 10/10 at 40
 #endif
 
     // compute angles
