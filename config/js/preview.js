@@ -152,7 +152,7 @@ var ObsidianPreview = (function () {
                     }
 
                     if (i == tick_to_emphasize) {
-                        draw_triangle(ctx, get_radial_point(radius, angle), 10, 12, angle, config["CONFIG_SECONDS"]);
+                        draw_triangle(ctx, get_radial_point(radius, angle), 10, 12, angle, config["CONFIG_COLOR_SECONDS"]);
                     }
                     else {
                         graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
@@ -166,7 +166,7 @@ var ObsidianPreview = (function () {
                     var angle = i * TRIG_MAX_ANGLE / 12;
                     var tick_length = 8;
                     if (i == tick_to_emphasize) {
-                        draw_triangle(ctx, get_radial_border_point(0, angle), 10, 12, angle, config["CONFIG_SECONDS"]);
+                        draw_triangle(ctx, get_radial_border_point(0, angle), 10, 12, angle, config["CONFIG_COLOR_SECONDS"]);
                     }
                     else {
                         graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
@@ -246,7 +246,7 @@ var ObsidianPreview = (function () {
         ctx.fillText("May 8", w / 2, PBL_IF_ROUND_ELSE(150, 130));
 
         if (config["CONFIG_WEATHER_LOCAL"] || (chalk && config["CONFIG_BLUETOOTH_LOGO"])) {
-            ctx.font = PBL_IF_ROUND_ELSE("23px nupe2", "23px nupe2small");
+            ctx.font = "23px nupe2";
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
             ctx.textAlign = "center";
             var weather = config["CONFIG_WEATHER_LOCAL"] ? (config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°") : "";
