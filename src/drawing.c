@@ -224,7 +224,7 @@ void remove_leading_zero(char* buffer, size_t length) {
         if (buffer[i] == '0' && last_was_space) {
             memcpy(&buffer[i], &buffer[i+1], length - (i + 1));
         }
-        last_was_space = buffer[i] == ' ';
+        last_was_space = buffer[i] == ' ' || buffer[i] == '.' || buffer[i] == '/';
         i += 1;
     }
 }
@@ -471,8 +471,10 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
 #ifdef DEBUG_DATE_POSITION
-    t->tm_hour = 12;
-    t->tm_min = (debug_iter + 55) % 60;
+    t->tm_hour = 5;
+    t->tm_min = (debug_iter + 25) % 60;
+    t->tm_mon = 4;
+    t->tm_mday = 10;
 #endif
 #ifdef DEBUG_WEATHER_POSITION
     t->tm_hour = 6;
@@ -524,6 +526,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest number below 3: %d", widest_num3); // 1
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest month: %s (%d)", widest_month, widest_month_tmp); // May 10 at 51
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest month: %d (%d)", widest_month_int, widest_month_int_tmp); // 10/10 at 40
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OK width: %d", (int)string_width(&fctx, "May 10", font_main, 20)); // 57
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OK width: %d", (int)string_width(&fctx, "10/10", font_main, 24));
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OK width: %d", (int)string_width(&fctx, "10:10", font_main, 24));
 #endif
 
     // compute angles
@@ -534,17 +539,67 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_angle);
 
     // format date strings
+    char* format_1 = NULL;
+    char* format_2 = NULL;
+    int format = 2;
+    switch(format) {
+        case 0: // Mon // Oct 22 (date)
+            format_1 = "%b %d";
+            format_2 = "%a";
+            break;
+        case 1: // Oct 22 (date)
+            format_1 = "%b %d";
+            break;
+        case 2: // 10/22 (date)
+            format_1 = "%m/%d";
+            break;
+        case 3: // 22.10. (date)
+            format_1 = "%d.%m.";
+            break;
+        case 4: // 22 (date)
+            format_1 = "%d";
+            break;
+        case 5: // Mon 22 (date)
+            format_1 = "%a %d";
+            break;
+        case 6: // Mon (day)
+            format_1 = "%a";
+            break;
+        case 7: // 14:10 (time 24h)
+            format_1 = "%H:%M";
+            break;
+        case 8: // 2:10 (time 12h)
+            format_1 = "%I:%M";
+            break;
+
+    }
+
     setlocale(LC_ALL, "");
-    strftime(buffer_1, sizeof(buffer_1), "%b %d", t);
-    strftime(buffer_2, sizeof(buffer_2), "%a", t);
+    strftime(buffer_1, sizeof(buffer_1), format_1, t);
+    if (format_2 == NULL) {
+        buffer_2[0] = 0;
+    } else {
+        strftime(buffer_2, sizeof(buffer_2), format_2, t);
+    }
     // remove leading zeros
-    remove_leading_zero(buffer_1, sizeof(buffer_1));
-    remove_leading_zero(buffer_2, sizeof(buffer_1));
+    if (format != 7) {
+        remove_leading_zero(buffer_1, sizeof(buffer_1));
+        remove_leading_zero(buffer_2, sizeof(buffer_1));
+    }
+
+    bool big = buffer_2[0] == 0;
+    int date_font_size = 18;
+    if (big) {
+        if (format == 0) {
+            // Jan 1
+            date_font_size = 20;
+        } else {
+            // other one-line formats
+            date_font_size = 24;
+        }
+    }
 
     // determine size
-    buffer_2[0] = 0;
-    bool big = buffer_2[0] == 0;
-    const int date_font_size = big ? 22 : 18;
     const int d_w1 = string_width(&fctx, buffer_2, font_main, date_font_size);
     const int d_w2 = string_width(&fctx, buffer_1, font_main, date_font_size);
 

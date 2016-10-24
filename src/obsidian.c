@@ -144,7 +144,7 @@ AppTimer * weather_request_timer;
  * Handler for time ticks.
  */
 void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
-    if ((tick_time->tm_sec == 0) || (tick_time->tm_sec % config_seconds == 0)) {
+    if (config_seconds == 0 || (tick_time->tm_sec == 0) || (tick_time->tm_sec % config_seconds == 0)) {
       layer_mark_dirty(layer_background);
     }
 #ifdef DEBUG_ITER_COUNTER

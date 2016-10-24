@@ -29,7 +29,7 @@
 #include "drawing.h"
 #include "geometry.h"
 
-//#define DEBUG_DATE_POSITION
+#define DEBUG_DATE_POSITION
 //#define DEBUG_WEATHER_POSITION
 
 ////////////////////////////////////////////
