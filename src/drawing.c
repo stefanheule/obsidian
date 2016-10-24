@@ -474,6 +474,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     t->tm_hour = 5;
     t->tm_min = (debug_iter + 25) % 60;
     t->tm_mon = 4;
+    t->tm_mon = 10;
     t->tm_mday = 10;
 #endif
 #ifdef DEBUG_WEATHER_POSITION
@@ -541,7 +542,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // format date strings
     char* format_1 = NULL;
     char* format_2 = NULL;
-    int format = 2;
+    int format = 9;
     switch(format) {
         case 0: // Mon // Oct 22 (date)
             format_1 = "%b %d";
@@ -571,7 +572,30 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         case 8: // 2:10 (time 12h)
             format_1 = "%I:%M";
             break;
-
+        case 9: // 2:10 // 10/22 (date/time)
+            format_1 = "%m/%d";
+            format_2 = "%I:%M";
+            break;
+        case 10: // 14:10 // 10/22 (date/time)
+            format_1 = "%m/%d";
+            format_2 = "%H:%M";
+            break;
+        case 11: // Mon // 10/22 (date/time)
+            format_1 = "%m/%d";
+            format_2 = "%a";
+            break;
+        case 12: // 2:10 // 22.10. (date/time)
+            format_1 = "%d.%m.";
+            format_2 = "%I:%M";
+            break;
+        case 13: // 14:10 // 22.10. (date/time)
+            format_1 = "%d.%m.";
+            format_2 = "%H:%M";
+            break;
+        case 14: // Mon // 22.10. (date/time)
+            format_1 = "%d.%m.";
+            format_2 = "%a";
+            break;
     }
 
     setlocale(LC_ALL, "");

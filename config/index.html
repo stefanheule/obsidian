@@ -194,8 +194,8 @@
       <div class="item-container-content">
         <label class="item">
           Date display
-          <select id='CONFIG_DATE' dir='rtl' class="item-select">
-            <option class="item-select-option" value="0">Mon // Oct 22 (date)</option>
+          <select id='CONFIG_DATE_FORMAT' dir='rtl' class="item-select">
+            <option class="item-select-option" value="0">Mon | Oct 22 (date)</option>
             <option class="item-select-option" value="1">Oct 22 (date)</option>
             <option class="item-select-option" value="2">10/22 (date)</option>
             <option class="item-select-option" value="3">22.10. (date)</option>
@@ -204,6 +204,12 @@
             <option class="item-select-option" value="6">Mon (day)</option>
             <option class="item-select-option" value="7">14:10 (time 24h)</option>
             <option class="item-select-option" value="8">2:10 (time 12h)</option>
+            <option class="item-select-option" value="9">2:10 | 10/22 (date/time)</option>
+            <option class="item-select-option" value="10">14:10 | 10/22 (date/time)</option>
+            <option class="item-select-option" value="11">Mon | 10/22 (date)</option>
+            <option class="item-select-option" value="12">2:10 | 22.10. (date/time)</option>
+            <option class="item-select-option" value="13">14:10 | 22.10. (date/time)</option>
+            <option class="item-select-option" value="14">Mon | 22.10. (date)</option>
           </select>
         </label>
       </div>
@@ -623,7 +629,8 @@
       "CONFIG_WEATHER_EXPIRATION": 36,
       "CONFIG_SQUARE": 37,
       "CONFIG_SECONDS": 38,
-      "CONFIG_COLOR_SECONDS": 39
+      "CONFIG_COLOR_SECONDS": 39,
+      "CONFIG_DATE_FORMAT": 40
     };
 
     // store settings
