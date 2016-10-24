@@ -123,10 +123,11 @@ void bluetooth_popup(GContext *ctx, bool connected) {
     graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_fill_rect(ctx, GRect(-10, height - yoffset - 3, width + 20, 50 - 8), 0, GCornersAll);
     graphics_context_set_text_color(ctx, GColorBlack);
-    graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
-                       GRect(PBL_IF_ROUND_ELSE(22, 2), notification_rect.origin.y + 4, 105, 40),
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
+    // TODO
+//    graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
+//                       GRect(PBL_IF_ROUND_ELSE(22, 2), notification_rect.origin.y + 4, 105, 40),
+//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+//                       NULL);
     if (connected) {
         graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorGreen, GColorBlack));
     } else {
@@ -181,6 +182,28 @@ static GPoint d_points[] = {
         {33, 16 - 32},
         {33, 16 - 39},
 };
+
+void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor color, uint8_t size, bool center) {
+    fctx_begin_fill(fctx);
+    fctx_set_fill_color(fctx, color);
+    fctx_set_color_bias(fctx, 0);
+    fctx_set_pivot(fctx, FPointZero);
+    FPoint pos;
+    pos.x = INT_TO_FIXED(position.x + width / 2);
+    pos.y = INT_TO_FIXED(position.y + 5);
+    fctx_set_offset(fctx, pos);
+    fctx_set_rotation(fctx, 0);
+    fctx_set_text_em_height(fctx, font, size);
+    fctx_draw_string(fctx, str, font, center ? GTextAlignmentCenter : GTextAlignmentLeft, FTextAnchorCapTop);
+    fctx_end_fill(fctx);
+}
+
+fixed_t string_width(FContext *fctx, char* str, FFont* font, int size) {
+    if (str[0] == 0) return 0;
+    fctx_set_text_em_height(fctx, font, size);
+    return FIXED_TO_INT(fctx_string_width(fctx, str, font));
+}
+
 #ifdef PBL_ROUND
 /** Array of candidate points to draw the battery information */
 static GPoint b_points[] = {
@@ -194,10 +217,27 @@ static GPoint b_points[] = {
 };
 #endif
 
+void remove_leading_zero(char* buffer, size_t length) {
+    bool last_was_space = true;
+    int i = 0;
+    while (buffer[i] != 0) {
+        if (buffer[i] == '0' && last_was_space) {
+            memcpy(&buffer[i], &buffer[i+1], length - (i + 1));
+        }
+        last_was_space = buffer[i] == ' ' || buffer[i] == '.' || buffer[i] == '/';
+        i += 1;
+    }
+}
+
 /**
  * Update procedure for the background
  */
 void background_update_proc(Layer *layer, GContext *ctx) {
+
+    // initialize fctx
+    FContext fctx;
+    fctx_init_context(&fctx, ctx);
+
 //    APP_LOG(APP_LOG_LEVEL_DEBUG, "drawing...");
 
     // update bounds
@@ -431,12 +471,65 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
 #ifdef DEBUG_DATE_POSITION
-    t->tm_hour = 12;
-    t->tm_min = (debug_iter + 55) % 60;
+    t->tm_hour = 5;
+    t->tm_min = (debug_iter + 25) % 60;
+    t->tm_mon = 4;
+    t->tm_mon = 10;
+    t->tm_mday = 10;
 #endif
 #ifdef DEBUG_WEATHER_POSITION
     t->tm_hour = 6;
     t->tm_min = (debug_iter + 55) % 60;
+#endif
+
+// determining which numbers/months are widest
+//#define DEBUG_WIDTH_OF_STRINGS
+#ifdef DEBUG_WIDTH_OF_STRINGS
+    int widest_num = 0;
+    int widest_num3 = 0;
+    int widest_num_tmp = 0;
+    int widest_num_tmp3 = 0;
+    for (int i = 0; i < 10; i++) {
+        snprintf(buffer_1, 10, "%d", i);
+        int w = string_width(&fctx, buffer_1, font_main, 18);
+        if (w > widest_num_tmp) {
+            widest_num_tmp = w;
+            widest_num = i;
+        }
+        if (i > 0 && i < 4 && w > widest_num_tmp3) {
+            widest_num_tmp3 = w;
+            widest_num3 = i;
+        }
+    }
+    char* months[] = {
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
+    int widest_month_tmp = 0;
+    char* widest_month = NULL;
+    int widest_month_int = 0;
+    int widest_month_int_tmp = 0;
+    for (int i = 0; i < 12; i++) {
+        snprintf(buffer_1, 10, "%s %d%d", months[i], widest_num3, widest_num);
+        int w = string_width(&fctx, buffer_1, font_main, 18);
+        if (w > widest_month_tmp) {
+            widest_month_tmp = w;
+            widest_month = months[i];
+        }
+
+        snprintf(buffer_1, 10, "%d/%d%d", i+1, widest_num3, widest_num);
+        w = string_width(&fctx, buffer_1, font_main, 18);
+        if (w > widest_month_int_tmp) {
+            widest_month_int_tmp = w;
+            widest_month_int = i + 1;
+        }
+    }
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest number: %d", widest_num); // 0
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest number below 3: %d", widest_num3); // 1
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest month: %s (%d)", widest_month, widest_month_tmp); // May 10 at 51
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Widest month: %d (%d)", widest_month_int, widest_month_int_tmp); // 10/10 at 40
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OK width: %d", (int)string_width(&fctx, "May 10", font_main, 20)); // 57
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OK width: %d", (int)string_width(&fctx, "10/10", font_main, 24));
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OK width: %d", (int)string_width(&fctx, "10:10", font_main, 24));
 #endif
 
     // compute angles
@@ -447,17 +540,96 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_angle);
 
     // format date strings
-    setlocale(LC_ALL, "");
-    strftime(buffer_1, sizeof(buffer_1), "%b %d", t);
-    // remove leading zeros
-    if (buffer_1[4] == '0') {
-        memcpy(&buffer_1[4], &buffer_1[5], 2);
+    char* format_1 = NULL;
+    char* format_2 = NULL;
+    int format = 9;
+    switch(format) {
+        case 0: // Mon // Oct 22 (date)
+            format_1 = "%b %d";
+            format_2 = "%a";
+            break;
+        case 1: // Oct 22 (date)
+            format_1 = "%b %d";
+            break;
+        case 2: // 10/22 (date)
+            format_1 = "%m/%d";
+            break;
+        case 3: // 22.10. (date)
+            format_1 = "%d.%m.";
+            break;
+        case 4: // 22 (date)
+            format_1 = "%d";
+            break;
+        case 5: // Mon 22 (date)
+            format_1 = "%a %d";
+            break;
+        case 6: // Mon (day)
+            format_1 = "%a";
+            break;
+        case 7: // 14:10 (time 24h)
+            format_1 = "%H:%M";
+            break;
+        case 8: // 2:10 (time 12h)
+            format_1 = "%I:%M";
+            break;
+        case 9: // 2:10 // 10/22 (date/time)
+            format_1 = "%m/%d";
+            format_2 = "%I:%M";
+            break;
+        case 10: // 14:10 // 10/22 (date/time)
+            format_1 = "%m/%d";
+            format_2 = "%H:%M";
+            break;
+        case 11: // Mon // 10/22 (date/time)
+            format_1 = "%m/%d";
+            format_2 = "%a";
+            break;
+        case 12: // 2:10 // 22.10. (date/time)
+            format_1 = "%d.%m.";
+            format_2 = "%I:%M";
+            break;
+        case 13: // 14:10 // 22.10. (date/time)
+            format_1 = "%d.%m.";
+            format_2 = "%H:%M";
+            break;
+        case 14: // Mon // 22.10. (date/time)
+            format_1 = "%d.%m.";
+            format_2 = "%a";
+            break;
     }
-    strftime(buffer_2, sizeof(buffer_2), "%a", t);
+
+    setlocale(LC_ALL, "");
+    strftime(buffer_1, sizeof(buffer_1), format_1, t);
+    if (format_2 == NULL) {
+        buffer_2[0] = 0;
+    } else {
+        strftime(buffer_2, sizeof(buffer_2), format_2, t);
+    }
+    // remove leading zeros
+    if (format != 7) {
+        remove_leading_zero(buffer_1, sizeof(buffer_1));
+        remove_leading_zero(buffer_2, sizeof(buffer_1));
+    }
+
+    bool big = buffer_2[0] == 0;
+    int date_font_size = 18;
+    if (big) {
+        if (format == 0) {
+            // Jan 1
+            date_font_size = 20;
+        } else {
+            // other one-line formats
+            date_font_size = 24;
+        }
+    }
+
+    // determine size
+    const int d_w1 = string_width(&fctx, buffer_2, font_main, date_font_size);
+    const int d_w2 = string_width(&fctx, buffer_1, font_main, date_font_size);
 
     // determine where we can draw the date without overlap
-    const int d_offset = PBL_IF_ROUND_ELSE(20, 15);
-    const int d_height = 21;
+    const int d_offset = PBL_IF_ROUND_ELSE(20, 15) + (big ? -10 : 0);
+    const int d_height = date_font_size;
     const int d_y_start = height / 2;
     bool found = false;
     uint16_t i;
@@ -476,21 +648,18 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         //d_center.y = d_center.y * 7 / 6;
 #endif
         date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
-        GSize date_size = graphics_text_layout_get_content_size(buffer_1, font_system_18px_bold, date_pos,
-                                                                GTextOverflowModeWordWrap, GTextAlignmentCenter);
         day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
-        GSize day_size = graphics_text_layout_get_content_size(buffer_2, font_system_18px_bold, day_pos,
-                                                               GTextOverflowModeWordWrap, GTextAlignmentCenter);
+
         if (!(line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(width / 2 + d_center.x - day_size.w / 2 - border,
-                                          d_y_start + d_center.y - border),
-                                   GPoint(width / 2 + d_center.x + day_size.w / 2 + border,
-                                          d_y_start + d_center.y + d_height + border)) ||
+                                   GPoint(width / 2 + d_center.x - d_w1 / 2 - border,
+                                          d_y_start + d_center.y),
+                                   GPoint(width / 2 + d_center.x + d_w1 / 2 + border,
+                                          d_y_start + d_center.y + d_height + 2*border)) ||
               line2_rect_intersect(center, hour_hand, center, minute_hand,
-                                   GPoint(width / 2 + d_center.x - date_size.w / 2 - border,
-                                          d_y_start + d_center.y + d_offset - border),
-                                   GPoint(width / 2 + d_center.x + date_size.w / 2 + border,
-                                          d_y_start + d_center.y + d_height + d_offset + border)))) {
+                                   GPoint(width / 2 + d_center.x - d_w2 / 2 - border,
+                                          d_y_start + d_center.y + d_offset),
+                                   GPoint(width / 2 + d_center.x + d_w2 / 2 + border,
+                                          d_y_start + d_center.y + d_height + d_offset + 2*border)))) {
             found = true;
             break;
         }
@@ -499,21 +668,29 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // this should not happen, but if it does, then use the default position
     if (!found) {
         d_center = d_points[0];
-        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
         day_pos = GRect(d_center.x, d_y_start + d_center.y, width, d_height);
+        date_pos = GRect(d_center.x, d_y_start + d_center.y + d_offset, width, d_height);
     }
+
+//    // show bounding box
+//    if (!big) {
+//        graphics_draw_rect(ctx, GRect(width / 2 + d_center.x - d_w1 / 2 - border,
+//                                      d_y_start + d_center.y,
+//                                      d_w1 + 2*border,
+//                                      d_height+ 2* border));
+//    }
+//    graphics_draw_rect(ctx, GRect(width / 2 + d_center.x - d_w2 / 2 - border,
+//                                  d_y_start + d_center.y + d_offset,
+//                                  d_w2 + 2*border,
+//                                  d_height+ 2* border));
 
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
-    graphics_context_set_text_color(ctx, COLOR(config_color_day_of_week));
-    graphics_draw_text(ctx, buffer_2, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), day_pos,
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
-    graphics_context_set_text_color(ctx, COLOR(config_color_date));
+    if (!big) {
+        draw_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 18, true);
+    }
 #endif
-    graphics_draw_text(ctx, buffer_1, PBL_IF_ROUND_ELSE(font_system_24px_bold, font_system_18px_bold), date_pos,
-                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-                       NULL);
+    draw_string(&fctx, buffer_1, date_pos.origin, font_main, COLOR(config_color_date), date_font_size, true);
 
     // weather information
     bool weather_is_on = config_weather_refresh > 0;
@@ -532,11 +709,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #ifdef PBL_ROUND
             if (!show_weather) {
                 snprintf(buffer_1, 10, "z");
+                buffer_2[0] = 0;
             } else if (!bluetooth && config_bluetooth_logo) {
-                snprintf(buffer_1, 10, "z%c%d", weather.icon, temp);
+                snprintf(buffer_1, 10, "z%c", weather.icon);
+                snprintf(buffer_2, 10, "%d", temp);
             } else {
 #endif
-            snprintf(buffer_1, 10, "%c%d", weather.icon, temp);
+            snprintf(buffer_1, 10, "%c", weather.icon);
+            snprintf(buffer_2, 10, "%d", temp);
 #ifdef PBL_ROUND
             }
 #endif
@@ -544,23 +724,31 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #ifdef PBL_ROUND
             if (!show_weather) {
                 snprintf(buffer_1, 10, "z");
+                buffer_2[0] = 0;
             } else if (!bluetooth && config_bluetooth_logo) {
-                snprintf(buffer_1, 10, "z%c%d°", weather.icon, temp);
+                snprintf(buffer_1, 10, "z%c", weather.icon);
+                snprintf(buffer_1, 10, "%d°", temp);
             } else {
 #endif
-            snprintf(buffer_1, 10, "%c%d°", weather.icon, temp);
+            snprintf(buffer_1, 10, "%c", weather.icon);
+            snprintf(buffer_2, 10, "%d°", temp);
 #ifdef PBL_ROUND
             }
 #endif
         }
         GPoint w_center;
-        GRect w_pos;
         const int w_border = 2;
-        const int w_height = 23;
         const int w_x = width / 2;
         const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - 48);
-        GSize weather_size = graphics_text_layout_get_content_size(buffer_1, font_nupe, GRect(0, 0, 300, 300),
-                                                                   GTextOverflowModeWordWrap, GTextAlignmentCenter);
+
+        const int w_font_size2 = 18;
+        const int w_font_size1 = w_font_size2 + w_font_size2*10/34;
+        const int w_height = w_font_size2;
+        const int w_w1 = string_width(&fctx, buffer_1, font_weather, w_font_size1);
+        const int w_w2 = string_width(&fctx, buffer_2, font_main, w_font_size2);
+        const int w_w = w_w1 + w_w2 + 1;
+
+        GSize weather_size = GSize(w_w, w_height);
         // loop through all points and use the first one that doesn't overlap with the watch hands
         for (i = 0; i < 1 + (ARRAY_LENGTH(w_points) - 1) * 2; i++) {
 //            i = debug_iter % ARRAY_LENGTH(w_points);
@@ -572,14 +760,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 //            break;
             if (!line2_rect_intersect(center, hour_hand, center, minute_hand,
                                       GPoint(w_x + w_center.x - weather_size.w / 2 - w_border,
-                                             w_y + w_center.y - w_border),
+                                             w_y + w_center.y),
                                       GPoint(w_x + w_center.x + weather_size.w / 2 + w_border,
-                                             w_y + w_center.y + w_height + w_border))) {
-                // show bounding box
-//                graphics_draw_rect(ctx, GRect(w_x + w_center.x - weather_size.w / 2 - w_border,
-//                                              w_y + w_center.y - w_border,
-//                                              weather_size.w+2*w_border,
-//                                              weather_size.h+2*w_border));
+                                             w_y + w_center.y + w_height + 2 * w_border))) {
                 found = true;
                 break;
             }
@@ -589,11 +772,19 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         if (!found) {
             w_center = w_points[0];
         }
+        GPoint pos1 = GPoint(w_center.x - w_w / 2, w_y + w_center.y + 2);
+        GPoint pos2 = GPoint(w_center.x - w_w / 2 + w_w1 + 1, w_y + w_center.y);
+        draw_string(&fctx, buffer_1, pos1, font_weather, COLOR(config_color_weather), w_font_size1, false);
+        draw_string(&fctx, buffer_2, pos2, font_main, COLOR(config_color_weather), w_font_size2, false);
 
-        w_pos = GRect(w_center.x, w_y + w_center.y, width, 23);
-        graphics_context_set_text_color(ctx, COLOR(config_color_weather));
-        graphics_draw_text(ctx, buffer_1, font_nupe, w_pos, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+//        // show bounding box
+//        graphics_draw_rect(ctx, GRect(w_x + w_center.x - weather_size.w / 2 - w_border,
+//                                      w_y + w_center.y,
+//                                      weather_size.w+2*w_border,
+//                                      weather_size.h+2*w_border));
     }
+
+    snprintf(buffer_1, 5, "21");
 
     // bluetooth status
     if (!bluetooth && config_bluetooth_logo) {
@@ -601,15 +792,6 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         draw_bluetooth_logo(ctx, GPoint(9, 9));
 #endif
     }
-
-    // second hand
-//    GPoint second_hand = get_radial_point_basic(radius, t->tm_sec, 60);
-//    graphics_context_set_stroke_width(ctx, 4);
-//    graphics_context_set_stroke_color(ctx, GColorBlack);
-//    graphics_draw_line(ctx, second_hand, center);
-//    graphics_context_set_stroke_width(ctx, 3);
-//    graphics_context_set_stroke_color(ctx, GColorWhite);
-//    graphics_draw_line(ctx, second_hand, center);
 
     // minute hand
     graphics_context_set_stroke_color(ctx, COLOR(config_color_minute_hand));
@@ -681,4 +863,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // draw the bluetooth popup
     bluetooth_popup(ctx, bluetooth);
+
+    // end fctx
+    fctx_deinit_context(&fctx);
 }
+

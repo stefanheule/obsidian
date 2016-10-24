@@ -100,7 +100,8 @@ Pebble.addEventListener('webviewclosed', function (e) {
         "CONFIG_WEATHER_EXPIRATION": 36,
         "CONFIG_SQUARE": 37,
         "CONFIG_SECONDS": 38,
-        "CONFIG_COLOR_SECONDS": 39
+        "CONFIG_COLOR_SECONDS": 39,
+        "CONFIG_DATE_FORMAT": 40
     };
     var config = {};
     var fullconfig = {};

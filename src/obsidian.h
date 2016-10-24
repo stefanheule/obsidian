@@ -17,6 +17,10 @@
 
 #include <pebble.h>
 
+// fctx headers
+#include <pebble-fctx/fctx.h>
+#include <pebble-fctx/ffont.h>
+
 // I don't know how to pass parameters to the compiler, so I'm using this file
 // for various configurations
 #include "config.h"
@@ -67,7 +71,8 @@
 #define CONFIG_SQUARE 37
 #define CONFIG_SECONDS 38
 #define CONFIG_COLOR_SECONDS 39
-#define CONFIG_END_MARKER 39
+#define CONFIG_DATE_FORMAT 40
+#define CONFIG_END_MARKER 40
 
 // message keys (also duplicated in appinfo.json)
 #define MSG_KEY_WEATHER_TEMP 100
@@ -117,6 +122,7 @@ extern uint16_t config_weather_expiration;
 extern uint8_t config_square;
 extern uint8_t config_seconds;
 extern uint8_t config_color_seconds;
+extern uint8_t config_date_format;
 
 
 ////////////////////////////////////////////
@@ -130,15 +136,9 @@ extern char buffer_2[30];
 extern GPoint center;
 extern int16_t height;
 extern int16_t width;
-#ifdef OBSIDIAN_SHOW_NUMBERS
-/** Open Sans font. */
-extern GFont font_open_sans;
-#endif
-extern GFont font_system_18px_bold;
-extern GFont font_nupe;
-#ifdef PBL_ROUND
-extern GFont font_system_24px_bold;
-#endif
+extern FFont* font_main;
+extern FFont* font_weather;
+
 extern bool show_bluetooth_popup;
 extern AppTimer *timer_bluetooth_popup;
 

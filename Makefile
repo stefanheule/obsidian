@@ -14,7 +14,6 @@ deploy: install_deploy
 build:
 	# copy fonts
 	cp resources/fonts/nupe2.ttf config/fonts/nupe2.ttf
-	cp resources/fonts/nupe2-small.ttf config/fonts/nupe2-small.ttf
 	pebble build
 
 build_os3:
@@ -116,5 +115,9 @@ clean_header:
 
 updated_config:
 	src/scripts/updated_config.sh
+
+font_build:
+	node_modules/pebble-fctx-compiler/fctx-compiler.js -r "[A-Ia-jz]" resources/fonts/nupe2.svg
+	node_modules/pebble-fctx-compiler/fctx-compiler.js -r "[0-9a-zA-Z.:\-/° ]" resources/fonts/OpenSans-CondensedBold.svg
 
 .PHONY: all deploy build build_quiet config log resources install_emulator install_deploy menu_icon screenshots screenshot screenshot_config write_header clean clean_header

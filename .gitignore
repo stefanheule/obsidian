@@ -1,4 +1,5 @@
 build
-CMakeLists.txt
 .lock-waf_linux2_build
 .idea/workspace.xml
+
+node_modules/

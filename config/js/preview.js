@@ -350,7 +350,10 @@ var ObsidianPreview = (function () {
         "CONFIG_COLOR_BATTERY_LOGO",
         "CONFIG_COLOR_BLUETOOTH_LOGO",
         "CONFIG_COLOR_BLUETOOTH_LOGO_2",
-        "CONFIG_COLOR_WEATHER"
+        "CONFIG_COLOR_WEATHER",
+        "CONFIG_COLOR_SECONDS",
+        "CONFIG_SECONDS",
+        "CONFIG_DATE_FORMAT"
     ];
     var chalkLookKeys = [
         "CONFIG_COLOR_INNER_BACKGROUND",
@@ -363,7 +366,10 @@ var ObsidianPreview = (function () {
         "CONFIG_COLOR_DAY_OF_WEEK",
         "CONFIG_COLOR_DATE",
         "CONFIG_COLOR_BATTERY_LOGO",
-        "CONFIG_COLOR_WEATHER"
+        "CONFIG_COLOR_WEATHER",
+        "CONFIG_COLOR_SECONDS",
+        "CONFIG_SECONDS",
+        "CONFIG_DATE_FORMAT"
     ];
 
     function getLookKeys(platform) {
@@ -454,7 +460,8 @@ var ObsidianPreview = (function () {
             CONFIG_WEATHER_EXPIRATION: 3 * 60,
             CONFIG_SQUARE: +false,
             CONFIG_SECONDS: 0,
-            CONFIG_COLOR_SECONDS: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black)
+            CONFIG_COLOR_SECONDS: COLOR_FALLBACK(GColor.JaegerGreen, GColor.Black),
+            CONFIG_DATE_FORMAT: 0
         };
         return cloneConfig(defaults);
     }

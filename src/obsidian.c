@@ -61,6 +61,7 @@ uint16_t config_weather_expiration = 3*60;
 uint8_t config_square = false;
 uint8_t config_seconds = 0;
 uint8_t config_color_seconds = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+uint8_t config_date_format = 0;
 
 
 ////////////////////////////////////////////
@@ -90,11 +91,8 @@ GFont font_open_sans;
 #endif
 
 /** Fonts. */
-GFont font_system_18px_bold;
-GFont font_nupe;
-#ifdef PBL_ROUND
-GFont font_system_24px_bold;
-#endif
+FFont* font_main;
+FFont* font_weather;
 
 /** Is the bluetooth popup current supposed to be shown? */
 bool show_bluetooth_popup;
@@ -147,7 +145,7 @@ AppTimer * weather_request_timer;
  * Handler for time ticks.
  */
 void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
-    if ((tick_time->tm_sec == 0) || (tick_time->tm_sec % config_seconds == 0)) {
+    if (config_seconds == 0 || (tick_time->tm_sec == 0) || (tick_time->tm_sec % config_seconds == 0)) {
       layer_mark_dirty(layer_background);
     }
 #ifdef DEBUG_ITER_COUNTER
@@ -211,14 +209,8 @@ void window_load(Window *window) {
     layer_add_child(window_layer, layer_background);
 
     // load fonts
-#ifdef OBSIDIAN_SHOW_NUMBERS
-    font_open_sans = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_12));
-#endif
-    font_system_18px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
-#ifdef PBL_ROUND
-    font_system_24px_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
-#endif
-    font_nupe = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_NUPE_23));
+    font_main = ffont_create_from_resource(RESOURCE_ID_MAIN_FFONT);
+    font_weather = ffont_create_from_resource(RESOURCE_ID_WEATHER_FFONT);
 
     // initialize
     show_bluetooth_popup = false;
@@ -232,7 +224,8 @@ void window_unload(Window *window) {
 #ifdef OBSIDIAN_SHOW_NUMBERS
     fonts_unload_custom_font(font_open_sans);
 #endif
-    fonts_unload_custom_font(font_nupe);
+    ffont_destroy(font_main);
+    ffont_destroy(font_weather);
 }
 
 void subscribe_tick(bool also_unsubscribe) {
