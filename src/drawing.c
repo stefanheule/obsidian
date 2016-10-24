@@ -438,7 +438,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
             if (!config_square) {
-                if (i == t->tm_sec % 60) {
+                if (i == t->tm_sec % 60 && config_seconds != 0) {
                     draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle,
                                  COLOR(config_color_seconds));
                 } else {
@@ -456,7 +456,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         for (int i = 0; i < 60; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
             if (!config_square) {
-                if (i == t->tm_sec % 60) {
+                if (i == t->tm_sec % 60 && config_seconds != 0) {
                     draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle,
                                  COLOR(config_color_seconds));
                 } else {
