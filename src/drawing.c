@@ -183,7 +183,7 @@ static GPoint d_points[] = {
         {33, 16 - 39},
 };
 
-void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor color, uint8_t size, bool center) {
+void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor color, int size, bool center) {
     fctx_begin_fill(fctx);
     fctx_set_fill_color(fctx, color);
     fctx_set_color_bias(fctx, 0);
@@ -542,8 +542,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // format date strings
     char* format_1 = NULL;
     char* format_2 = NULL;
-    int format = 9;
-    switch(format) {
+    switch(config_date_format) {
         case 0: // Mon // Oct 22 (date)
             format_1 = "%b %d";
             format_2 = "%a";
@@ -606,7 +605,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         strftime(buffer_2, sizeof(buffer_2), format_2, t);
     }
     // remove leading zeros
-    if (format != 7) {
+    if (config_date_format != 7) {
         remove_leading_zero(buffer_1, sizeof(buffer_1));
         remove_leading_zero(buffer_2, sizeof(buffer_1));
     }
@@ -614,7 +613,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     bool big = buffer_2[0] == 0;
     int date_font_size = 18;
     if (big) {
-        if (format == 0) {
+        if (config_date_format == 0) {
             // Jan 1
             date_font_size = 20;
         } else {
