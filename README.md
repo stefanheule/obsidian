@@ -111,6 +111,8 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 **Version 2.6 ()**
 
+- New font and much better font drawing library
+- New date format options (including digital time and larger font)
 - Second hand (mostly implemented by Tamás Iván)
 
 **Version 2.5 (2016-09-22)**

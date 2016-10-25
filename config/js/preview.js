@@ -238,12 +238,83 @@ var ObsidianPreview = (function () {
         graphics_context_set_fill_color(ctx, COLOR(config_color_inner_background));
         graphics_fill_circle(ctx, center, 2 + 0.5);
 
-        ctx.font = PBL_IF_ROUND_ELSE("19px Verdana", "14px Verdana");
         ctx.textAlign = "center";
+
+        var config_date_format = config["CONFIG_DATE_FORMAT"];
+        var format_1 = "";
+        var format_2 = "";
+        switch(config_date_format) {
+            case 0: // Mon // Oct 22 (date)
+                format_1 = "May 29";
+                format_2 = "Mon";
+                break;
+            case 1: // Oct 22 (date)
+                format_1 = "May 28";
+                break;
+            case 2: // 10/22 (date)
+                format_1 = "5/28";
+                break;
+            case 3: // 22.10. (date)
+                format_1 = "28.5.";
+                break;
+            case 4: // 22 (date)
+                format_1 = "28";
+                break;
+            case 5: // Mon 22 (date)
+                format_1 = "Mon 28";
+                break;
+            case 6: // Mon (day)
+                format_1 = "Mon";
+                break;
+            case 7: // 14:10 (time 24h)
+                format_1 = "22:10";
+                break;
+            case 8: // 2:10 (time 12h)
+                format_1 = "10:10";
+                break;
+            case 9: // 2:10 // 10/22 (date/time)
+                format_1 = "5/28";
+                format_2 = "10:10";
+                break;
+            case 10: // 14:10 // 10/22 (date/time)
+                format_1 = "5/28";
+                format_2 = "22:10";
+                break;
+            case 11: // Mon // 10/22 (date/time)
+                format_1 = "5/28";
+                format_2 = "Mon";
+                break;
+            case 12: // 2:10 // 22.10. (date/time)
+                format_1 = "28.5.";
+                format_2 = "10:10";
+                break;
+            case 13: // 14:10 // 22.10. (date/time)
+                format_1 = "28.5.";
+                format_2 = "22:10";
+                break;
+            case 14: // Mon // 22.10. (date/time)
+                format_1 = "28.5.";
+                format_2 = "Mon";
+                break;
+        }
+
+        var big = format_2 == "";
+        var date_font_size = 16;
+        if (big) {
+            if (config_date_format == 1) {
+                date_font_size = 20;
+            } else {
+                date_font_size = 24;
+            }
+        }
+        ctx.font = PBL_IF_ROUND_ELSE(date_font_size + "px 'Open Sans Condensed'", date_font_size + "px 'Open Sans Condensed'");
+
         graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DAY_OF_WEEK"]);
-        ctx.fillText("Sat", w / 2, PBL_IF_ROUND_ELSE(130, 116));
+        if (format_2 != "") {
+            ctx.fillText(format_2, w / 2, PBL_IF_ROUND_ELSE(130, 116));
+        }
         graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DATE"]);
-        ctx.fillText("May 8", w / 2, PBL_IF_ROUND_ELSE(150, 130));
+        ctx.fillText(format_1, w / 2, PBL_IF_ROUND_ELSE(150, 130) - (big ? 6 : 0));
 
         if (config["CONFIG_WEATHER_LOCAL"] || (chalk && config["CONFIG_BLUETOOTH_LOGO"])) {
             ctx.font = "23px nupe2";
