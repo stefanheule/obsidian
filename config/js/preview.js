@@ -299,15 +299,16 @@ var ObsidianPreview = (function () {
         }
 
         var big = format_2 == "";
-        var date_font_size = 16;
+        var base_font_size = PBL_IF_ROUND_ELSE(20, 16);
+        var date_font_size = base_font_size;
         if (big) {
-            if (config_date_format == 1) {
-                date_font_size = 20;
+            if (config_date_format == 1 || config_date_format == 5) {
+                date_font_size = 25;
             } else {
-                date_font_size = 24;
+                date_font_size = 29;
             }
         }
-        ctx.font = PBL_IF_ROUND_ELSE(date_font_size + "px 'Open Sans Condensed'", date_font_size + "px 'Open Sans Condensed'");
+        ctx.font = date_font_size + "px 'Open Sans Condensed'";
 
         graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DAY_OF_WEEK"]);
         if (format_2 != "") {
@@ -316,14 +317,41 @@ var ObsidianPreview = (function () {
         graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_DATE"]);
         ctx.fillText(format_1, w / 2, PBL_IF_ROUND_ELSE(150, 130) - (big ? 6 : 0));
 
-        if (config["CONFIG_WEATHER_LOCAL"] || (chalk && config["CONFIG_BLUETOOTH_LOGO"])) {
-            ctx.font = "23px nupe2";
+        var config_weather = config["CONFIG_WEATHER_LOCAL"];
+        var config_weather_unit = config["CONFIG_WEATHER_UNIT_LOCAL"];
+        var config_bluetooth_logo = config["CONFIG_BLUETOOTH_LOGO"];
+        if (chalk) {
             graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
             ctx.textAlign = "center";
-            var weather = config["CONFIG_WEATHER_LOCAL"] ? (config["CONFIG_WEATHER_UNIT_LOCAL"] == 2 ? "a74°" : "a23°") : "";
-            var weatherStr = (chalk && config["CONFIG_BLUETOOTH_LOGO"] ? "z" : "") + weather;
-            ctx.fillText(weatherStr, w / 2, PBL_IF_ROUND_ELSE(60, 60));
+            ctx.font = "23px nupe2";
+            if (config_weather) {
+                var weatherstr = config_bluetooth_logo ? "za" : "a";
+                var offsetweather = config_bluetooth_logo ? 14 : 11;
+                ctx.fillText(weatherstr, w / 2 - offsetweather, 60);
+                ctx.font = base_font_size + "px 'Open Sans Condensed'";
+                ctx.fillText(config_weather_unit == 2 ? "74°" : "23°", w / 2 + offsetweather, 59);
+            } else {
+                if (config_bluetooth_logo) {
+                    ctx.fillText("z", w / 2, 60);
+                }
+            }
+        } else if (config_weather) {
+            graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
+            ctx.textAlign = "center";
+            ctx.font = "23px nupe2";
+            ctx.fillText("a", w / 2 - 10, 60);
+            ctx.font = base_font_size + "px 'Open Sans Condensed'";
+            ctx.fillText(config_weather_unit == 2 ? "74°" : "23°", w / 2 + 10, 58);
         }
+
+        // if (config_weather || (chalk && config["CONFIG_BLUETOOTH_LOGO"])) {
+        //     ctx.font = "23px nupe2";
+        //     graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
+        //     ctx.textAlign = "center";
+        //     var weather = config_weather ? (config_weather_unit == 2 ? "a74°" : "a23°") : "";
+        //     var weatherStr = (chalk && config["CONFIG_BLUETOOTH_LOGO"] ? "z" : "") + weather;
+        //     ctx.fillText(weatherStr, w / 2, PBL_IF_ROUND_ELSE(60, 60));
+        // }
 
         var config_battery_logo = config["CONFIG_BATTERY_LOGO"];
         var battery_state = {
@@ -348,7 +376,7 @@ var ObsidianPreview = (function () {
                 GPoint(battery.origin.x + battery.size.w + 1, battery.origin.y + 5.5), 1);
         }
 
-        if (!chalk && config["CONFIG_BLUETOOTH_LOGO"]) {
+        if (!chalk && config_bluetooth_logo) {
             var origin = GPoint(9.5, 9.5);
             var BLUETOOTH_LOGO_STEP = 3;
             var config_color_bluetooth_logo_2 = config["CONFIG_COLOR_BLUETOOTH_LOGO_2"];

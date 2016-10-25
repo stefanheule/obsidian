@@ -613,7 +613,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     bool big = buffer_2[0] == 0;
     int date_font_size = 18;
     if (big) {
-        if (config_date_format == 1) {
+        if (config_date_format == 1 || config_date_format == 5) {
             // Jan 1
             date_font_size = 20;
         } else {
