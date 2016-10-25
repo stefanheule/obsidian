@@ -461,8 +461,10 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 
     // draw second hand
     if (config_seconds != 0) {
-        int32_t angle = (t->tm_sec % 60) * TRIG_MAX_ANGLE / 60;
-        draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), PBL_IF_ROUND_ELSE(12, 10),
+        int32_t angle = ((t->tm_sec % 60) - (t->tm_sec % config_seconds)) * TRIG_MAX_ANGLE / 60;
+        GPoint target = config_square ? get_radial_border_point(0, angle) : get_radial_point(
+                radius + PBL_IF_ROUND_ELSE(3, 0), angle);
+        draw_pointer(ctx, target, PBL_IF_ROUND_ELSE(12, 10),
                      PBL_IF_ROUND_ELSE(14, 12), angle, COLOR(config_color_seconds));
     }
 
@@ -737,7 +739,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         const int w_x = width / 2;
         const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - 48);
 
-        const int w_font_size2 = PBL_IF_ROUND_ELSE(18*4/3, 18);
+        const int w_font_size2 = PBL_IF_ROUND_ELSE(18 * 4 / 3, 18);
         int w_font_size1 = w_font_size2 + w_font_size2 * 10 / 34;
         const int w_height = w_font_size2;
         const int w_w1 = string_width(&fctx, buffer_1, font_weather, w_font_size1);

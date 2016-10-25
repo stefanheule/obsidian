@@ -195,7 +195,7 @@ var ObsidianPreview = (function () {
         }
 
         if (config["CONFIG_SECONDS"] != 0) {
-            draw_triangle(ctx, get_radial_point(radius, 0), PBL_IF_ROUND_ELSE(12, 10), PBL_IF_ROUND_ELSE(14, 12), 0, config["CONFIG_COLOR_SECONDS"]);
+            draw_triangle(ctx, config_square ? get_radial_border_point(0, 0) : get_radial_point(radius, 0), PBL_IF_ROUND_ELSE(12, 10), PBL_IF_ROUND_ELSE(14, 12), 0, config["CONFIG_COLOR_SECONDS"]);
         }
 
         // compute angles
