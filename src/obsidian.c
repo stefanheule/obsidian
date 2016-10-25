@@ -60,7 +60,7 @@ uint16_t config_weather_refresh = 30;
 uint16_t config_weather_expiration = 3*60;
 uint8_t config_square = false;
 uint8_t config_seconds = 0;
-uint8_t config_color_seconds = COLOR_FALLBACK(GColorBlackARGB8, GColorBlackARGB8);
+uint8_t config_color_seconds = COLOR_FALLBACK(GColorJaegerGreenARGB8, GColorBlackARGB8);
 uint8_t config_date_format = 0;
 
 
