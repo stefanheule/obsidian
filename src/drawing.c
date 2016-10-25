@@ -198,7 +198,7 @@ void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor
     fctx_end_fill(fctx);
 }
 
-fixed_t string_width(FContext *fctx, char* str, FFont* font, int size) {
+fixed_t string_width(FContext *fctx, char *str, FFont *font, int size) {
     if (str[0] == 0) return 0;
     fctx_set_text_em_height(fctx, font, size);
     return FIXED_TO_INT(fctx_string_width(fctx, str, font));
@@ -217,12 +217,12 @@ static GPoint b_points[] = {
 };
 #endif
 
-void remove_leading_zero(char* buffer, size_t length) {
+void remove_leading_zero(char *buffer, size_t length) {
     bool last_was_space = true;
     int i = 0;
     while (buffer[i] != 0) {
         if (buffer[i] == '0' && last_was_space) {
-            memcpy(&buffer[i], &buffer[i+1], length - (i + 1));
+            memcpy(&buffer[i], &buffer[i + 1], length - (i + 1));
         }
         last_was_space = buffer[i] == ' ' || buffer[i] == '.' || buffer[i] == '/';
         i += 1;
@@ -438,36 +438,32 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         for (int i = start_min_tick; i < start_min_tick + 5; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
             if (!config_square) {
-                if (i == t->tm_sec % 60 && config_seconds != 0) {
-                    draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle,
-                                 COLOR(config_color_seconds));
-                } else {
-                    graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                                  get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
-                }
+                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                              get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
             } else {
                 graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
                                               get_radial_border_point(square_minute_tick, angle), 1);
             }
-
         }
     } else if (config_minute_ticks == 1) {
         // all minute ticks
         for (int i = 0; i < 60; ++i) {
             int32_t angle = i * TRIG_MAX_ANGLE / 60;
             if (!config_square) {
-                if (i == t->tm_sec % 60 && config_seconds != 0) {
-                    draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), 10, 12, angle,
-                                 COLOR(config_color_seconds));
-                } else {
-                    graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
-                                                  get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
-                }
+                graphics_draw_line_with_width(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle),
+                                              get_radial_point(radius - PBL_IF_ROUND_ELSE(5, 3), angle), 1);
             } else {
                 graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
                                               get_radial_border_point(square_minute_tick, angle), 1);
             }
         }
+    }
+
+    // draw second hand
+    if (config_seconds != 0) {
+        int32_t angle = (t->tm_sec % 60) * TRIG_MAX_ANGLE / 60;
+        draw_pointer(ctx, get_radial_point(radius + PBL_IF_ROUND_ELSE(3, 0), angle), PBL_IF_ROUND_ELSE(12, 10),
+                     PBL_IF_ROUND_ELSE(14, 12), angle, COLOR(config_color_seconds));
     }
 
 #ifdef DEBUG_DATE_POSITION
@@ -540,9 +536,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     GPoint hour_hand = get_radial_point(radius * 55 / 100, hour_angle);
 
     // format date strings
-    char* format_1 = NULL;
-    char* format_2 = NULL;
-    switch(config_date_format) {
+    char *format_1 = NULL;
+    char *format_2 = NULL;
+    switch (config_date_format) {
         case 0: // Mon // Oct 22 (date)
             format_1 = "%b %d";
             format_2 = "%a";
@@ -653,12 +649,12 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                                    GPoint(width / 2 + d_center.x - d_w1 / 2 - border,
                                           d_y_start + d_center.y),
                                    GPoint(width / 2 + d_center.x + d_w1 / 2 + border,
-                                          d_y_start + d_center.y + d_height + 2*border)) ||
+                                          d_y_start + d_center.y + d_height + 2 * border)) ||
               line2_rect_intersect(center, hour_hand, center, minute_hand,
                                    GPoint(width / 2 + d_center.x - d_w2 / 2 - border,
                                           d_y_start + d_center.y + d_offset),
                                    GPoint(width / 2 + d_center.x + d_w2 / 2 + border,
-                                          d_y_start + d_center.y + d_height + d_offset + 2*border)))) {
+                                          d_y_start + d_center.y + d_height + d_offset + 2 * border)))) {
             found = true;
             break;
         }
@@ -741,7 +737,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - 48);
 
         const int w_font_size2 = 18;
-        const int w_font_size1 = w_font_size2 + w_font_size2*10/34;
+        const int w_font_size1 = w_font_size2 + w_font_size2 * 10 / 34;
         const int w_height = w_font_size2;
         const int w_w1 = string_width(&fctx, buffer_1, font_weather, w_font_size1);
         const int w_w2 = string_width(&fctx, buffer_2, font_main, w_font_size2);
