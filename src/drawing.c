@@ -617,13 +617,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             date_font_size = 24;
         }
     }
+    date_font_size = PBL_IF_ROUND_ELSE(date_font_size * 4 / 3, date_font_size);
 
     // determine size
     const int d_w1 = string_width(&fctx, buffer_2, font_main, date_font_size);
     const int d_w2 = string_width(&fctx, buffer_1, font_main, date_font_size);
 
     // determine where we can draw the date without overlap
-    const int d_offset = PBL_IF_ROUND_ELSE(20, 15) + (big ? -10 : 0);
+    const int d_offset = PBL_IF_ROUND_ELSE(20, 15) + (big ? -PBL_IF_ROUND_ELSE(12, 10) : 0);
     const int d_height = date_font_size;
     const int d_y_start = height / 2;
     bool found = false;
@@ -682,7 +683,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
     if (!big) {
-        draw_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), 18, true);
+        draw_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), date_font_size, true);
     }
 #endif
     draw_string(&fctx, buffer_1, date_pos.origin, font_main, COLOR(config_color_date), date_font_size, true);
@@ -736,8 +737,8 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         const int w_x = width / 2;
         const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - 48);
 
-        const int w_font_size2 = 18;
-        const int w_font_size1 = w_font_size2 + w_font_size2 * 10 / 34;
+        const int w_font_size2 = PBL_IF_ROUND_ELSE(18*4/3, 18);
+        int w_font_size1 = w_font_size2 + w_font_size2 * 10 / 34;
         const int w_height = w_font_size2;
         const int w_w1 = string_width(&fctx, buffer_1, font_weather, w_font_size1);
         const int w_w2 = string_width(&fctx, buffer_2, font_main, w_font_size2);
