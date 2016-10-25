@@ -44,7 +44,7 @@ Pebble.addEventListener('showConfiguration', function () {
     var url = 'https://stefanheule.com/obsidian/config/10/index.html';
     url = 'https://rawgit.com/stefanheule/obsidian/master/config/index.html';
 
-    url = 'https://local.com/obsidian/config/0/index.html';
+    //url = 'https://local.com/obsidian/config/0/index.html';
 
     url += '?platform=' + encodeURIComponent(getPlatform());
     url += '&watch=' + encodeURIComponent(getDetails());
