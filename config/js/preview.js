@@ -151,26 +151,16 @@ var ObsidianPreview = (function () {
                         tick_width = 2;
                     }
 
-                    if (i == tick_to_emphasize) {
-                        draw_triangle(ctx, get_radial_point(radius, angle), 10, 12, angle, config["CONFIG_COLOR_SECONDS"]);
-                    }
-                    else {
-                        graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
-                            get_radial_point(radius - tick_length, angle),
-                            tick_width);
-                    }
+                    graphics_draw_line_with_width(ctx, get_radial_point(radius, angle),
+                        get_radial_point(radius - tick_length, angle),
+                        tick_width);
                 }
             } else {
                 for (var i = 0; i < 12; ++i) {
                     if (config["CONFIG_HOUR_TICKS"] == 2 && (i % 3) != 0) continue;
                     var angle = i * TRIG_MAX_ANGLE / 12;
                     var tick_length = 8;
-                    if (i == tick_to_emphasize) {
-                        draw_triangle(ctx, get_radial_border_point(0, angle), 10, 12, angle, config["CONFIG_COLOR_SECONDS"]);
-                    }
-                    else {
-                        graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
-                    }
+                    graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle), get_radial_border_point(tick_length, angle), 4);
                 }
             }
         }
@@ -202,6 +192,10 @@ var ObsidianPreview = (function () {
                         get_radial_border_point(square_minute_tick, angle), 1);
                 }
             }
+        }
+
+        if (config["CONFIG_SECONDS"] != 0) {
+            draw_triangle(ctx, get_radial_point(radius, 0), PBL_IF_ROUND_ELSE(12, 10), PBL_IF_ROUND_ELSE(14, 12), 0, config["CONFIG_COLOR_SECONDS"]);
         }
 
         // compute angles
@@ -343,15 +337,6 @@ var ObsidianPreview = (function () {
             ctx.font = base_font_size + "px 'Open Sans Condensed'";
             ctx.fillText(config_weather_unit == 2 ? "74°" : "23°", w / 2 + 10, 58);
         }
-
-        // if (config_weather || (chalk && config["CONFIG_BLUETOOTH_LOGO"])) {
-        //     ctx.font = "23px nupe2";
-        //     graphics_context_set_fill_color(ctx, config["CONFIG_COLOR_WEATHER"]);
-        //     ctx.textAlign = "center";
-        //     var weather = config_weather ? (config_weather_unit == 2 ? "a74°" : "a23°") : "";
-        //     var weatherStr = (chalk && config["CONFIG_BLUETOOTH_LOGO"] ? "z" : "") + weather;
-        //     ctx.fillText(weatherStr, w / 2, PBL_IF_ROUND_ELSE(60, 60));
-        // }
 
         var config_battery_logo = config["CONFIG_BATTERY_LOGO"];
         var battery_state = {
