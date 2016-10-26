@@ -180,6 +180,14 @@ extern AppTimer * weather_request_timer;
 // 100 + an upper bound for all the configuration items we have
 #define OBSIDIAN_INBOX_SIZE (100 + (1 + (OBSIDIAN_N_CONFIG) * (7+4)))
 
+#ifdef PBL_PLATFORM_EMERY
+#define PBL_IF_EMERY(x, y) (x)
+#define SCALED_EMERY(x) ((x) * 200 / 144)
+#else
+#define PBL_IF_EMERY(x, y) (y)
+#define SCALED_EMERY(x) (x)
+#endif
+
 
 ////////////////////////////////////////////
 //// screenshot configurations

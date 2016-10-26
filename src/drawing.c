@@ -15,6 +15,27 @@
 #include "drawing.h"
 #include "obsidian.h"
 
+void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor color, int size, bool center) {
+    fctx_begin_fill(fctx);
+    fctx_set_fill_color(fctx, color);
+    fctx_set_color_bias(fctx, 0);
+    fctx_set_pivot(fctx, FPointZero);
+    FPoint pos;
+    pos.x = INT_TO_FIXED(position.x + width / 2);
+    pos.y = INT_TO_FIXED(position.y + 5);
+    fctx_set_offset(fctx, pos);
+    fctx_set_rotation(fctx, 0);
+    fctx_set_text_em_height(fctx, font, size);
+    fctx_draw_string(fctx, str, font, center ? GTextAlignmentCenter : GTextAlignmentLeft, FTextAnchorCapTop);
+    fctx_end_fill(fctx);
+}
+
+fixed_t string_width(FContext *fctx, char *str, FFont *font, int size) {
+    if (str[0] == 0) return 0;
+    fctx_set_text_em_height(fctx, font, size);
+    return FIXED_TO_INT(fctx_string_width(fctx, str, font));
+}
+
 void draw_pointer(GContext *ctx, GPoint target, int16_t width, int16_t height, int32_t angle, GColor color) {
     GPoint vertices[3];
     vertices[0].x = 0;
@@ -111,7 +132,8 @@ void draw_bluetooth_logo(GContext *ctx, GPoint origin) {
 /**
  * Draws a popup about the bluetooth connection
  */
-void bluetooth_popup(GContext *ctx, bool connected) {
+//#define DEBUG_BLUETOOTH_POPUP
+void bluetooth_popup(FContext* fctx, GContext *ctx, bool connected) {
 #ifndef DEBUG_BLUETOOTH_POPUP
     if (!show_bluetooth_popup) return;
 #endif
@@ -122,19 +144,18 @@ void bluetooth_popup(GContext *ctx, bool connected) {
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
     graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_fill_rect(ctx, GRect(-10, height - yoffset - 3, width + 20, 50 - 8), 0, GCornersAll);
-    graphics_context_set_text_color(ctx, GColorBlack);
-    // TODO
-//    graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_system_18px_bold,
-//                       GRect(PBL_IF_ROUND_ELSE(22, 2), notification_rect.origin.y + 4, 105, 40),
-//                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
-//                       NULL);
+    char *str1 = "Bluetooth";
+    char *str2 = connected ? "Connected" : "Disconnected";
+    GPoint pos = GPoint((width - 24) / 2 - width/2, notification_rect.origin.y + 4);
+    draw_string(fctx, str1, pos, font_main, GColorBlack, 18, true);
+    draw_string(fctx, str2, GPoint(pos.x, pos.y + 20), font_main, GColorBlack, 18, true);
     if (connected) {
         graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorGreen, GColorBlack));
     } else {
         graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorRed, GColorBlack));
     }
 
-    GPoint icon_center = GPoint(PBL_IF_ROUND_ELSE(135, 120) + 3,
+    GPoint icon_center = GPoint(PBL_IF_ROUND_ELSE(135, width - 24) + 3,
                                 notification_rect.origin.y + notification_rect.size.h - 26);
     graphics_fill_circle(ctx, icon_center, 9);
     graphics_context_set_stroke_color(ctx, GColorWhite);
@@ -162,47 +183,26 @@ int debug_iter = 0;
 
 /** Array of candidate points to draw the weather string at */
 static GPoint w_points[] = {
-        {0,                            0},
-        {10 + PBL_IF_ROUND_ELSE(2, 0), 3},
-        {17 + PBL_IF_ROUND_ELSE(3, 0), 7},
-        {26 + PBL_IF_ROUND_ELSE(4, 0), 13},
-        {29 + PBL_IF_ROUND_ELSE(5, 0), 19},
-        {33 + PBL_IF_ROUND_ELSE(6, 0), 25},
-        {33 + PBL_IF_ROUND_ELSE(6, 0), 32},
-        {33 + PBL_IF_ROUND_ELSE(6, 0), 39},
+        {SCALED_EMERY(0),                            SCALED_EMERY(0)},
+        {SCALED_EMERY(10 + PBL_IF_ROUND_ELSE(2, 0)), SCALED_EMERY(3)},
+        {SCALED_EMERY(17 + PBL_IF_ROUND_ELSE(3, 0)), SCALED_EMERY(7)},
+        {SCALED_EMERY(26 + PBL_IF_ROUND_ELSE(4, 0)), SCALED_EMERY(13)},
+        {SCALED_EMERY(29 + PBL_IF_ROUND_ELSE(5, 0)), SCALED_EMERY(19)},
+        {SCALED_EMERY(33 + PBL_IF_ROUND_ELSE(6, 0)), SCALED_EMERY(25)},
+        {SCALED_EMERY(33 + PBL_IF_ROUND_ELSE(6, 0)), SCALED_EMERY(32)},
+        {SCALED_EMERY(33 + PBL_IF_ROUND_ELSE(6, 0)), SCALED_EMERY(39)},
 };
 /** Array of candidate points to draw the date string at */
 static GPoint d_points[] = {
-        {0,  16},
-        {10, 16 - 3},
-        {17, 16 - 7},
-        {26, 16 - 13},
-        {29, 16 - 19},
-        {33, 16 - 25},
-        {33, 16 - 32},
-        {33, 16 - 39},
+        {SCALED_EMERY(0),  SCALED_EMERY(16)},
+        {SCALED_EMERY(10), SCALED_EMERY(16 - 3)},
+        {SCALED_EMERY(17), SCALED_EMERY(16 - 7)},
+        {SCALED_EMERY(26), SCALED_EMERY(16 - 13)},
+        {SCALED_EMERY(29), SCALED_EMERY(16 - 19)},
+        {SCALED_EMERY(33), SCALED_EMERY(16 - 25)},
+        {SCALED_EMERY(33), SCALED_EMERY(16 - 32)},
+        {SCALED_EMERY(33), SCALED_EMERY(16 - 39)},
 };
-
-void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor color, int size, bool center) {
-    fctx_begin_fill(fctx);
-    fctx_set_fill_color(fctx, color);
-    fctx_set_color_bias(fctx, 0);
-    fctx_set_pivot(fctx, FPointZero);
-    FPoint pos;
-    pos.x = INT_TO_FIXED(position.x + width / 2);
-    pos.y = INT_TO_FIXED(position.y + 5);
-    fctx_set_offset(fctx, pos);
-    fctx_set_rotation(fctx, 0);
-    fctx_set_text_em_height(fctx, font, size);
-    fctx_draw_string(fctx, str, font, center ? GTextAlignmentCenter : GTextAlignmentLeft, FTextAnchorCapTop);
-    fctx_end_fill(fctx);
-}
-
-fixed_t string_width(FContext *fctx, char *str, FFont *font, int size) {
-    if (str[0] == 0) return 0;
-    fctx_set_text_em_height(fctx, font, size);
-    return FIXED_TO_INT(fctx_string_width(fctx, str, font));
-}
 
 #ifdef PBL_ROUND
 /** Array of candidate points to draw the battery information */
@@ -619,14 +619,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             date_font_size = 24;
         }
     }
-    date_font_size = PBL_IF_ROUND_ELSE(date_font_size * 4 / 3, date_font_size);
+    date_font_size = SCALED_EMERY(PBL_IF_ROUND_ELSE(date_font_size * 4 / 3, date_font_size));
 
     // determine size
     const int d_w1 = string_width(&fctx, buffer_2, font_main, date_font_size);
     const int d_w2 = string_width(&fctx, buffer_1, font_main, date_font_size);
 
     // determine where we can draw the date without overlap
-    const int d_offset = PBL_IF_ROUND_ELSE(20, 15) + (big ? -PBL_IF_ROUND_ELSE(12, 10) : 0);
+    const int d_offset = SCALED_EMERY(PBL_IF_ROUND_ELSE(20, 15)) + SCALED_EMERY(big ? -PBL_IF_ROUND_ELSE(12, 10) : 0);
     const int d_height = date_font_size;
     const int d_y_start = height / 2;
     bool found = false;
@@ -737,9 +737,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         GPoint w_center;
         const int w_border = 2;
         const int w_x = width / 2;
-        const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - 48);
+        const int w_y = PBL_IF_ROUND_ELSE(36, height / 2 - SCALED_EMERY(48));
 
-        const int w_font_size2 = PBL_IF_ROUND_ELSE(18 * 4 / 3, 18);
+        int w_font_size2 = SCALED_EMERY(PBL_IF_ROUND_ELSE(18 * 4 / 3, 18));
         int w_font_size1 = w_font_size2 + w_font_size2 * 10 / 34;
         const int w_height = w_font_size2;
         const int w_w1 = string_width(&fctx, buffer_1, font_weather, w_font_size1);
@@ -815,7 +815,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             (config_battery_logo == 2 && battery_state.charge_percent <= 30 && !battery_state.is_charging &&
              !battery_state.is_plugged)) {
             GRect battery = PBL_IF_ROUND_ELSE(GRect((width
-                                                      -14)/2, 21, 14, 8), GRect(125, 3, 14, 8));
+                                                      -14)/2, 21, 14, 8), GRect(width-19, 3, 14, 8));
             if (config_square) {
                 battery.origin.x = 123;
                 battery.origin.y = 7;
@@ -860,7 +860,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
     // draw the bluetooth popup
-    bluetooth_popup(ctx, bluetooth);
+    bluetooth_popup(&fctx, ctx, bluetooth);
 
     // end fctx
     fctx_deinit_context(&fctx);

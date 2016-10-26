@@ -19,7 +19,7 @@
 
 void graphics_draw_line_with_width(GContext *ctx, GPoint p0, GPoint p1, uint8_t width);
 void draw_bluetooth_logo(GContext *ctx, GPoint origin);
-void bluetooth_popup(GContext *ctx, bool connected);
+void bluetooth_popup(FContext* fctx, GContext *ctx, bool connected);
 void background_update_proc(Layer *layer, GContext *ctx);
 
 #endif //OBSIDIAN_DRAWING_H
