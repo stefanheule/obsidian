@@ -58,7 +58,7 @@ menu_icon:
 resources:
 	scripts/assemble_resources.sh
 
-screenshots
+screenshots:
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_MAIN" OBSIDIAN_FILE="main"
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_SQUARE" OBSIDIAN_FILE="square"
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_BATTERY_LOW_1" OBSIDIAN_FILE="battery-low-1"
