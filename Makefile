@@ -58,8 +58,7 @@ menu_icon:
 resources:
 	scripts/assemble_resources.sh
 
-screenshots: screenshot_config
-	pebble kill
+screenshots
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_MAIN" OBSIDIAN_FILE="main"
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_SQUARE" OBSIDIAN_FILE="square"
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_BATTERY_LOW_1" OBSIDIAN_FILE="battery-low-1"
@@ -82,7 +81,6 @@ screenshots: screenshot_config
 	$(MAKE) screenshot OBSIDIAN_CONFIG="SCREENSHOT_ALT_THEME_8" OBSIDIAN_FILE="theme-8"
 	scripts/assemble_screenshots.sh
 	scripts/assemble_resources.sh
-	pebble kill
 
 screenshot_config:
 	rm -f screenshots/aplite/config.png
