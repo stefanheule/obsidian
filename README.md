@@ -201,7 +201,7 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |         2.0 - 2.1 |                     7 |
 |         2.2 - 2.3 |                     8 |
 |         2.4 - 2.5 |                     9 |
-|               2.6 |                    10 |
+|               3.0 |                    10 |
 
 ## Contributing
 
