@@ -13,6 +13,7 @@ pebble wipe
 (take_screenshot $1 "aplite") &
 (take_screenshot $1 "basalt") &
 (take_screenshot $1 "chalk") &
+(take_screenshot $1 "emery") &
 wait
 echo "" > src/config.h
 pebble wipe
