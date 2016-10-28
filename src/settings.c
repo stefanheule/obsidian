@@ -151,6 +151,10 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
     if (ask_for_weather_update) {
         update_weather();
     }
+
+#ifdef PBL_ROUND
+    config_square = false;
+#endif
 }
 
 /**
@@ -217,6 +221,9 @@ void read_config_all() {
 
 #ifdef DEBUG_SQUARE
     config_square = true;
+#endif
+#ifdef PBL_ROUND
+    config_square = false;
 #endif
 
     if (persist_exists(PERSIST_KEY_WEATHER)) {

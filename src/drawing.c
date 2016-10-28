@@ -619,7 +619,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             date_font_size = 22;
         }
     }
-    date_font_size = SCALED_EMERY(PBL_IF_ROUND_ELSE(date_font_size * 4 / 3, date_font_size));
+    date_font_size = SCALED_EMERY(PBL_IF_ROUND_ELSE(date_font_size * 5 / 4, date_font_size));
 
     // determine size
     const int d_w1 = string_width(&fctx, buffer_2, font_main, date_font_size);

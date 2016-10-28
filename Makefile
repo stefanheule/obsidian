@@ -5,7 +5,7 @@ OBSIDIAN_FILE="out"
 # platform
 P="basalt"
 
-VERSION=$(shell cat appinfo.json | grep version | grep -o "[0-9]*\.[0-9]*")
+VERSION=$(shell cat package.json | grep version | grep -o "[0-9][0-9]*\.[0-9][0-9]*")
 
 all: build install_emulator
 

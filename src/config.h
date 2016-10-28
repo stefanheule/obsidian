@@ -1,1 +1,1 @@
-
+#define SCREENSHOT_SQUARE
