@@ -109,16 +109,17 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
-**Version 2.6 ()**
+**Version 3.0 (2016-10-28)**
 
-- New font and much better font drawing library
 - New date format options (including digital time and larger font)
-- Second hand (mostly implemented by Tamás Iván)
+- New font and much better font drawing library resulting in smoother text
+- Second hand option (disabled by default; mostly implemented by Tamás Iván)
+- Experimental support for the Pebble Time 2 (emery platform)
 
 **Version 2.5 (2016-09-22)**
 
 - Optimized for Pebble OS 4.0
-- Added support for diorite platform
+- Added support for Pebble 2 (diorite platform)
 - Addes support for Timeline Quick View
 - Updated forecast.io to darksky.net (their service got renamed).
 
