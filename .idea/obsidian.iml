@@ -21,14 +21,14 @@
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
           <root url="file:///usr/include" />
           <root url="file:///usr/local/include" />
-          <root url="file://$USER_HOME$/.pebble-sdk/SDKs/4.2.1/sdk-core/pebble/emery/include" />
+          <root url="file://$USER_HOME$/.pebble-sdk/SDKs/current/sdk-core/pebble/emery/include" />
         </CLASSES>
         <SOURCES>
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
           <root url="file:///usr/include" />
           <root url="file:///usr/local/include" />
-          <root url="file://$USER_HOME$/.pebble-sdk/SDKs/4.2.1/sdk-core/pebble/emery/include" />
+          <root url="file://$USER_HOME$/.pebble-sdk/SDKs/current/sdk-core/pebble/emery/include" />
         </SOURCES>
       </library>
     </orderEntry>
