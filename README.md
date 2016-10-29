@@ -12,7 +12,7 @@ Some information on Obsidian elsewhere:
 
 ## Overview
 
-This is a usable and elegant analog watchface for the Pebble, Pebble Steel, Pebble Time, Pebble Time Steel as well as the Pebble Time Round.
+This is a usable and elegant analog watchface for the Pebble 2, Pebble Time 2, Pebble Time, Pebble Time Steel as well as the Pebble Time Round.
 It's main features are:
 
 - High contrast colors, clearly visible in most light conditions.
@@ -72,15 +72,6 @@ The watchface also supports the Pebble Time Round:
 
 ![Alternative color theme](screenshots/chalk/theme-overview-2.png)
 
-## Screenshots (Pebble and Pebble Steel)
-
-On the original Pebble and Pebble Steel, the colors are limited to black and white, but all other features are still available.  Some screenshots:
-
-![Screenshot of the date display moving on aplite platform](screenshots/aplite/date.png)
-
-![Screenshot of the weather information on aplite platform](screenshots/aplite/weather.png)
-
-![Screenshot of the bluetooth alerts on aplite platform](screenshots/aplite/bluetooth.png)
 
 ## Screenshot of Configuration
 
@@ -115,6 +106,7 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 - New font and much better font drawing library resulting in smoother text
 - Second hand option (disabled by default; mostly implemented by Tamás Iván)
 - Experimental support for the Pebble Time 2 (emery platform)
+- Remove support for aplite platform (due to memory constraints)
 
 **Version 2.5 (2016-09-22)**
 

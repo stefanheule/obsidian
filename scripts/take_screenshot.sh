@@ -7,15 +7,18 @@ function take_screenshot {
   pebble screenshot --emulator $2 screenshots/$2/$1.png &> /dev/null
 }
 
+(take_screenshot $1 "aplite")
 pebble wipe
 pebble kill
-pebble wipe
-(take_screenshot $1 "aplite") &
-(take_screenshot $1 "basalt") &
-(take_screenshot $1 "chalk") &
-(take_screenshot $1 "emery") &
-wait
+# (take_screenshot $1 "basalt")
+# pebble wipe
+# pebble kill
+# (take_screenshot $1 "chalk")
+# pebble wipe
+# pebble kill
+# (take_screenshot $1 "emery")
+# pebble wipe
+# pebble kill
+
+
 echo "" > src/config.h
-pebble wipe
-pebble kill
-pebble wipe

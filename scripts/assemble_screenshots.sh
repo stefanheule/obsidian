@@ -4,15 +4,21 @@
 
 set -e
 
-for platform in "aplite" "basalt" "chalk"; do
+for platform in "aplite" "basalt" "chalk" "emery"; do
 
   watch_width=144
   if [ $platform == "chalk" ]; then
     watch_width=180
   fi
+  if [ $platform == "emery" ]; then
+    watch_width=200
+  fi
   watch_height=168
   if [ $platform == "chalk" ]; then
     watch_height=180
+  fi
+  if [ $platform == "emery" ]; then
+    watch_height=228
   fi
 
   n=3
