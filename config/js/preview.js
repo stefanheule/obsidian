@@ -239,7 +239,7 @@ var ObsidianPreview = (function () {
         var format_2 = "";
         switch(config_date_format) {
             case 0: // Mon // Oct 22 (date)
-                format_1 = "May 29";
+                format_1 = "May 28";
                 format_2 = "Mon";
                 break;
             case 1: // Oct 22 (date)
@@ -289,6 +289,14 @@ var ObsidianPreview = (function () {
             case 14: // Mon // 22.10. (date/time)
                 format_1 = "28.5.";
                 format_2 = "Mon";
+                break;
+            case 15: // 2:10 | Mon 22 (date/time)
+                format_1 = "Mon 28";
+                format_2 = "10:10";
+                break;
+            case 16: // 14:10 | Mon 22 (date/time)
+                format_1 = "Mon 28";
+                format_2 = "22:10";
                 break;
         }
 
