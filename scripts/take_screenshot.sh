@@ -10,15 +10,15 @@ function take_screenshot {
 (take_screenshot $1 "diorite")
 pebble wipe
 pebble kill
-# (take_screenshot $1 "basalt")
-# pebble wipe
-# pebble kill
-# (take_screenshot $1 "chalk")
-# pebble wipe
-# pebble kill
-# (take_screenshot $1 "emery")
-# pebble wipe
-# pebble kill
+(take_screenshot $1 "basalt")
+pebble wipe
+pebble kill
+(take_screenshot $1 "chalk")
+pebble wipe
+pebble kill
+(take_screenshot $1 "emery")
+pebble wipe
+pebble kill
 
 
 echo "" > src/config.h

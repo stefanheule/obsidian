@@ -12,7 +12,7 @@ Some information on Obsidian elsewhere:
 
 ## Overview
 
-This is a usable and elegant analog watchface for the Pebble 2, Pebble Time 2, Pebble Time, Pebble Time Steel as well as the Pebble Time Round.
+This is a usable and elegant analog watchface for the Original Pebble, Pebble Steel, Pebble Time, Pebble Time Steel, Pebble Time Round, Pebble 2 and the Pebble Time 2.
 It's main features are:
 
 - High contrast colors, clearly visible in most light conditions.
