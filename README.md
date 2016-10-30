@@ -100,7 +100,7 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
-**Version 3.0 (2016-10-28)**
+**Version 3.0 (2016-10-29)**
 
 - New date format options (including digital time and larger font)
 - New font and much better font drawing library resulting in smoother text
