@@ -7,7 +7,7 @@ function take_screenshot {
   pebble screenshot --emulator $2 screenshots/$2/$1.png &> /dev/null
 }
 
-(take_screenshot $1 "aplite")
+(take_screenshot $1 "diorite")
 pebble wipe
 pebble kill
 # (take_screenshot $1 "basalt")

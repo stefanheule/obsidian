@@ -83,20 +83,25 @@ screenshots:
 	scripts/assemble_resources.sh
 
 screenshot_config:
-	rm -f screenshots/aplite/config.png
+	rm -f screenshots/diorite/config.png
 	rm -f screenshots/basalt/config.png
 	rm -f screenshots/chalk/config.png
-	phantomjs scripts/capture-settings-screenshot.js http://obsidian.local.com/index.html?platform=aplite&version=$(VERSION)
+	rm -f screenshots/emery/config.png
+	phantomjs scripts/capture-settings-screenshot.js https://local.com/obsidian/config/0/index.html?platform=aplite&version=$(VERSION)
 	sleep 2
-	pngcrush -q -rem time tmp.png screenshots/aplite/config.png
+	pngcrush -q -rem time tmp.png screenshots/diorite/config.png
 	rm tmp.png
-	phantomjs scripts/capture-settings-screenshot.js http://obsidian.local.com/index.html?platform=basalt&version=$(VERSION)
+	phantomjs scripts/capture-settings-screenshot.js https://local.com/obsidian/config/0/index.html?platform=basalt&version=$(VERSION)
 	sleep 2
 	pngcrush -q -rem time tmp.png screenshots/basalt/config.png
 	rm tmp.png
-	phantomjs scripts/capture-settings-screenshot.js http://obsidian.local.com/index.html?platform=chalk&version=$(VERSION)
+	phantomjs scripts/capture-settings-screenshot.js https://local.com/obsidian/config/0/index.html?platform=chalk&version=$(VERSION)
 	sleep 2
 	pngcrush -q -rem time tmp.png screenshots/chalk/config.png
+	rm tmp.png
+	phantomjs scripts/capture-settings-screenshot.js https://local.com/obsidian/config/0/index.html?platform=emery&version=$(VERSION)
+	sleep 2
+	pngcrush -q -rem time tmp.png screenshots/emery/config.png
 	rm tmp.png
 
 screenshot: write_header build_quiet

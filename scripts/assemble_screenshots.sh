@@ -4,7 +4,7 @@
 
 set -e
 
-for platform in "aplite" "basalt" "chalk" "emery"; do
+for platform in "diorite" "basalt" "chalk" "emery"; do
 
   watch_width=144
   if [ $platform == "chalk" ]; then
@@ -102,7 +102,7 @@ for platform in "aplite" "basalt" "chalk" "emery"; do
   mv tmp.png screenshots/$platform/weather.png
 done
 
-for platform in "aplite" "basalt" "chalk"; do
+for platform in "diorite" "emery" "basalt" "chalk"; do
   for f in screenshots/$platform/*.png; do
     pngcrush -rem time $f tmp.png &> /dev/null
     mv tmp.png $f
