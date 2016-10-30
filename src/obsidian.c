@@ -91,8 +91,14 @@ GFont font_open_sans;
 #endif
 
 /** Fonts. */
+#ifdef PBL_COLOR
 FFont* font_main;
 FFont* font_weather;
+#else
+GFont font_main;
+GFont font_main_big;
+GFont font_weather;
+#endif
 
 /** Is the bluetooth popup current supposed to be shown? */
 bool show_bluetooth_popup;
@@ -209,8 +215,14 @@ void window_load(Window *window) {
     layer_add_child(window_layer, layer_background);
 
     // load fonts
+#ifdef PBL_COLOR
     font_main = ffont_create_from_resource(RESOURCE_ID_MAIN_FFONT);
     font_weather = ffont_create_from_resource(RESOURCE_ID_WEATHER_FFONT);
+#else
+    font_main = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+    font_main_big = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
+    font_weather = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_NUPE_23));
+#endif
 
     // initialize
     show_bluetooth_popup = false;
@@ -224,8 +236,12 @@ void window_unload(Window *window) {
 #ifdef OBSIDIAN_SHOW_NUMBERS
     fonts_unload_custom_font(font_open_sans);
 #endif
+#ifdef PBL_COLOR
     ffont_destroy(font_main);
     ffont_destroy(font_weather);
+#else
+    fonts_unload_custom_font(font_weather);
+#endif
 }
 
 void subscribe_tick(bool also_unsubscribe) {

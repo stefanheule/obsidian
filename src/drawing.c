@@ -15,6 +15,24 @@
 #include "drawing.h"
 #include "obsidian.h"
 
+
+#ifdef PBL_COLOR
+fixed_t string_width(FContext *fctx, char *str, FFont *font, int size)
+#else
+fixed_t string_width(FContext *fctx, char *str, GFont font, int size)
+#endif
+{
+    if (str[0] == 0) return 0;
+#ifdef PBL_COLOR
+    fctx_set_text_em_height(fctx, font, size);
+    return FIXED_TO_INT(fctx_string_width(fctx, str, font));
+#else
+    GSize r = graphics_text_layout_get_content_size(str, font, GRect(0, 0, 500, 500), GTextOverflowModeWordWrap, GTextAlignmentCenter);
+    return r.w;
+#endif
+}
+
+#ifdef PBL_COLOR
 void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor color, int size, bool center) {
     fctx_begin_fill(fctx);
     fctx_set_fill_color(fctx, color);
@@ -29,12 +47,21 @@ void draw_string(FContext *fctx, char *str, GPoint position, FFont *font, GColor
     fctx_draw_string(fctx, str, font, center ? GTextAlignmentCenter : GTextAlignmentLeft, FTextAnchorCapTop);
     fctx_end_fill(fctx);
 }
-
-fixed_t string_width(FContext *fctx, char *str, FFont *font, int size) {
-    if (str[0] == 0) return 0;
-    fctx_set_text_em_height(fctx, font, size);
-    return FIXED_TO_INT(fctx_string_width(fctx, str, font));
+#else
+void draw_string(FContext *fctx, char *str, GPoint position, GFont font, GColor color, int size, bool center) {
+    int16_t posx = position.x + width / 2;
+    int16_t posy = position.y;
+    if (center) {
+        posx -= string_width(fctx, str, font, size) / 2;
+    }
+    if (font == font_weather) {
+        posy -= 5;
+    }
+    graphics_context_set_text_color(fctx->gctx, color);
+    graphics_draw_text(fctx->gctx, str, font, GRect(posx, posy, 500, 500), GTextOverflowModeWordWrap, GTextAlignmentLeft, 0);
 }
+#endif
+
 
 void draw_pointer(GContext *ctx, GPoint target, int16_t width, int16_t height, int32_t angle, GColor color) {
     GPoint vertices[3];
@@ -144,11 +171,20 @@ void bluetooth_popup(FContext* fctx, GContext *ctx, bool connected) {
     graphics_fill_rect(ctx, notification_rect, 0, GCornersAll);
     graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_fill_rect(ctx, GRect(-10, height - yoffset - 3, width + 20, 50 - 8), 0, GCornersAll);
+#ifndef PBL_COLOR
+    graphics_context_set_text_color(ctx, GColorBlack);
+    graphics_draw_text(ctx, connected ? "Bluetooth Connected" : "Bluetooth Disconnected", font_main,
+                       GRect(PBL_IF_ROUND_ELSE(22, 2), notification_rect.origin.y + 4, 105, 40),
+                       GTextOverflowModeWordWrap, GTextAlignmentCenter,
+NULL);
+#else
     char *str1 = "Bluetooth";
     char *str2 = connected ? "Connected" : "Disconnected";
     GPoint pos = GPoint((width - 24) / 2 - width/2, notification_rect.origin.y + 4);
     draw_string(fctx, str1, pos, font_main, GColorBlack, 18, true);
     draw_string(fctx, str2, GPoint(pos.x, pos.y + 20), font_main, GColorBlack, 18, true);
+#endif
+
     if (connected) {
         graphics_context_set_fill_color(ctx, COLOR_FALLBACK(GColorGreen, GColorBlack));
     } else {
@@ -629,9 +665,18 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     }
     date_font_size = SCALED_EMERY(PBL_IF_ROUND_ELSE(date_font_size * 5 / 4, date_font_size));
 
+#ifdef PBL_COLOR
+    FFont* date_font = font_main;
+#else
+    GFont date_font = font_main;
+    if (big) {
+        date_font = font_main_big;
+    }
+#endif
+
     // determine size
-    const int d_w1 = string_width(&fctx, buffer_2, font_main, date_font_size);
-    const int d_w2 = string_width(&fctx, buffer_1, font_main, date_font_size);
+    const int d_w1 = string_width(&fctx, buffer_2, date_font, date_font_size);
+    const int d_w2 = string_width(&fctx, buffer_1, date_font, date_font_size);
 
     // determine where we can draw the date without overlap
     const int d_offset = SCALED_EMERY(PBL_IF_ROUND_ELSE(20, 15)) + SCALED_EMERY(big ? -PBL_IF_ROUND_ELSE(12, 10) : 0);
@@ -693,10 +738,10 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     // actuallyl draw the date text
 #ifndef DEBUG_NO_DATE
     if (!big) {
-        draw_string(&fctx, buffer_2, day_pos.origin, font_main, COLOR(config_color_day_of_week), date_font_size, true);
+        draw_string(&fctx, buffer_2, day_pos.origin, date_font, COLOR(config_color_day_of_week), date_font_size, true);
     }
 #endif
-    draw_string(&fctx, buffer_1, date_pos.origin, font_main, COLOR(config_color_date), date_font_size, true);
+    draw_string(&fctx, buffer_1, date_pos.origin, date_font, COLOR(config_color_date), date_font_size, true);
 
     // weather information
     bool weather_is_on = config_weather_refresh > 0;

@@ -1,5 +1,5 @@
 {
-  "version": "3.1.0",
+  "version": "3.2.0",
   "author": "Stefan Heule",
   "private": true,
   "keywords": [
@@ -18,12 +18,27 @@
         {
           "type": "raw",
           "name": "MAIN_FFONT",
-          "file": "OpenSans-CondensedBold.ffont"
+          "file": "OpenSans-CondensedBold.ffont",
+          "targetPlatforms": [
+            "basalt", "chalk", "emery"
+          ]
         },
         {
           "type": "raw",
           "name": "WEATHER_FFONT",
-          "file": "nupe2.ffont"
+          "file": "nupe2.ffont",
+          "targetPlatforms": [
+            "basalt", "chalk", "emery"
+          ]
+        },
+        {
+        "characterRegex": "[a-jzA-IZ]",
+        "file": "fonts/nupe2.ttf",
+        "name": "NUPE_23",
+        "type": "font",
+        "targetPlatforms": [
+          "aplite", "diorite"
+        ]
         }
       ]
     },
@@ -84,6 +99,7 @@
       "watchface": true
     },
     "targetPlatforms": [
+      "aplite",
       "basalt",
       "chalk",
       "diorite",

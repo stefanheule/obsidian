@@ -100,6 +100,10 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
+**Version 3.2 (2016-10-30)**
+
+- Bring back support for Pebble and Pebble Steel.
+
 **Version 3.1 (2016-10-30)**
 
 - Fix wrong color bug for hour ticks.
@@ -199,7 +203,7 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |         2.2 - 2.3 |                     8 |
 |         2.4 - 2.5 |                     9 |
 |               3.0 |                    10 |
-|               3.1 |                    11 |
+|         3.1 - 3.2 |                    11 |
 
 ## Contributing
 

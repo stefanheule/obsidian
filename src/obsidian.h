@@ -136,8 +136,14 @@ extern char buffer_2[30];
 extern GPoint center;
 extern int16_t height;
 extern int16_t width;
+#ifdef PBL_COLOR
 extern FFont* font_main;
 extern FFont* font_weather;
+#else
+extern GFont font_main;
+extern GFont font_main_big;
+extern GFont font_weather;
+#endif
 
 extern bool show_bluetooth_popup;
 extern AppTimer *timer_bluetooth_popup;
