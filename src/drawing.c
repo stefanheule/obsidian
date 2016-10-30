@@ -395,6 +395,7 @@ void background_update_proc(Layer *layer, GContext *ctx) {
 #endif
 
     // hour ticks
+    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
     uint8_t tick_width = 2;
     if (config_hour_ticks != 3) {
         if (!config_square) {
@@ -430,7 +431,6 @@ void background_update_proc(Layer *layer, GContext *ctx) {
     }
 
     // minute ticks
-    graphics_context_set_stroke_color(ctx, COLOR(config_color_ticks));
     int square_minute_tick = 4;
     if (config_minute_ticks == 2) {
         // only relevant minute ticks
@@ -592,6 +592,14 @@ void background_update_proc(Layer *layer, GContext *ctx) {
         case 14: // Mon // 22.10. (date/time)
             format_1 = "%d.%m.";
             format_2 = "%a";
+            break;
+        case 15: // 2:10 | Mon 22 (date/time)
+            format_1 = "%a %d";
+            format_2 = "%I:%M";
+            break;
+        case 16: // 14:10 | Mon 22 (date/time)
+            format_1 = "%a %d";
+            format_2 = "%H:%M";
             break;
     }
 
