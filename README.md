@@ -103,6 +103,7 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 **Version 3.2 (2016-10-30)**
 
 - Bring back support for Pebble and Pebble Steel.
+- Improve font on Pebble 2.
 
 **Version 3.1 (2016-10-30)**
 
