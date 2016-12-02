@@ -181,12 +181,12 @@ void handle_bluetooth(bool connected) {
     }
 
     // vibrate
-    if (vibrate) {
+    if (vibrate && !quiet_time_is_active()) {
         vibes_double_pulse();
     }
 
     // turn light on
-    if (show_popup) {
+    if (show_popup && !quiet_time_is_active()) {
         light_enable_interaction();
     }
 
