@@ -51,7 +51,7 @@ Pebble.addEventListener('showConfiguration', function () {
     url += '&wtoken=' + encodeURIComponent(getWToken());
     url += '&utoken=' + encodeURIComponent(getUToken());
     url += '&watch=' + encodeURIComponent(getDetails());
-    url += '&version=3.2';
+    url += '&version=3.3';
     console.log('[ info/app ] Showing configuration page: ' + url);
     Pebble.openURL(url);
 });

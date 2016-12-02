@@ -100,6 +100,11 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
+**Version 3.3 (2016-12-02)**
+
+- Use temperature, not apparent temperature for darksky weather.
+- Respect quiet time.
+
 **Version 3.2 (2016-10-30)**
 
 - Bring back support for Pebble and Pebble Steel.
@@ -204,7 +209,7 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |         2.2 - 2.3 |                     8 |
 |         2.4 - 2.5 |                     9 |
 |               3.0 |                    10 |
-|         3.1 - 3.2 |                    11 |
+|         3.1 - now |                    11 |
 
 ## Contributing
 
