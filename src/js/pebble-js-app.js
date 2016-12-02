@@ -368,7 +368,7 @@ function fetchWeather(latitude, longitude) {
                     }
                 }
             } else {
-                temp = response.currently.apparentTemperature;
+                temp = response.currently.temperature;
                 icon = response.currently.icon;
             }
             temp = Math.round(temp);
