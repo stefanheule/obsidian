@@ -100,6 +100,11 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
+**Version 3.4 (2017-01-06)**
+
+- Fix weather bug.
+- Increase tick thickness for 3/6/9/12 on square watch face.
+
 **Version 3.3 (2016-12-02)**
 
 - Use temperature, not apparent temperature for darksky weather.

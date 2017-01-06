@@ -460,8 +460,9 @@ void background_update_proc(Layer *layer, GContext *ctx) {
                 if (config_hour_ticks == 2 && (i % 3) != 0) continue;
                 int32_t angle = i * TRIG_MAX_ANGLE / 12;
                 int tick_length = 8;
+                int tick_width = (i%3==0) ? 6 : 4;
                 graphics_draw_line_with_width(ctx, get_radial_border_point(0, angle),
-                                              get_radial_border_point(tick_length, angle), 4);
+                                              get_radial_border_point(tick_length, angle), tick_width);
             }
         }
     }
