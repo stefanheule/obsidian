@@ -54,7 +54,7 @@ Finally, it is fully configurable, both in terms of what it looks like as well a
 
 The configuration dialog to achieve this flexibility looks as follows:
 
-![Configuration](screenshots/config.png)
+![Configuration](screenshots/basalt/config.png)
 
 ## Screenshots (Pebble Time Round)
 
