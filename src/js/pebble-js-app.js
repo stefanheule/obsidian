@@ -229,7 +229,7 @@ function parseIconForecastIO(icon) {
 
 /** Returns true iff a and b represent the same day (ignoring time). */
 function sameDate(a, b) {
-    return a.getDay() == b.getDay() && a.getFullYear() == b.getFullYear() && a.getMonth() && b.getMonth();
+    return a.getDay() == b.getDay() && a.getFullYear() == b.getFullYear() && a.getMonth() == b.getMonth();
 }
 
 /** Callback if determining weather conditions failed. */
