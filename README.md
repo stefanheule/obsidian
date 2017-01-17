@@ -100,6 +100,10 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
+**Version 3.5 (2017-01-17)**
+
+- Change ticks for 3/6/9/12 on square watch faces again.
+
 **Version 3.4 (2017-01-06)**
 
 - Fix weather bug.
