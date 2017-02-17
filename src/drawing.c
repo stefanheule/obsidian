@@ -638,6 +638,10 @@ void background_update_proc(Layer *layer, GContext *ctx) {
             format_1 = "%a %d";
             format_2 = "%H:%M";
             break;
+        case 17: // Mon // 22 Oct (date)
+            format_1 = "%d %b";
+            format_2 = "%a";
+            break;
     }
 
     setlocale(LC_ALL, "");

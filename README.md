@@ -100,6 +100,10 @@ There is an [older version available on the Pebble App Store](https://apps.getpe
 
 ## Changelog
 
+**Version 3.6 (2017-02-17)**
+
+- Add "Mon | 28 May" date format
+
 **Version 3.5 (2017-01-17)**
 
 - Change ticks for 3/6/9/12 on square watch faces again.
@@ -218,7 +222,8 @@ The watchface itself uses relatively arbitrary version numbers of MAJOR.MINOR.  
 |         2.2 - 2.3 |                     8 |
 |         2.4 - 2.5 |                     9 |
 |               3.0 |                    10 |
-|         3.1 - now |                    11 |
+|         3.1 - 3.5 |                    11 |
+|         3.6 - now |                    12 |
 
 ## Contributing
 

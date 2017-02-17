@@ -298,6 +298,10 @@ var ObsidianPreview = (function () {
                 format_1 = "Mon 28";
                 format_2 = "22:10";
                 break;
+            case 17: // Mon // 22 Oct (date)
+                format_1 = "28 May";
+                format_2 = "Mon";
+                break;
         }
 
         var big = format_2 == "";
